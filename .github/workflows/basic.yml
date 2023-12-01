@@ -208,18 +208,16 @@ jobs:
       # POST PROCESSING
 
       - name: Install (*nix)
-        run: |
-          sudo cmake --install cpputest_build/
-          pkg-config --print-provides cpputest
+        run: sudo cmake --install cpputest_build/
         if: ${{ matrix.install && !startswith(matrix.os, 'windows')}}
       - name: Install (Windows)
         run: cmake --install cpputest_build/ --config=Debug
         if: ${{ matrix.install && startswith(matrix.os, 'windows')}}
       - name: Use install
         run: |
-          cmake -B build -S examples
-          cmake --build build -j
-          ctest --test-dir build
+          cmake -B example_build -S examples
+          cmake --build example_build -j
+          ctest --test-dir example_build
         if: ${{ matrix.install }}
 
       - name: Coverage
