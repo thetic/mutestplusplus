@@ -1,7 +1,5 @@
 add_executable(CppUTestTests
     src/AllTests.cpp
-    src/AllocLetTestFree.c
-    src/AllocLetTestFreeTest.cpp
     src/CheatSheetTest.cpp
     src/CommandLineArgumentsTest.cpp
     src/CommandLineTestRunnerTest.cpp

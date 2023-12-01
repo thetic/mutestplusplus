@@ -214,7 +214,7 @@ static const char* TimeStringImplementation()
 {
     time_t theTime = time(NULLPTR);
     static char dateTime[80];
-#ifdef STDC_WANT_SECURE_LIB
+#ifdef CPPUTEST_HAVE_SECURE_STDLIB
     static struct tm lastlocaltime;
     localtime_s(&lastlocaltime, &theTime);
     struct tm *tmp = &lastlocaltime;

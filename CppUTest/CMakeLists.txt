@@ -19,15 +19,15 @@ add_library(CppUTest
 )
 
 if(CPPUTEST_PLATFORM)
-    target_sources(CppUTest
-        PRIVATE
-            platform/${CPPUTEST_PLATFORM}/UtestPlatform.cpp
-    )
+    add_subdirectory(platform/${CPPUTEST_PLATFORM})
 endif()
 
-if (MINGW)
-    include(CheckStructHasMember)
-    check_struct_has_member("struct timespec" tv_sec time.h HAVE_STRUCT_TIMESPEC LANGUAGE CXX)
+include(CheckCXXSymbolExists)
+check_cxx_symbol_exists(strdup "string.h" CPPUTEST_HAVE_STRDUP)
+include(CheckTypeSize)
+check_type_size("long long" SIZEOF_LONGLONG LANGUAGE CXX)
+if(HAVE_SIZEOF_LONGLONG)
+    set(CPPUTEST_HAVE_LONG_LONG_INT ON)
 endif()
 
 configure_file(
@@ -41,22 +41,6 @@ target_include_directories(CppUTest
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
-
-target_compile_definitions(CppUTest
-    PRIVATE
-        $<$<BOOL:${CPPUTEST_USE_SECURE_STDLIB}>:STDC_WANT_SECURE_LIB>
-        # Apply workaround for MinGW timespec redefinition (pthread.h / time.h).
-        $<$<BOOL:${HAVE_STRUCT_TIMESPEC}>:_TIMESPEC_DEFINED>
-)
-
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads)
-
-target_link_libraries(CppUTest
-    PRIVATE
-        $<$<BOOL:${WIN32}>:winmm>
-        $<$<BOOL:${CMAKE_USE_PTHREADS_INIT}>:${CMAKE_THREAD_LIBS_INIT}>
 )
 
 add_library(CppUTest::CppUTest ALIAS CppUTest)

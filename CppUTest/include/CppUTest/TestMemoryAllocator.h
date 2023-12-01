@@ -46,19 +46,6 @@ extern TestMemoryAllocator* getCurrentMallocAllocator();
 extern void setCurrentMallocAllocatorToDefault();
 extern TestMemoryAllocator* defaultMallocAllocator();
 
-class GlobalMemoryAllocatorStash
-{
-public:
-    GlobalMemoryAllocatorStash();
-    void save();
-    void restore();
-
-private:
-    TestMemoryAllocator* originalMallocAllocator;
-    TestMemoryAllocator* originalNewAllocator;
-    TestMemoryAllocator* originalNewArrayAllocator;
-};
-
 class TestMemoryAllocator
 {
 public:
@@ -164,33 +151,6 @@ private:
     MemoryAccountant& accountant_;
     TestMemoryAllocator* originalAllocator_;
     AccountingTestMemoryAllocatorMemoryNode* head_;
-};
-
-class GlobalMemoryAccountant
-{
-public:
-    GlobalMemoryAccountant();
-    ~GlobalMemoryAccountant();
-
-    void useCacheSizes(size_t sizes[], size_t length);
-
-    void start();
-    void stop();
-    SimpleString report();
-    SimpleString reportWithCacheSizes(size_t sizes[], size_t length);
-
-    TestMemoryAllocator* getMallocAllocator();
-    TestMemoryAllocator* getNewAllocator();
-    TestMemoryAllocator* getNewArrayAllocator();
-
-private:
-
-    void restoreMemoryAllocators();
-
-    MemoryAccountant accountant_;
-    AccountingTestMemoryAllocator* mallocAllocator_;
-    AccountingTestMemoryAllocator* newAllocator_;
-    AccountingTestMemoryAllocator* newArrayAllocator_;
 };
 
 #endif

@@ -33,17 +33,14 @@
 TEST_GROUP(TestMemoryAllocatorTest)
 {
     TestMemoryAllocator* allocator;
-    GlobalMemoryAllocatorStash memoryAllocatorStash;
 
     void setup() _override
     {
         allocator = NULLPTR;
-        memoryAllocatorStash.save();
     }
 
     void teardown() _override
     {
-        memoryAllocatorStash.restore();
         delete allocator;
     }
 };
@@ -403,132 +400,4 @@ TEST(AccountingTestMemoryAllocator, allocatorForwardsAllocAndFreeName)
 {
     STRCMP_EQUAL("malloc", allocator->alloc_name());
     STRCMP_EQUAL("free", allocator->free_name());
-}
-
-
-class GlobalMemoryAccountantExecFunction
-    : public ExecFunction
-{
-public:
-    void (*testFunction_)(GlobalMemoryAccountant*);
-    GlobalMemoryAccountant* parameter_;
-
-    virtual void exec() _override
-    {
-        testFunction_(parameter_);
-    }
-};
-
-TEST_GROUP(GlobalMemoryAccountant)
-{
-    GlobalMemoryAccountant accountant;
-    TestTestingFixture fixture;
-    GlobalMemoryAccountantExecFunction testFunction;
-    GlobalMemoryAllocatorStash stash;
-
-    void setup() _override
-    {
-        testFunction.parameter_ = &accountant;
-        fixture.setTestFunction(&testFunction);
-        stash.save();
-    }
-
-    void teardown() _override
-    {
-        stash.restore();
-    }
-};
-
-TEST(GlobalMemoryAccountant, start)
-{
-    accountant.start();
-
-    POINTERS_EQUAL(accountant.getMallocAllocator(), getCurrentMallocAllocator());
-    POINTERS_EQUAL(accountant.getNewAllocator(), getCurrentNewAllocator());
-    POINTERS_EQUAL(accountant.getNewArrayAllocator(), getCurrentNewArrayAllocator());
-
-    accountant.stop();
-}
-
-TEST(GlobalMemoryAccountant, stop)
-{
-    TestMemoryAllocator* originalMallocAllocator = getCurrentMallocAllocator();
-    TestMemoryAllocator* originalNewAllocator = getCurrentNewAllocator();
-    TestMemoryAllocator* originalNewArrayAllocator = getCurrentNewArrayAllocator();
-
-    accountant.start();
-    accountant.stop();
-
-    POINTERS_EQUAL(originalMallocAllocator, getCurrentMallocAllocator());
-    POINTERS_EQUAL(originalNewAllocator, getCurrentNewAllocator());
-    POINTERS_EQUAL(originalNewArrayAllocator, getCurrentNewArrayAllocator());
-}
-
-static void failStopWithoutStartingWillFail_(GlobalMemoryAccountant* accountant)
-{
-    accountant->stop();
-}
-
-TEST(GlobalMemoryAccountant, StopCantBeCalledWithoutStarting)
-{
-    testFunction.testFunction_ = failStopWithoutStartingWillFail_;
-    fixture.runAllTests();
-    fixture.assertPrintContains("GlobalMemoryAccount: Stop called without starting");
-}
-
-static void failStartingTwiceWillFail_(GlobalMemoryAccountant* accountant)
-{
-    accountant->start();
-    accountant->start();
-}
-
-TEST(GlobalMemoryAccountant, startTwiceWillFail)
-{
-    testFunction.testFunction_ = failStartingTwiceWillFail_;
-    fixture.runAllTests();
-    accountant.stop();
-
-    fixture.assertPrintContains("Global allocator start called twice!");
-}
-
-static void failChangeMallocMemoryAllocator_(GlobalMemoryAccountant* accountant)
-{
-    accountant->start();
-    setCurrentMallocAllocator(defaultMallocAllocator());
-    accountant->stop();
-}
-
-TEST(GlobalMemoryAccountant, checkWhetherMallocAllocatorIsNotChanged)
-{
-    testFunction.testFunction_ = failChangeMallocMemoryAllocator_;
-    fixture.runAllTests();
-    fixture.assertPrintContains("GlobalMemoryAccountant: Malloc memory allocator has been changed while accounting for memory");
-}
-
-static void failChangeNewMemoryAllocator_(GlobalMemoryAccountant* accountant)
-{
-    accountant->start();
-    setCurrentNewAllocator(defaultNewAllocator());
-    accountant->stop();
-}
-
-TEST(GlobalMemoryAccountant, checkWhetherNewAllocatorIsNotChanged)
-{
-    testFunction.testFunction_ = failChangeNewMemoryAllocator_;
-    fixture.runAllTests();
-    fixture.assertPrintContains("GlobalMemoryAccountant: New memory allocator has been changed while accounting for memory");
-}
-
-static void failChangeNewArrayMemoryAllocator_(GlobalMemoryAccountant* accountant)
-{
-    accountant->start();
-    setCurrentNewArrayAllocator(defaultNewArrayAllocator());
-    accountant->stop();
-}
-
-TEST(GlobalMemoryAccountant, checkWhetherNewArrayAllocatorIsNotChanged)
-{
-    testFunction.testFunction_ = failChangeNewArrayMemoryAllocator_;
-    fixture.runAllTests();
-    fixture.assertPrintContains("GlobalMemoryAccountant: New Array memory allocator has been changed while accounting for memory");
 }
