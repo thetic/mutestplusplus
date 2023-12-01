@@ -197,21 +197,21 @@ jobs:
       - name: Configure
         run: cmake --preset ${{ matrix.preset }} ${{ matrix.cmake_args }}
       - name: Build
-        run: cmake --build cpputest_build --verbose -j
+        run: cmake --build build --verbose -j
       - name: Test
         run: >
           ctest
-          --test-dir cpputest_build
+          --test-dir build
           ${{ matrix.ctest_args }}
           --output-on-failure
 
       # POST PROCESSING
 
       - name: Install (*nix)
-        run: sudo cmake --install cpputest_build/
+        run: sudo cmake --install build/
         if: ${{ matrix.install && !startswith(matrix.os, 'windows')}}
       - name: Install (Windows)
-        run: cmake --install cpputest_build/ --config=Debug
+        run: cmake --install build/ --config=Debug
         if: ${{ matrix.install && startswith(matrix.os, 'windows')}}
       - name: Use install
         run: |
@@ -249,6 +249,6 @@ jobs:
       - name: Configure
         run: cmake --preset=GNU
       - name: Build
-        run: cmake --build cpputest_build -j
+        run: cmake --build build -j
       - name: Test
-        run: ctest --test-dir cpputest_build --output-on-failure
+        run: ctest --test-dir build --output-on-failure
