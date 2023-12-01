@@ -2,13 +2,6 @@ add_library(CppUTestExtTests_main OBJECT
     AllTests.cpp
 )
 
-if(CPPUTEST_STD_C_LIB_DISABLED)
-    target_sources(CppUTestExtTests_main
-        PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/../DummyUTestPlatform/DummyUTestPlatform.cpp
-    )
-endif()
-
 if(CPPUTEST_TEST_GTEST)
     find_package(GTest)
     if(NOT GTest_FOUND)
@@ -42,8 +35,6 @@ target_link_libraries(CppUTestExtTests_main
 if(NOT CPPUTEST_SPLIT_TESTS)
     add_executable(CppUTestExtTests)
 
-    add_mapfile(CppUTestExtTests)
-
     if(CPPUTEST_TEST_DISCOVERY)
         include(CppUTest)
         cpputest_discover_tests(CppUTestExtTests
@@ -58,7 +49,6 @@ function(add_cpputestext_test number)
     if(CPPUTEST_SPLIT_TESTS)
         string(APPEND name ${number})
         add_executable(${name})
-        add_mapfile(${name})
         if(CPPUTEST_TEST_DISCOVERY)
             cpputest_discover_tests(${name})
         endif()

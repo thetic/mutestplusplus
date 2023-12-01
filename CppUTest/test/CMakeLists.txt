@@ -2,13 +2,6 @@ add_library(CppUTestTests_main OBJECT
     AllTests.cpp
 )
 
-if(CPPUTEST_STD_C_LIB_DISABLED)
-    target_sources(CppUTestTests_main
-        PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/../DummyUTestPlatform/DummyUTestPlatform.cpp
-    )
-endif()
-
 target_link_libraries(CppUTestTests_main
     PUBLIC CppUTest
 )
@@ -18,8 +11,6 @@ include(CppUTest)
 if(NOT CPPUTEST_SPLIT_TESTS)
     add_executable(CppUTestTests)
 
-    add_mapfile(CppUTestTests)
-
     if(CPPUTEST_TEST_DISCOVERY)
         cpputest_discover_tests(CppUTestTests)
     endif()
@@ -27,11 +18,10 @@ endif()
 
 function(add_cpputest_test number)
     set(name CppUTestTests)
-    
+
     if(CPPUTEST_SPLIT_TESTS)
         string(APPEND name ${number})
         add_executable(${name})
-        add_mapfile(${name})
         if(CPPUTEST_TEST_DISCOVERY)
             cpputest_discover_tests(${name})
         endif()

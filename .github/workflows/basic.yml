@@ -113,9 +113,6 @@ jobs:
           - name: No Exceptions
             os: ubuntu-latest
             preset: no-exceptions
-          - name: No C Standard Library
-            os: ubuntu-latest
-            preset: no-std-c
           - name: Coverage
             os: ubuntu-latest
             preset: coverage
@@ -201,11 +198,6 @@ jobs:
         run: cmake --preset ${{ matrix.preset }} ${{ matrix.cmake_args }}
       - name: Build
         run: cmake --build cpputest_build --verbose -j
-      - name: Save map files
-        uses: actions/upload-artifact@v3
-        with:
-          name: "${{ matrix.name }} map files"
-          path: cpputest_build/**/*.map
       - name: Test
         run: >
           ctest
