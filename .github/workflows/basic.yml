@@ -17,28 +17,6 @@ jobs:
           clangFormatVersion: 14
           source: examples
 
-  codeql:
-    runs-on: ubuntu-20.04
-    env:
-      CC: gcc-10
-      CXX: g++-10
-    name: "CodeQL"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@main
-      - name: CodeQL Initialization
-        uses: github/codeql-action/init@v2
-        with:
-          languages: cpp
-          queries: +security-and-quality
-      - name: Build
-        run: |
-          mkdir _build && cd _build
-          cmake -DCMAKE_CXX_STANDARD=17 ..
-          make -j2
-      - name: CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
-
   cmake:
     strategy:
       matrix:
@@ -257,13 +235,6 @@ jobs:
           lcov --capture --directory . --no-external --output-file lcov.info
           lcov --remove lcov.info --output-file lcov.info '*/tests/*'
         if: ${{ matrix.name == 'Coverage' }}
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          path-to-lcov: lcov.info
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ matrix.name == 'Coverage' }}
-
   test_report:
     name: JUnit Test Report
     runs-on: ubuntu-latest
