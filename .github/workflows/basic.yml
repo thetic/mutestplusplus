@@ -227,19 +227,6 @@ jobs:
           lcov --capture --directory . --no-external --output-file lcov.info
           lcov --remove lcov.info --output-file lcov.info '*/tests/*'
         if: ${{ matrix.name == 'Coverage' }}
-  test_report:
-    name: JUnit Test Report
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@main
-      - run: cmake --preset=defaults -DCPPUTEST_JUNIT_REPORT=TRUE
-      - run: cmake --build cpputest_build -j
-      - run: ctest --test-dir cpputest_build
-      - uses: actions/upload-artifact@v3
-        if: success() || failure()
-        with:
-          name: test-results
-          path: "cpputest_build/**/cpputest_*.xml"
 
   cmake_msys:
     name: CMake MSYS
