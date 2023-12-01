@@ -1,6 +1,5 @@
 add_library(CppUTestExt STATIC
     src/CodeMemoryReportFormatter.cpp
-    src/GTest.cpp
     src/IEEE754ExceptionsPlugin.cpp
     src/MemoryReporterPlugin.cpp
     src/MockFailure.cpp
