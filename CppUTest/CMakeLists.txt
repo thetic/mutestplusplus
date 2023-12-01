@@ -1,6 +1,5 @@
 add_library(CppUTest
     src/CommandLineArguments.cpp
-    src/MemoryLeakWarningPlugin.cpp
     src/TestHarness_c.cpp
     src/TestRegistry.cpp
     src/CommandLineTestRunner.cpp
@@ -12,7 +11,6 @@ add_library(CppUTest
     src/TeamCityTestOutput.cpp
     src/TestFailure.cpp
     src/TestOutput.cpp
-    src/MemoryLeakDetector.cpp
     src/TestFilter.cpp
     src/TestPlugin.cpp
     src/TestTestingFixture.cpp
@@ -62,21 +60,6 @@ target_link_libraries(CppUTest
 )
 
 add_library(CppUTest::CppUTest ALIAS CppUTest)
-
-if(NOT CPPUTEST_MEM_LEAK_DETECTION_DISABLED)
-    if(MSVC)
-        set(force_include "/FI")
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "IAR")
-        set(force_include "--preinclude ")
-    else()
-        set(force_include "-include")
-    endif()
-    target_compile_options(CppUTest
-        PUBLIC
-            "$<$<COMPILE_LANGUAGE:C,CXX>:${force_include}CppUTest/MemoryLeakDetectorMallocMacros.h>"
-            "$<$<COMPILE_LANGUAGE:CXX>:${force_include}CppUTest/MemoryLeakDetectorNewMacros.h>"
-    )
-endif()
 
 if(CPPUTEST_BUILD_TESTING)
     add_subdirectory(test)

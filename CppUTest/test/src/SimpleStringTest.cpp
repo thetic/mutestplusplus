@@ -29,23 +29,8 @@
 #include "CppUTest/SimpleString.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/TestMemoryAllocator.h"
-#include "CppUTest/MemoryLeakDetector.h"
 #include "CppUTest/TestTestingFixture.h"
 
-class JustUseNewStringAllocator : public TestMemoryAllocator
-{
-public:
-    virtual ~JustUseNewStringAllocator() _destructor_override {}
-
-    char* alloc_memory(size_t size, const char* file, size_t line) _override
-    {
-        return MemoryLeakWarningPlugin::getGlobalDetector()->allocMemory(getCurrentNewArrayAllocator(), size, file, line);
-    }
-    void free_memory(char* str, size_t, const char* file, size_t line) _override
-    {
-        MemoryLeakWarningPlugin::getGlobalDetector()->deallocMemory(getCurrentNewArrayAllocator(), str, file, line);
-    }
-};
 
 class GlobalSimpleStringMemoryAccountantExecFunction
     : public ExecFunction
@@ -155,12 +140,10 @@ TEST(GlobalSimpleStringMemoryAccountant, reportUseCaches)
 
 TEST_GROUP(SimpleString)
 {
-  JustUseNewStringAllocator justNewForSimpleStringTestAllocator;
   GlobalSimpleStringAllocatorStash stash;
   void setup() _override
   {
       stash.save();
-      SimpleString::setStringAllocator(&justNewForSimpleStringTestAllocator);
   }
   void teardown() _override
   {

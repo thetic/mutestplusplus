@@ -46,7 +46,6 @@ TEST_GROUP(SimpleStringInternalCache)
 {
     SimpleStringInternalCache cache;
     MemoryAccountant accountant;
-    MemoryLeakAllocator* defaultAllocator;
     AccountingTestMemoryAllocator* allocator;
 
     TestFunctionWithCache testFunction;
@@ -56,10 +55,6 @@ TEST_GROUP(SimpleStringInternalCache)
     {
         fixture.setTestFunction(&testFunction);
         testFunction.parameter = &cache;
-
-        defaultAllocator = new MemoryLeakAllocator(defaultMallocAllocator());
-        allocator = new AccountingTestMemoryAllocator(accountant, defaultAllocator);
-        cache.setAllocator(defaultAllocator);
     }
 
     void teardown() _override
@@ -67,7 +62,6 @@ TEST_GROUP(SimpleStringInternalCache)
         cache.clearAllIncludingCurrentlyUsedMemory();
         accountant.clear();
         delete allocator;
-        delete defaultAllocator;
     }
 
     void createCacheForSize(size_t size, size_t amount)

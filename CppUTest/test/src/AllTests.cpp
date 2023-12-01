@@ -29,8 +29,6 @@
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/SimpleStringInternalCache.h"
 
-#define SHOW_MEMORY_REPORT 0
-
 int main(int ac, char **av)
 {
     int returnValue = 0;
@@ -41,17 +39,7 @@ int main(int ac, char **av)
         CHECK(true);
         LONGS_EQUAL(1, 1);
 
-#if SHOW_MEMORY_REPORT
-        GlobalMemoryAccountant accountant;
-        accountant.start();
-#endif
-
         returnValue = CommandLineTestRunner::RunAllTests(ac, av); /* cover alternate method */
-
-#if SHOW_MEMORY_REPORT
-        accountant.stop();
-        printf("%s", accountant.report().asCharString());
-#endif
     }
 
     return returnValue;

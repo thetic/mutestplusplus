@@ -35,8 +35,6 @@ endif()
 
 cmake_dependent_option(CPPUTEST_STD_CPP_LIB_DISABLED "Use the standard C++ library"
   OFF "NOT CPPUTEST_STD_C_LIB_DISABLED" ON)
-cmake_dependent_option(CPPUTEST_MEM_LEAK_DETECTION_DISABLED "Enable memory leak detection"
-  OFF "NOT BORLAND;NOT CPPUTEST_STD_C_LIB_DISABLED;NOT is_clang_cl" ON)
 option(CPPUTEST_EXTENSIONS "Use the CppUTest extension library" ON)
 include(CheckTypeSize)
 check_type_size("long long" SIZEOF_LONGLONG)
