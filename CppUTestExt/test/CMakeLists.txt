@@ -1,5 +1,64 @@
-add_library(CppUTestExtTests_main OBJECT
-    AllTests.cpp
+add_executable(CppUTestExtTests
+    src/AllTests.cpp
+    src/CodeMemoryReporterTest.cpp
+    src/ExpectedFunctionsListTest.cpp
+    src/ExpectedFunctionsListTest.cpp
+    src/GMockTest.cpp
+    src/GTest1Test.cpp
+    src/GTest2ConvertorTest.cpp
+    src/IEEE754PluginTest.cpp
+    src/IEEE754PluginTest_c.c
+    src/MemoryReportAllocatorTest.cpp
+    src/MemoryReportFormatterTest.cpp
+    src/MemoryReporterPluginTest.cpp
+    src/MockActualCallTest.cpp
+    src/MockCallTest.cpp
+    src/MockCheatSheetTest.cpp
+    src/MockComparatorCopierTest.cpp
+    src/MockComparatorCopierTest.cpp
+    src/MockComparatorCopierTest.cpp
+    src/MockExpectedCallTest.cpp
+    src/MockFailureReporterForTest.cpp
+    src/MockFailureReporterForTest.cpp
+    src/MockFailureReporterForTest.cpp
+    src/MockFailureReporterForTest.cpp
+    src/MockFailureReporterForTest.cpp
+    src/MockFailureReporterForTest.cpp
+    src/MockFailureReporterForTest.cpp
+    src/MockFailureReporterForTest.cpp
+    src/MockFailureReporterForTest.cpp
+    src/MockFailureTest.cpp
+    src/MockHierarchyTest.cpp
+    src/MockHierarchyTest.cpp
+    src/MockHierarchyTest.cpp
+    src/MockNamedValueTest.cpp
+    src/MockParameterTest.cpp
+    src/MockPluginTest.cpp
+    src/MockPluginTest.cpp
+    src/MockReturnValueTest.cpp
+    src/MockReturnValueTest.cpp
+    src/MockStrictOrderTest.cpp
+    src/MockSupportTest.cpp
+    src/MockSupport_cTest.cpp
+    src/MockSupport_cTestCFile.c
+    src/OrderedTestTest.cpp
+    src/OrderedTestTest_c.c
+)
+
+target_include_directories(CppUTestExtTests
+    PRIVATE
+        include
+)
+
+target_link_libraries(CppUTestExtTests
+    PRIVATE
+        CppUTest
+        CppUTestExt
+)
+
+include(CppUTest)
+cpputest_discover_tests(CppUTestExtTests
+    DETAILED FALSE
 )
 
 if(CPPUTEST_TEST_GTEST)
@@ -22,112 +81,6 @@ if(CPPUTEST_TEST_GTEST)
             )
         endif()
     endif()
-    target_link_libraries(CppUTestExtTests_main PUBLIC ${GTEST_LIBRARIES})
-    target_compile_definitions(CppUTestExtTests_main PUBLIC CPPUTEST_INCLUDE_GTEST_TESTS)
+    target_link_libraries(CppUTestExtTests PRIVATE ${GTEST_LIBRARIES})
+    target_compile_definitions(CppUTestExtTests PRIVATE CPPUTEST_INCLUDE_GTEST_TESTS)
 endif()
-
-target_link_libraries(CppUTestExtTests_main
-    PUBLIC
-        CppUTest
-        CppUTestExt
-)
-
-if(NOT CPPUTEST_SPLIT_TESTS)
-    add_executable(CppUTestExtTests)
-
-    if(CPPUTEST_TEST_DISCOVERY)
-        include(CppUTest)
-        cpputest_discover_tests(CppUTestExtTests
-            DETAILED FALSE
-        )
-    endif()
-endif()
-
-function(add_cpputestext_test number)
-    set(name CppUTestExtTests)
-
-    if(CPPUTEST_SPLIT_TESTS)
-        string(APPEND name ${number})
-        add_executable(${name})
-        if(CPPUTEST_TEST_DISCOVERY)
-            cpputest_discover_tests(${name})
-        endif()
-    endif()
-
-    target_sources(${name}
-        PRIVATE ${ARGN}
-    )
-    target_link_libraries(${name}
-        PRIVATE CppUTestExtTests_main
-    )
-endfunction()
-
-add_cpputestext_test(1
-    MockFailureReporterForTest.cpp
-    ExpectedFunctionsListTest.cpp
-    GMockTest.cpp
-    GTest1Test.cpp
-    GTest2ConvertorTest.cpp
-)
-
-add_cpputestext_test(2
-    MockFailureReporterForTest.cpp
-    MemoryReportAllocatorTest.cpp
-    MemoryReportFormatterTest.cpp
-    MemoryReporterPluginTest.cpp
-    MockActualCallTest.cpp
-    MockCheatSheetTest.cpp
-    MockComparatorCopierTest.cpp
-    MockExpectedCallTest.cpp
-    MockHierarchyTest.cpp
-)
-
-add_cpputestext_test(3
-    MockFailureReporterForTest.cpp
-    CodeMemoryReporterTest.cpp
-    OrderedTestTest.cpp
-    OrderedTestTest_c.c
-)
-
-add_cpputestext_test(4
-    MockFailureReporterForTest.cpp
-    MockReturnValueTest.cpp
-    MockNamedValueTest.cpp
-)
-
-add_cpputestext_test(5
-    MockFailureReporterForTest.cpp
-    MockPluginTest.cpp
-    MockSupport_cTest.cpp
-    MockSupport_cTestCFile.c
-)
-
-add_cpputestext_test(6
-    MockFailureReporterForTest.cpp
-    ExpectedFunctionsListTest.cpp
-    MockCallTest.cpp
-)
-
-add_cpputestext_test(7
-    MockFailureReporterForTest.cpp
-    MockComparatorCopierTest.cpp
-    MockHierarchyTest.cpp
-    MockParameterTest.cpp
-)
-
-add_cpputestext_test(8
-    MockFailureReporterForTest.cpp
-    IEEE754PluginTest.cpp
-    IEEE754PluginTest_c.c
-    MockComparatorCopierTest.cpp
-)
-
-add_cpputestext_test(9
-    MockFailureReporterForTest.cpp
-    MockFailureTest.cpp
-    MockHierarchyTest.cpp
-    MockPluginTest.cpp
-    MockReturnValueTest.cpp
-    MockStrictOrderTest.cpp
-    MockSupportTest.cpp
-)

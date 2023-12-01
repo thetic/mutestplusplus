@@ -1,95 +1,45 @@
-add_library(CppUTestTests_main OBJECT
-    AllTests.cpp
+add_executable(CppUTestTests
+    src/AllTests.cpp
+    src/AllocLetTestFree.c
+    src/AllocLetTestFreeTest.cpp
+    src/AllocationInCFile.c
+    src/AllocationInCppFile.cpp
+    src/CheatSheetTest.cpp
+    src/CommandLineArgumentsTest.cpp
+    src/CommandLineTestRunnerTest.cpp
+    src/CompatabilityTests.cpp
+    src/DummyMemoryLeakDetector.cpp
+    src/JUnitOutputTest.cpp
+    src/MemoryLeakDetectorTest.cpp
+    src/MemoryLeakWarningTest.cpp
+    src/MemoryOperatorOverloadTest.cpp
+    src/PluginTest.cpp
+    src/PreprocessorTest.cpp
+    src/SetPluginTest.cpp
+    src/SimpleMutexTest.cpp
+    src/SimpleStringCacheTest.cpp
+    src/SimpleStringTest.cpp
+    src/TeamCityOutputTest.cpp
+    src/TestFailureNaNTest.cpp
+    src/TestFailureTest.cpp
+    src/TestFilterTest.cpp
+    src/TestHarness_cTest.cpp
+    src/TestHarness_cTestCFile.c
+    src/TestInstallerTest.cpp
+    src/TestMemoryAllocatorTest.cpp
+    src/TestOutputTest.cpp
+    src/TestRegistryTest.cpp
+    src/TestResultTest.cpp
+    src/TestUTestMacro.cpp
+    src/TestUTestStringMacro.cpp
+    src/UtestPlatformTest.cpp
+    src/UtestTest.cpp
 )
 
-target_link_libraries(CppUTestTests_main
-    PUBLIC CppUTest
+target_include_directories(CppUTestTests
+    PRIVATE include
 )
 
-include(CppUTest)
-
-if(NOT CPPUTEST_SPLIT_TESTS)
-    add_executable(CppUTestTests)
-
-    if(CPPUTEST_TEST_DISCOVERY)
-        cpputest_discover_tests(CppUTestTests)
-    endif()
-endif()
-
-function(add_cpputest_test number)
-    set(name CppUTestTests)
-
-    if(CPPUTEST_SPLIT_TESTS)
-        string(APPEND name ${number})
-        add_executable(${name})
-        if(CPPUTEST_TEST_DISCOVERY)
-            cpputest_discover_tests(${name})
-        endif()
-    endif()
-
-    target_sources(${name}
-        PRIVATE ${ARGN}
-    )
-    target_link_libraries(${name}
-        PRIVATE CppUTestTests_main
-    )
-endfunction()
-
-add_cpputest_test(1
-    AllocLetTestFree.c
-    AllocLetTestFreeTest.cpp
-    CheatSheetTest.cpp
-    CompatabilityTests.cpp
-    CommandLineArgumentsTest.cpp
-    CommandLineTestRunnerTest.cpp
-    JUnitOutputTest.cpp
-)
-
-add_cpputest_test(2
-    DummyMemoryLeakDetector.cpp
-    MemoryLeakWarningTest.cpp
-    PluginTest.cpp
-    PreprocessorTest.cpp
-    SetPluginTest.cpp
-    SimpleMutexTest.cpp
-    TeamCityOutputTest.cpp
-    TestFailureNaNTest.cpp
-    TestFailureTest.cpp
-    TestResultTest.cpp
-)
-
-add_cpputest_test(3
-    MemoryLeakDetectorTest.cpp
-    SimpleStringTest.cpp
-    SimpleStringCacheTest.cpp
-)
-
-add_cpputest_test(4
-    TestOutputTest.cpp
-    TestRegistryTest.cpp
-)
-
-add_cpputest_test(5
-    AllocationInCFile.c
-    AllocationInCppFile.cpp
-    MemoryOperatorOverloadTest.cpp
-    TeamCityOutputTest.cpp
-)
-
-add_cpputest_test(6
-    TestFilterTest.cpp
-    TestHarness_cTest.cpp
-    TestHarness_cTestCFile.c
-    TestInstallerTest.cpp
-)
-
-add_cpputest_test(7
-    TestMemoryAllocatorTest.cpp
-    TestUTestMacro.cpp
-)
-
-add_cpputest_test(8
-    UtestPlatformTest.cpp
-    UtestTest.cpp
-    TestUTestStringMacro.cpp
+target_link_libraries(CppUTestTests
+    PRIVATE CppUTest
 )

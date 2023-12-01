@@ -45,8 +45,6 @@ cmake_dependent_option(CPPUTEST_USE_LONG_LONG "Support long long"
 
 cmake_dependent_option(CPPUTEST_BUILD_TESTING "Compile and make tests for CppUTest"
   ${PROJECT_IS_TOP_LEVEL} "BUILD_TESTING" OFF)
-cmake_dependent_option(CPPUTEST_SPLIT_TESTS "Split tests into small executables"
-  OFF "CPPUTEST_BUILD_TESTING" OFF)
 cmake_dependent_option(CPPUTEST_TEST_DISCOVERY "Build time test discover"
   ON "CPPUTEST_BUILD_TESTING;CMAKE_CROSSCOMPILING_EMULATOR OR NOT CMAKE_CROSSCOMPILING" OFF)
 cmake_dependent_option(CPPUTEST_TEST_GTEST "Test GoogleTest integration"
@@ -70,8 +68,6 @@ if(NOT DEFINED CPPUTEST_PLATFORM)
       set(CPPUTEST_PLATFORM Iar)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "ARMCC")
       set(CPPUTEST_PLATFORM armcc)
-    elseif(DOS)
-      set(CPPUTEST_PLATFORM Dos)
     elseif(BORLAND)
       set(CPPUTEST_PLATFORM Borland)
     else()
@@ -84,7 +80,7 @@ set(CPPUTEST_PLATFORM "${CPPUTEST_PLATFORM}" CACHE STRING "Platform implementati
 set_property(
   CACHE CPPUTEST_PLATFORM
   PROPERTY STRINGS
-    armcc Borland C2000 Dos Gcc Iar Keil Symbian VisualCpp OFF
+    armcc Borland C2000 Gcc Iar Keil Symbian VisualCpp OFF
 )
 
 include(CheckCXXSymbolExists)
