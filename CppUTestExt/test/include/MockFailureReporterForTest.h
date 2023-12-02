@@ -30,8 +30,10 @@
 
 #include "CppUTestExt/MockSupport.h"
 
-#define CHECK_EXPECTED_MOCK_FAILURE(expectedFailure) CHECK_EXPECTED_MOCK_FAILURE_LOCATION(expectedFailure, __FILE__, __LINE__)
-#define CHECK_NO_MOCK_FAILURE() CHECK_NO_MOCK_FAILURE_LOCATION(__FILE__, __LINE__)
+#define CHECK_EXPECTED_MOCK_FAILURE(expectedFailure)                           \
+    CHECK_EXPECTED_MOCK_FAILURE_LOCATION(expectedFailure, __FILE__, __LINE__)
+#define CHECK_NO_MOCK_FAILURE()                                                \
+    CHECK_NO_MOCK_FAILURE_LOCATION(__FILE__, __LINE__)
 
 class MockFailureReporterForTest : public MockFailureReporter
 {
@@ -41,13 +43,14 @@ public:
     virtual void failTest(const MockFailure& failure) _override;
     static MockFailureReporterForTest* getReporter();
     static void clearReporter();
+
 private:
     static MockFailureReporterForTest* instance_;
 };
 
 class MockFailureReporterInstaller
 {
-  public:
+public:
     MockFailureReporterInstaller();
     ~MockFailureReporterInstaller();
 };
@@ -55,16 +58,20 @@ class MockFailureReporterInstaller
 UtestShell* mockFailureTest();
 SimpleString mockFailureString();
 void CLEAR_MOCK_FAILURE();
-void CHECK_EXPECTED_MOCK_FAILURE_LOCATION(const MockFailure& expectedFailure, const char* file, size_t line);
+void CHECK_EXPECTED_MOCK_FAILURE_LOCATION(
+    const MockFailure& expectedFailure, const char* file, size_t line
+);
 void CHECK_NO_MOCK_FAILURE_LOCATION(const char* file, size_t line);
 
 class MockExpectedCallsListForTest : public MockExpectedCallsList
 {
-  public:
+public:
     ~MockExpectedCallsListForTest() _destructor_override;
     MockCheckedExpectedCall* addFunction(const SimpleString& name);
-    MockCheckedExpectedCall* addFunction(unsigned int numCalls, const SimpleString& name);
-    MockCheckedExpectedCall* addFunctionOrdered(const SimpleString& name, unsigned int order);
+    MockCheckedExpectedCall*
+    addFunction(unsigned int numCalls, const SimpleString& name);
+    MockCheckedExpectedCall*
+    addFunctionOrdered(const SimpleString& name, unsigned int order);
 };
 
 #endif

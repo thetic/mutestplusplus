@@ -25,11 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTestExt/OrderedTest.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
 #include "CppUTest/TestRegistry.h"
 #include "CppUTest/TestTestingFixture.h"
-#include "CppUTestExt/OrderedTest.h"
 #include "OrderedTestTest.h"
 
 TEST_GROUP(TestOrderedTest)
@@ -61,7 +61,9 @@ TEST_GROUP(TestOrderedTest)
 
     void InstallOrderedTest(OrderedTestShell& test, int level)
     {
-        OrderedTestInstaller(test, "testgroup", "testname", __FILE__, __LINE__, level);
+        OrderedTestInstaller(
+            test, "testgroup", "testname", __FILE__, __LINE__, level
+        );
     }
 
     void InstallNormalTest(UtestShell& test)
@@ -82,7 +84,9 @@ TEST_GROUP(TestOrderedTest)
 
 TEST(TestOrderedTest, TestInstallerSetsFields)
 {
-    OrderedTestInstaller installer(orderedTest, "testgroup", "testname", "this.cpp", 10, 5);
+    OrderedTestInstaller installer(
+        orderedTest, "testgroup", "testname", "this.cpp", 10, 5
+    );
     STRCMP_EQUAL("testgroup", orderedTest.getGroup().asCharString());
     STRCMP_EQUAL("testname", orderedTest.getName().asCharString());
     STRCMP_EQUAL("this.cpp", orderedTest.getFile().asCharString());
@@ -129,7 +133,7 @@ TEST(TestOrderedTest, MultipleOrderedTests)
     InstallNormalTest(normalTest3);
     InstallOrderedTest(orderedTest3, 7);
 
-    UtestShell * firstOrderedTest = firstTest()->getNext()->getNext()->getNext();
+    UtestShell* firstOrderedTest = firstTest()->getNext()->getNext()->getNext();
     CHECK(firstOrderedTest == &orderedTest2);
     CHECK(firstOrderedTest->getNext() == &orderedTest);
     CHECK(firstOrderedTest->getNext()->getNext() == &orderedTest3);
@@ -144,21 +148,23 @@ TEST(TestOrderedTest, MultipleOrderedTests2)
     CHECK(firstTest() == &orderedTest2);
     CHECK(secondTest() == &orderedTest3);
     CHECK(secondTest()->getNext() == &orderedTest);
-
 }
 
 class OrderedTestTestingFixture
 {
 public:
-    static void checkRun(int run) {
-        if(run != run_) {
+    static void checkRun(int run)
+    {
+        if (run != run_) {
             run_ = run;
             count_ = 0;
         }
     }
-    static int count(void) {
+    static int count(void)
+    {
         return count_++;
     }
+
 private:
     static int run_;
     static int count_;
@@ -171,7 +177,9 @@ TEST_GROUP(TestOrderedTestMacros)
 {
     void setup() _override
     {
-        OrderedTestTestingFixture::checkRun(TestRegistry::getCurrentRegistry()->getCurrentRepetition());
+        OrderedTestTestingFixture::checkRun(
+            TestRegistry::getCurrentRegistry()->getCurrentRepetition()
+        );
     }
 };
 
@@ -234,7 +242,8 @@ TEST_ORDERED(TestOrderedTestMacros, Test8, 8)
 
 // Export to be usable in OrderedTestTest_c.c
 extern "C" {
-int orderedTestFixtureCWrapper(void) {
+int orderedTestFixtureCWrapper(void)
+{
     return OrderedTestTestingFixture::count();
 }
 }

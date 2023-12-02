@@ -46,8 +46,18 @@ class TestResult;
 class TestOutput
 {
 public:
-    enum WorkingEnvironment {visualStudio, eclipse, detectEnvironment};
-    enum VerbosityLevel {level_quiet, level_verbose, level_veryVerbose};
+    enum WorkingEnvironment
+    {
+        visualStudio,
+        eclipse,
+        detectEnvironment
+    };
+    enum VerbosityLevel
+    {
+        level_quiet,
+        level_verbose,
+        level_veryVerbose
+    };
 
     explicit TestOutput();
     virtual ~TestOutput();
@@ -61,7 +71,7 @@ public:
 
     virtual void verbose(VerbosityLevel level);
     virtual void color();
-    virtual void printBuffer(const char*)=0;
+    virtual void printBuffer(const char*) = 0;
     virtual void print(const char*);
     virtual void print(long);
     virtual void print(size_t);
@@ -72,22 +82,25 @@ public:
 
     virtual void printVeryVerbose(const char*);
 
-    virtual void flush()=0;
+    virtual void flush() = 0;
 
     static void setWorkingEnvironment(WorkingEnvironment workEnvironment);
     static WorkingEnvironment getWorkingEnvironment();
 
 protected:
-
-    virtual void printEclipseErrorInFileOnLine(SimpleString file, size_t lineNumber);
-    virtual void printVisualStudioErrorInFileOnLine(SimpleString file, size_t lineNumber);
+    virtual void
+    printEclipseErrorInFileOnLine(SimpleString file, size_t lineNumber);
+    virtual void
+    printVisualStudioErrorInFileOnLine(SimpleString file, size_t lineNumber);
 
     virtual void printProgressIndicator();
     void printFileAndLineForTestAndFailure(const TestFailure& failure);
     void printFileAndLineForFailure(const TestFailure& failure);
     void printFailureInTest(SimpleString testName);
     void printFailureMessage(SimpleString reason);
-    void printErrorInFileOnLineFormattedForWorkingEnvironment(SimpleString testFile, size_t lineNumber);
+    void printErrorInFileOnLineFormattedForWorkingEnvironment(
+        SimpleString testFile, size_t lineNumber
+    );
 
     TestOutput(const TestOutput&);
     TestOutput& operator=(const TestOutput&);
@@ -111,15 +124,11 @@ TestOutput& operator<<(TestOutput&, long);
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-class ConsoleTestOutput: public TestOutput
+class ConsoleTestOutput : public TestOutput
 {
 public:
-    explicit ConsoleTestOutput()
-    {
-    }
-    virtual ~ConsoleTestOutput() _destructor_override
-    {
-    }
+    explicit ConsoleTestOutput() {}
+    virtual ~ConsoleTestOutput() _destructor_override {}
 
     virtual void printBuffer(const char* s) _override;
     virtual void flush() _override;
@@ -137,13 +146,10 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-
-class StringBufferTestOutput: public TestOutput
+class StringBufferTestOutput : public TestOutput
 {
 public:
-    explicit StringBufferTestOutput()
-    {
-    }
+    explicit StringBufferTestOutput() {}
 
     virtual ~StringBufferTestOutput() _destructor_override;
 
@@ -168,7 +174,6 @@ protected:
 private:
     StringBufferTestOutput(const StringBufferTestOutput&);
     StringBufferTestOutput& operator=(const StringBufferTestOutput&);
-
 };
 
 class CompositeTestOutput : public TestOutput

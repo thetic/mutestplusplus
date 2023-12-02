@@ -27,37 +27,34 @@
 
 #include "CppUTest/TestHarness_c.h"
 
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestRegistry.h"
-#include "CppUTest/TestOutput.h"
-#include "CppUTest/TestTestingFixture.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
-
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/TestOutput.h"
+#include "CppUTest/TestRegistry.h"
+#include "CppUTest/TestTestingFixture.h"
 
 extern "C" int setup_teardown_was_called_in_test_group_in_C;
 extern "C" int test_was_called_in_test_group_in_C;
 int setup_teardown_was_called_in_test_group_in_C = 0;
 int test_was_called_in_test_group_in_C = 0;
 
-TEST_GROUP_C_WRAPPER(TestGroupInC)
-{
-    TEST_GROUP_C_SETUP_WRAPPER(TestGroupInC)
-    TEST_GROUP_C_TEARDOWN_WRAPPER(TestGroupInC)
-};
+TEST_GROUP_C_WRAPPER(TestGroupInC){TEST_GROUP_C_SETUP_WRAPPER(TestGroupInC
+) TEST_GROUP_C_TEARDOWN_WRAPPER(TestGroupInC)};
 
 TEST_C_WRAPPER(TestGroupInC, checkThatTheTestHasRun)
 IGNORE_TEST_C_WRAPPER(TestGroupInC, ignoreMacroForCFile)
 
 /*
- * This test is a bit strange. They use the fact that you can do -r2 for repeating the same run.
- * When you do so, the same statics will be shared and therefore we can test whether the setup/teardown is run
- * correctly.
+ * This test is a bit strange. They use the fact that you can do -r2 for
+ * repeating the same run. When you do so, the same statics will be shared and
+ * therefore we can test whether the setup/teardown is run correctly.
  */
 
 TEST(TestGroupInC, setupHasBeenCalled)
 {
     test_was_called_in_test_group_in_C++;
-    /* Increased in setup, decreased in teardown. So at this point it must be 1 also on a multiple run */
+    /* Increased in setup, decreased in teardown. So at this point it must be 1
+     * also on a multiple run */
     LONGS_EQUAL(1, setup_teardown_was_called_in_test_group_in_C);
 }
 
@@ -66,8 +63,11 @@ static bool hasDestructorOfTheDestructorCheckedBeenCalled;
 class HasTheDestructorBeenCalledChecker
 {
 public:
-    HasTheDestructorBeenCalledChecker(){}
-    ~HasTheDestructorBeenCalledChecker() { hasDestructorOfTheDestructorCheckedBeenCalled = true; }
+    HasTheDestructorBeenCalledChecker() {}
+    ~HasTheDestructorBeenCalledChecker()
+    {
+        hasDestructorOfTheDestructorCheckedBeenCalled = true;
+    }
 };
 
 TEST_GROUP(TestHarness_c)
@@ -523,7 +523,9 @@ TEST(TestHarness_c, checkString)
     fixture->setTestFunction(failStringMethod_);
     fixture->runAllTests();
 
-    StringEqualFailure failure(UtestShell::getCurrent(), "file", 1, "Hello", "Hello World", "");
+    StringEqualFailure failure(
+        UtestShell::getCurrent(), "file", 1, "Hello", "Hello World", ""
+    );
     fixture->assertPrintContains(failure.getMessage());
     fixture->assertPrintContains("arness_c");
     CHECK(!hasDestructorOfTheDestructorCheckedBeenCalled);
@@ -541,7 +543,9 @@ TEST(TestHarness_c, checkStringText)
     fixture->setTestFunction(failStringTextMethod_);
     fixture->runAllTests();
 
-    StringEqualFailure failure(UtestShell::getCurrent(), "file", 1, "Hello", "Hello World", "");
+    StringEqualFailure failure(
+        UtestShell::getCurrent(), "file", 1, "Hello", "Hello World", ""
+    );
     fixture->assertPrintContains(failure.getMessage());
     fixture->assertPrintContains("arness_c");
     fixture->assertPrintContains("Message: StringTestText");
@@ -551,7 +555,7 @@ TEST(TestHarness_c, checkStringText)
 static void failPointerMethod_()
 {
     HasTheDestructorBeenCalledChecker checker;
-    CHECK_EQUAL_C_POINTER(NULLPTR, (void *)0x1);
+    CHECK_EQUAL_C_POINTER(NULLPTR, (void*)0x1);
 }
 
 TEST(TestHarness_c, checkPointer)
@@ -567,7 +571,7 @@ TEST(TestHarness_c, checkPointer)
 static void failPointerTextMethod_()
 {
     HasTheDestructorBeenCalledChecker checker;
-    CHECK_EQUAL_C_POINTER_TEXT(NULLPTR, (void *)0x1, "PointerTestText");
+    CHECK_EQUAL_C_POINTER_TEXT(NULLPTR, (void*)0x1, "PointerTestText");
 }
 
 TEST(TestHarness_c, checkPointerText)
@@ -592,7 +596,9 @@ TEST(TestHarness_c, checkBits)
     CHECK_EQUAL_C_BITS(0xABCD, (unsigned short)0xABCD, 0xFFFF);
     fixture->setTestFunction(failBitsMethod_);
     fixture->runAllTests();
-    fixture->assertPrintContains("expected <00000000 00000001>\n\tbut was  <00000000 00000011>");
+    fixture->assertPrintContains(
+        "expected <00000000 00000001>\n\tbut was  <00000000 00000011>"
+    );
     fixture->assertPrintContains("arness_c");
     CHECK(!hasDestructorOfTheDestructorCheckedBeenCalled);
 }
@@ -600,7 +606,9 @@ TEST(TestHarness_c, checkBits)
 static void failBitsTextMethod_()
 {
     HasTheDestructorBeenCalledChecker checker;
-    CHECK_EQUAL_C_BITS_TEXT(0x0001, (unsigned short)0x0003, 0xFFFF, "BitsTestText");
+    CHECK_EQUAL_C_BITS_TEXT(
+        0x0001, (unsigned short)0x0003, 0xFFFF, "BitsTestText"
+    );
 }
 
 TEST(TestHarness_c, checkBitsText)
@@ -608,7 +616,9 @@ TEST(TestHarness_c, checkBitsText)
     CHECK_EQUAL_C_BITS_TEXT(0xABCD, (unsigned short)0xABCD, 0xFFFF, "Text");
     fixture->setTestFunction(failBitsTextMethod_);
     fixture->runAllTests();
-    fixture->assertPrintContains("expected <00000000 00000001>\n\tbut was  <00000000 00000011>");
+    fixture->assertPrintContains(
+        "expected <00000000 00000001>\n\tbut was  <00000000 00000011>"
+    );
     fixture->assertPrintContains("arness_c");
     fixture->assertPrintContains("Message: BitsTestText");
     CHECK(!hasDestructorOfTheDestructorCheckedBeenCalled);

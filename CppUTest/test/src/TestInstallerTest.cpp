@@ -32,7 +32,6 @@ class TestInstallerTestUtestShell : public UtestShell
 {
 };
 
-
 // this is file scope because the test is installed
 // with all other tests, which also happen to be
 // created as static instances at file scope
@@ -46,7 +45,9 @@ TEST_GROUP(TestInstaller)
     {
         myRegistry = new TestRegistry();
         myRegistry->setCurrentRegistry(myRegistry);
-        testInstaller = new TestInstaller(shell, "TestInstaller", "test", __FILE__, __LINE__);
+        testInstaller = new TestInstaller(
+            shell, "TestInstaller", "test", __FILE__, __LINE__
+        );
     }
     void teardown() _override
     {
@@ -57,6 +58,4 @@ TEST_GROUP(TestInstaller)
     }
 };
 
-TEST(TestInstaller, Create)
-{
-}
+TEST(TestInstaller, Create) {}

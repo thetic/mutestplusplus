@@ -29,7 +29,8 @@
 #include "CppUTest/TestOutput.h"
 #include "CppUTest/TestTestingFixture.h"
 
-#define CHECK_TEST_FAILS_PROPER_WITH_TEXT(text) fixture.checkTestFailsWithProperTestLocation(text, __FILE__, __LINE__)
+#define CHECK_TEST_FAILS_PROPER_WITH_TEXT(text)                                \
+    fixture.checkTestFailsWithProperTestLocation(text, __FILE__, __LINE__)
 
 TEST_GROUP(UnitTestStringMacros)
 {
@@ -142,7 +143,8 @@ static void STRCMP_NOCASE_CONTAINSWithActualIsNULLTestMethod_()
 
 TEST(UnitTestStringMacros, FailureWithSTRCMP_NOCASE_CONTAINSAndActualIsNULL)
 {
-    fixture.runTestWithMethod(STRCMP_NOCASE_CONTAINSWithActualIsNULLTestMethod_);
+    fixture.runTestWithMethod(STRCMP_NOCASE_CONTAINSWithActualIsNULLTestMethod_
+    );
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("did not contain  <ok>");
 }
 
@@ -153,7 +155,9 @@ static void STRCMP_NOCASE_CONTAINSWithExpectedIsNULLTestMethod_()
 
 TEST(UnitTestStringMacros, FailureWithSTRCMP_NOCASE_CONTAINSAndExpectedIsNULL)
 {
-    fixture.runTestWithMethod(STRCMP_NOCASE_CONTAINSWithExpectedIsNULLTestMethod_);
+    fixture.runTestWithMethod(
+        STRCMP_NOCASE_CONTAINSWithExpectedIsNULLTestMethod_
+    );
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("did not contain  <>");
 }
 
@@ -172,8 +176,10 @@ TEST(UnitTestStringMacros, FailureWithSTRCMP_EQUAL)
 
 TEST(UnitTestStringMacros, STRCMP_EQUALBehavesAsProperMacro)
 {
-    if (false) STRCMP_EQUAL("1", "2");
-    else STRCMP_EQUAL("1", "1");
+    if (false)
+        STRCMP_EQUAL("1", "2");
+    else
+        STRCMP_EQUAL("1", "1");
 }
 
 IGNORE_TEST(UnitTestStringMacros, STRCMP_EQUALWorksInAnIgnoredTest)
@@ -197,13 +203,17 @@ TEST(UnitTestStringMacros, FailureWithSTRCMP_EQUAL_TEXT)
 
 TEST(UnitTestStringMacros, STRCMP_EQUAL_TEXTBehavesAsProperMacro)
 {
-    if (false) STRCMP_EQUAL_TEXT("1", "2", "Failed because it failed");
-    else STRCMP_EQUAL_TEXT("1", "1", "Failed because it failed");
+    if (false)
+        STRCMP_EQUAL_TEXT("1", "2", "Failed because it failed");
+    else
+        STRCMP_EQUAL_TEXT("1", "1", "Failed because it failed");
 }
 
 IGNORE_TEST(UnitTestStringMacros, STRCMP_EQUAL_TEXTWorksInAnIgnoredTest)
 {
-    STRCMP_EQUAL_TEXT("Hello", "World", "Failed because it failed"); // LCOV_EXCL_LINE
+    STRCMP_EQUAL_TEXT(
+        "Hello", "World", "Failed because it failed"
+    ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
 static void failingTestMethodWithSTRNCMP_EQUAL_()
@@ -221,8 +231,10 @@ TEST(UnitTestStringMacros, FailureWithSTRNCMP_EQUAL)
 
 TEST(UnitTestStringMacros, STRNCMP_EQUALBehavesAsProperMacro)
 {
-    if (false) STRNCMP_EQUAL("1", "2", 1);
-    else STRNCMP_EQUAL("1", "1", 1);
+    if (false)
+        STRNCMP_EQUAL("1", "2", 1);
+    else
+        STRNCMP_EQUAL("1", "1", 1);
 }
 
 IGNORE_TEST(UnitTestStringMacros, STRNCMP_EQUALWorksInAnIgnoredTest)
@@ -246,13 +258,17 @@ TEST(UnitTestStringMacros, FailureWithSTRNCMP_EQUAL_TEXT)
 
 TEST(UnitTestStringMacros, STRNCMP_EQUAL_TEXTBehavesAsProperMacro)
 {
-    if (false) STRNCMP_EQUAL_TEXT("1", "2", 1, "Failed because it failed");
-    else STRNCMP_EQUAL_TEXT("1", "1", 1, "Failed because it failed");
+    if (false)
+        STRNCMP_EQUAL_TEXT("1", "2", 1, "Failed because it failed");
+    else
+        STRNCMP_EQUAL_TEXT("1", "1", 1, "Failed because it failed");
 }
 
 IGNORE_TEST(UnitTestStringMacros, STRNCMP_EQUAL_TEXTWorksInAnIgnoredTest)
 {
-    STRNCMP_EQUAL_TEXT("Hello", "World", 3, "Failed because it failed"); // LCOV_EXCL_LINE
+    STRNCMP_EQUAL_TEXT(
+        "Hello", "World", 3, "Failed because it failed"
+    ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
 static void failingTestMethodWithSTRCMP_NOCASE_EQUAL_()
@@ -270,8 +286,10 @@ TEST(UnitTestStringMacros, FailureWithSTRCMP_NOCASE_EQUAL)
 
 TEST(UnitTestStringMacros, STRCMP_NOCASE_EQUALBehavesAsProperMacro)
 {
-    if (false) STRCMP_NOCASE_EQUAL("1", "2");
-    else STRCMP_NOCASE_EQUAL("1", "1");
+    if (false)
+        STRCMP_NOCASE_EQUAL("1", "2");
+    else
+        STRCMP_NOCASE_EQUAL("1", "1");
 }
 
 IGNORE_TEST(UnitTestStringMacros, STRCMP_NOCASE_EQUALWorksInAnIgnoredTest)
@@ -295,13 +313,17 @@ TEST(UnitTestStringMacros, FailureWithSTRCMP_NOCASE_EQUAL_TEXT)
 
 TEST(UnitTestStringMacros, STRCMP_NOCASE_EQUAL_TEXTBehavesAsProperMacro)
 {
-    if (false) STRCMP_NOCASE_EQUAL_TEXT("1", "2", "Failed because it failed");
-    else STRCMP_NOCASE_EQUAL_TEXT("1", "1", "Failed because it failed");
+    if (false)
+        STRCMP_NOCASE_EQUAL_TEXT("1", "2", "Failed because it failed");
+    else
+        STRCMP_NOCASE_EQUAL_TEXT("1", "1", "Failed because it failed");
 }
 
 IGNORE_TEST(UnitTestStringMacros, STRCMP_NOCASE_EQUAL_TEXTWorksInAnIgnoredTest)
 {
-    STRCMP_NOCASE_EQUAL_TEXT("Hello", "World", "Failed because it failed"); // LCOV_EXCL_LINE
+    STRCMP_NOCASE_EQUAL_TEXT(
+        "Hello", "World", "Failed because it failed"
+    ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
 static void failingTestMethodWithSTRCMP_CONTAINS_()
@@ -319,8 +341,10 @@ TEST(UnitTestStringMacros, FailureWithSTRCMP_CONTAINS)
 
 TEST(UnitTestStringMacros, STRCMP_CONTAINSBehavesAsProperMacro)
 {
-    if (false) STRCMP_CONTAINS("1", "2");
-    else STRCMP_CONTAINS("1", "1");
+    if (false)
+        STRCMP_CONTAINS("1", "2");
+    else
+        STRCMP_CONTAINS("1", "1");
 }
 
 IGNORE_TEST(UnitTestStringMacros, STRCMP_CONTAINSWorksInAnIgnoredTest)
@@ -344,13 +368,17 @@ TEST(UnitTestStringMacros, FailureWithSTRCMP_CONTAINS_TEXT)
 
 TEST(UnitTestStringMacros, STRCMP_CONTAINS_TEXTBehavesAsProperMacro)
 {
-    if (false) STRCMP_CONTAINS_TEXT("1", "2", "Failed because it failed");
-    else STRCMP_CONTAINS_TEXT("1", "1", "Failed because it failed");
+    if (false)
+        STRCMP_CONTAINS_TEXT("1", "2", "Failed because it failed");
+    else
+        STRCMP_CONTAINS_TEXT("1", "1", "Failed because it failed");
 }
 
 IGNORE_TEST(UnitTestStringMacros, STRCMP_CONTAINS_TEXTWorksInAnIgnoredTest)
 {
-    STRCMP_CONTAINS_TEXT("Hello", "World", "Failed because it failed"); // LCOV_EXCL_LINE
+    STRCMP_CONTAINS_TEXT(
+        "Hello", "World", "Failed because it failed"
+    ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
 static void failingTestMethodWithSTRCMP_NOCASE_CONTAINS_()
@@ -368,8 +396,10 @@ TEST(UnitTestStringMacros, FailureWithSTRCMP_NOCASE_CONTAINS)
 
 TEST(UnitTestStringMacros, STRCMP_NOCASE_CONTAINSBehavesAsProperMacro)
 {
-    if (false) STRCMP_NOCASE_CONTAINS("never", "executed");
-    else STRCMP_NOCASE_CONTAINS("hello", "HELLO WORLD");
+    if (false)
+        STRCMP_NOCASE_CONTAINS("never", "executed");
+    else
+        STRCMP_NOCASE_CONTAINS("hello", "HELLO WORLD");
 }
 
 IGNORE_TEST(UnitTestStringMacros, STRCMP_NO_CASE_CONTAINSWorksInAnIgnoredTest)
@@ -385,7 +415,8 @@ static void failingTestMethodWithSTRCMP_NOCASE_CONTAINS_TEXT_()
 
 TEST(UnitTestStringMacros, FailureWithSTRCMP_NOCASE_CONTAINS_TEXT)
 {
-    fixture.runTestWithMethod(failingTestMethodWithSTRCMP_NOCASE_CONTAINS_TEXT_);
+    fixture.runTestWithMethod(failingTestMethodWithSTRCMP_NOCASE_CONTAINS_TEXT_
+    );
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("actual <WORLD>");
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("did not contain  <hello>");
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("Failed because it failed");
@@ -393,13 +424,23 @@ TEST(UnitTestStringMacros, FailureWithSTRCMP_NOCASE_CONTAINS_TEXT)
 
 TEST(UnitTestStringMacros, STRCMP_NOCASE_CONTAINS_TEXTBehavesAsProperMacro)
 {
-    if (false) STRCMP_NOCASE_CONTAINS_TEXT("never", "executed", "Failed because it failed");
-    else STRCMP_NOCASE_CONTAINS_TEXT("hello", "HELLO WORLD", "Failed because it failed");
+    if (false)
+        STRCMP_NOCASE_CONTAINS_TEXT(
+            "never", "executed", "Failed because it failed"
+        );
+    else
+        STRCMP_NOCASE_CONTAINS_TEXT(
+            "hello", "HELLO WORLD", "Failed because it failed"
+        );
 }
 
-IGNORE_TEST(UnitTestStringMacros, STRCMP_NO_CASE_CONTAINS_TEXTWorksInAnIgnoredTest)
+IGNORE_TEST(
+    UnitTestStringMacros, STRCMP_NO_CASE_CONTAINS_TEXTWorksInAnIgnoredTest
+)
 {
-    STRCMP_NOCASE_CONTAINS_TEXT("Hello", "World", "Failed because it failed"); // LCOV_EXCL_LINE
+    STRCMP_NOCASE_CONTAINS_TEXT(
+        "Hello", "World", "Failed because it failed"
+    ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
 TEST(UnitTestStringMacros, NFirstCharsComparison)

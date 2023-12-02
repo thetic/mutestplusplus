@@ -34,6 +34,8 @@
 #ifndef D_TestResult_h
 #define D_TestResult_h
 
+#include "CppUTest/CppUTestConfig.h"
+
 class TestFailure;
 class TestOutput;
 class UtestShell;
@@ -88,7 +90,8 @@ public:
 
     bool isFailure() const
     {
-        return (getFailureCount() != 0) || (getRunCount() + getIgnoredCount() == 0);
+        return (getFailureCount() != 0) ||
+               (getRunCount() + getIgnoredCount() == 0);
     }
 
     size_t getTotalExecutionTime() const;
@@ -96,8 +99,8 @@ public:
 
     size_t getCurrentTestTotalExecutionTime() const;
     size_t getCurrentGroupTotalExecutionTime() const;
-private:
 
+private:
     TestOutput& output_;
     size_t testCount_;
     size_t runCount_;

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2014, Michael Feathers, James Grenning, Bas Vodde and Chen YewMing
- * All rights reserved.
+ * Copyright (c) 2014, Michael Feathers, James Grenning, Bas Vodde and Chen
+ * YewMing All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -24,9 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "CppUTest/TestHarness.h"
 #include "CppUTest/SimpleMutex.h"
-
+#include "CppUTest/TestHarness.h"
 
 SimpleMutex::SimpleMutex(void)
 {
@@ -48,9 +47,7 @@ void SimpleMutex::Unlock(void)
     PlatformSpecificMutexUnlock(psMtx);
 }
 
-
-ScopedMutexLock::ScopedMutexLock(SimpleMutex *mtx) :
-    mutex(mtx)
+ScopedMutexLock::ScopedMutexLock(SimpleMutex* mtx) : mutex(mtx)
 {
     mutex->Lock();
 }
@@ -59,5 +56,3 @@ ScopedMutexLock::~ScopedMutexLock()
 {
     mutex->Unlock();
 }
-
-

@@ -25,21 +25,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
 #include "CppUTest/TestRegistry.h"
-#include "CppUTest/TestOutput.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/TestOutput.h"
 
 namespace
 {
-const int testLineNumber = 1;
+    const int testLineNumber = 1;
 }
 
-class MockTest: public UtestShell
+class MockTest : public UtestShell
 {
 public:
     MockTest(const char* group = "Group") :
-        UtestShell(group, "Name", "File", testLineNumber), hasRun_(false)
+        UtestShell(group, "Name", "File", testLineNumber),
+        hasRun_(false)
     {
     }
     virtual void runOneTest(TestPlugin*, TestResult&) _override
@@ -50,10 +51,9 @@ public:
     bool hasRun_;
 };
 
-class MockTestResult: public TestResult
+class MockTestResult : public TestResult
 {
 public:
-
     int countTestsStarted;
     int countTestsEnded;
     int countCurrentTestStarted;
@@ -61,15 +61,12 @@ public:
     int countCurrentGroupStarted;
     int countCurrentGroupEnded;
 
-    MockTestResult(TestOutput& p) :
-        TestResult(p)
+    MockTestResult(TestOutput& p) : TestResult(p)
     {
         resetCount();
     }
 
-    virtual ~MockTestResult() _destructor_override
-    {
-    }
+    virtual ~MockTestResult() _destructor_override {}
 
     void resetCount()
     {
@@ -105,7 +102,6 @@ public:
     {
         countCurrentGroupEnded++;
     }
-
 };
 
 TEST_GROUP(TestRegistry)
@@ -116,8 +112,8 @@ TEST_GROUP(TestRegistry)
     MockTest* test2;
     MockTest* test3;
     MockTest* test4;
-    TestResult *result;
-    MockTestResult *mockResult;
+    TestResult* result;
+    MockTestResult* mockResult;
     void setup() _override
     {
         output = new StringBufferTestOutput();
@@ -251,7 +247,9 @@ TEST(TestRegistry, findTestWithName)
 
 TEST(TestRegistry, findTestWithGroupDoesntExist)
 {
-    CHECK(myRegistry->findTestWithGroup("ThisTestGroupDoesntExists") == NULLPTR);
+    CHECK(
+        myRegistry->findTestWithGroup("ThisTestGroupDoesntExists") == NULLPTR
+    );
 }
 
 TEST(TestRegistry, findTestWithGroup)
@@ -260,7 +258,9 @@ TEST(TestRegistry, findTestWithGroup)
     test2->setGroupName("SomeOtherGroup");
     myRegistry->addTest(test1);
     myRegistry->addTest(test2);
-    CHECK(myRegistry->findTestWithGroup("GroupOfATestThatDoesExist") != NULLPTR);
+    CHECK(
+        myRegistry->findTestWithGroup("GroupOfATestThatDoesExist") != NULLPTR
+    );
 }
 
 TEST(TestRegistry, nameFilterWorks)
@@ -308,7 +308,7 @@ TEST(TestRegistry, CurrentRepetitionIsCorrectTwo)
     LONGS_EQUAL(2, myRegistry->getCurrentRepetition());
 }
 
-class MyTestPluginDummy: public TestPlugin
+class MyTestPluginDummy : public TestPlugin
 {
 public:
     MyTestPluginDummy(const SimpleString& name) : TestPlugin(name) {}
@@ -328,7 +328,10 @@ TEST(TestRegistry, ResetPluginsWorks)
     LONGS_EQUAL(0, myRegistry->countPlugins());
 }
 
-TEST(TestRegistry, listTestGroupNames_shouldListBackwardsGroup1AfterGroup11AndGroup2OnlyOnce)
+TEST(
+    TestRegistry,
+    listTestGroupNames_shouldListBackwardsGroup1AfterGroup11AndGroup2OnlyOnce
+)
 {
     test1->setGroupName("GROUP_1");
     myRegistry->addTest(test1);
@@ -344,7 +347,10 @@ TEST(TestRegistry, listTestGroupNames_shouldListBackwardsGroup1AfterGroup11AndGr
     STRCMP_EQUAL("GROUP_2 GROUP_11 GROUP_1", s.asCharString());
 }
 
-TEST(TestRegistry, listTestGroupAndCaseNames_shouldListBackwardsGroupATestaAfterGroupAtestaa)
+TEST(
+    TestRegistry,
+    listTestGroupAndCaseNames_shouldListBackwardsGroupATestaAfterGroupAtestaa
+)
 {
     test1->setGroupName("GROUP_A");
     test1->setTestName("test_a");
@@ -358,10 +364,15 @@ TEST(TestRegistry, listTestGroupAndCaseNames_shouldListBackwardsGroupATestaAfter
 
     myRegistry->listTestGroupAndCaseNames(*result);
     SimpleString s = output->getOutput();
-    STRCMP_EQUAL("GROUP_A.test_aa GROUP_B.test_b GROUP_A.test_a", s.asCharString());
+    STRCMP_EQUAL(
+        "GROUP_A.test_aa GROUP_B.test_b GROUP_A.test_a", s.asCharString()
+    );
 }
 
-TEST(TestRegistry, listTestLocations_shouldListBackwardsGroupATestaAfterGroupAtestaa)
+TEST(
+    TestRegistry,
+    listTestLocations_shouldListBackwardsGroupATestaAfterGroupAtestaa
+)
 {
     test1->setGroupName("GROUP_A");
     test1->setTestName("test_a");
@@ -381,7 +392,13 @@ TEST(TestRegistry, listTestLocations_shouldListBackwardsGroupATestaAfterGroupAte
 
     myRegistry->listTestLocations(*result);
     SimpleString s = output->getOutput();
-    STRCMP_EQUAL("GROUP_A.test_aa.cpptest_simple/my_tests/testaa.cpp.300\nGROUP_B.test_b.cpptest_simple/my tests/testb.cpp.200\nGROUP_A.test_a.cpptest_simple/my_tests/testa.cpp.100\n", s.asCharString());
+    STRCMP_EQUAL(
+        "GROUP_A.test_aa.cpptest_simple/my_tests/"
+        "testaa.cpp.300\nGROUP_B.test_b.cpptest_simple/my "
+        "tests/testb.cpp.200\nGROUP_A.test_a.cpptest_simple/my_tests/"
+        "testa.cpp.100\n",
+        s.asCharString()
+    );
 }
 
 TEST(TestRegistry, shuffleEmptyListIsNoOp)
@@ -410,25 +427,25 @@ IGNORE_TEST(TestRegistry, shuffleTestList)
     myRegistry->addTest(test2);
     myRegistry->addTest(test1);
 
-    UtestShell* first_before  = myRegistry->getFirstTest();
+    UtestShell* first_before = myRegistry->getFirstTest();
     UtestShell* second_before = first_before->getNext();
-    UtestShell* third_before  = second_before->getNext();
+    UtestShell* third_before = second_before->getNext();
 
-    CHECK_TRUE(first_before  == test1);
+    CHECK_TRUE(first_before == test1);
     CHECK_TRUE(second_before == test2);
-    CHECK_TRUE(third_before  == test3);
-    CHECK_TRUE(third_before->getNext()  == NULLPTR);
+    CHECK_TRUE(third_before == test3);
+    CHECK_TRUE(third_before->getNext() == NULLPTR);
 
     // shuffle always with element at index 0: [1] 2 [3] --> [3] [2] 1 --> 2 3 1
     myRegistry->shuffleTests(0);
 
-    UtestShell* first_after  = myRegistry->getFirstTest();
+    UtestShell* first_after = myRegistry->getFirstTest();
     UtestShell* second_after = first_after->getNext();
-    UtestShell* third_after  = second_after->getNext();
+    UtestShell* third_after = second_after->getNext();
 
-    CHECK_TRUE(first_after  == test2);
+    CHECK_TRUE(first_after == test2);
     CHECK_TRUE(second_after == test3);
-    CHECK_TRUE(third_after  == test1);
+    CHECK_TRUE(third_after == test1);
     CHECK_TRUE(third_after->getNext() == NULLPTR);
 }
 

@@ -25,17 +25,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
 
 extern "C" {
 
-    static long MockGetPlatformSpecificTimeInMillis()
-    {
-        return 10;
-    }
-
+static long MockGetPlatformSpecificTimeInMillis()
+{
+    return 10;
+}
 }
 
 TEST_GROUP(TestResult)
@@ -50,7 +49,9 @@ TEST_GROUP(TestResult)
         mock = new StringBufferTestOutput();
         printer = mock;
         res = new TestResult(*printer);
-        UT_PTR_SET(GetPlatformSpecificTimeInMillis, MockGetPlatformSpecificTimeInMillis);
+        UT_PTR_SET(
+            GetPlatformSpecificTimeInMillis, MockGetPlatformSpecificTimeInMillis
+        );
     }
     void teardown() _override
     {
@@ -83,7 +84,9 @@ TEST(TestResult, ResultIsNotOkIfFailures)
 {
     res->countTest();
     res->countRun();
-    res->addFailure(TestFailure(UtestShell::getCurrent(), StringFrom("dummy message")));
+    res->addFailure(
+        TestFailure(UtestShell::getCurrent(), StringFrom("dummy message"))
+    );
     CHECK_TRUE(res->isFailure());
 }
 

@@ -25,20 +25,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
 #include "CppUTest/TestRegistry.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestHarness.h"
 
 TestRegistry::TestRegistry() :
-    tests_(NULLPTR), nameFilters_(NULLPTR), groupFilters_(NULLPTR), firstPlugin_(NullTestPlugin::instance()), runInSeperateProcess_(false), currentRepetition_(0), runIgnored_(false)
+    tests_(NULLPTR),
+    nameFilters_(NULLPTR),
+    groupFilters_(NULLPTR),
+    firstPlugin_(NullTestPlugin::instance()),
+    runInSeperateProcess_(false),
+    currentRepetition_(0),
+    runIgnored_(false)
 {
 }
 
-TestRegistry::~TestRegistry()
-{
-}
+TestRegistry::~TestRegistry() {}
 
-void TestRegistry::addTest(UtestShell *test)
+void TestRegistry::addTest(UtestShell* test)
 {
     tests_ = test->addTest(tests_);
 }
@@ -48,9 +52,11 @@ void TestRegistry::runAllTests(TestResult& result)
     bool groupStart = true;
 
     result.testsStarted();
-    for (UtestShell *test = tests_; test != NULLPTR; test = test->getNext()) {
-        if (runInSeperateProcess_) test->setRunInSeperateProcess();
-        if (runIgnored_) test->setRunIgnored();
+    for (UtestShell* test = tests_; test != NULLPTR; test = test->getNext()) {
+        if (runInSeperateProcess_)
+            test->setRunInSeperateProcess();
+        if (runIgnored_)
+            test->setRunIgnored();
 
         if (groupStart) {
             result.currentGroupStarted(test);
@@ -77,7 +83,7 @@ void TestRegistry::listTestGroupNames(TestResult& result)
 {
     SimpleString groupList;
 
-    for (UtestShell *test = tests_; test != NULLPTR; test = test->getNext()) {
+    for (UtestShell* test = tests_; test != NULLPTR; test = test->getNext()) {
         SimpleString gname;
         gname += "#";
         gname += test->getGroup();
@@ -100,7 +106,7 @@ void TestRegistry::listTestGroupAndCaseNames(TestResult& result)
 {
     SimpleString groupAndNameList;
 
-    for (UtestShell *test = tests_; test != NULLPTR; test = test->getNext()) {
+    for (UtestShell* test = tests_; test != NULLPTR; test = test->getNext()) {
         if (testShouldRun(test, result)) {
             SimpleString groupAndName;
             groupAndName += "#";
@@ -119,7 +125,8 @@ void TestRegistry::listTestGroupAndCaseNames(TestResult& result)
     groupAndNameList.replace("#", "");
 
     if (groupAndNameList.endsWith(" "))
-        groupAndNameList = groupAndNameList.subString(0, groupAndNameList.size() - 1);
+        groupAndNameList =
+            groupAndNameList.subString(0, groupAndNameList.size() - 1);
     result.print(groupAndNameList.asCharString());
 }
 
@@ -127,17 +134,17 @@ void TestRegistry::listTestLocations(TestResult& result)
 {
     SimpleString testLocations;
 
-    for (UtestShell *test = tests_; test != NULLPTR; test = test->getNext()) {
-            SimpleString testLocation;
-            testLocation += test->getGroup();
-            testLocation += ".";
-            testLocation += test->getName();
-            testLocation += ".";
-            testLocation += test->getFile();
-            testLocation += ".";
-            testLocation += StringFromFormat("%d\n",(int) test->getLineNumber());
+    for (UtestShell* test = tests_; test != NULLPTR; test = test->getNext()) {
+        SimpleString testLocation;
+        testLocation += test->getGroup();
+        testLocation += ".";
+        testLocation += test->getName();
+        testLocation += ".";
+        testLocation += test->getFile();
+        testLocation += ".";
+        testLocation += StringFromFormat("%d\n", (int)test->getLineNumber());
 
-            testLocations += testLocation;
+        testLocations += testLocation;
     }
 
     result.print(testLocations.asCharString());
@@ -145,7 +152,10 @@ void TestRegistry::listTestLocations(TestResult& result)
 
 bool TestRegistry::endOfGroup(UtestShell* test)
 {
-    return (!test || !test->getNext() || test->getGroup() != test->getNext()->getGroup());
+    return (
+        !test || !test->getNext() ||
+        test->getGroup() != test->getNext()->getGroup()
+    );
 }
 
 size_t TestRegistry::countTests()
@@ -169,7 +179,6 @@ void TestRegistry::setCurrentRegistry(TestRegistry* registry)
 void TestRegistry::unDoLastAddTest()
 {
     tests_ = tests_ ? tests_->getNext() : NULLPTR;
-
 }
 
 void TestRegistry::setNameFilters(const TestFilter* filters)
@@ -199,7 +208,8 @@ int TestRegistry::getCurrentRepetition()
 
 bool TestRegistry::testShouldRun(UtestShell* test, TestResult& result)
 {
-    if (test->shouldRun(groupFilters_, nameFilters_)) return true;
+    if (test->shouldRun(groupFilters_, nameFilters_))
+        return true;
     else {
         result.countFilteredOut();
         return false;
@@ -228,19 +238,21 @@ TestPlugin* TestRegistry::getPluginByName(const SimpleString& name)
 
 void TestRegistry::removePluginByName(const SimpleString& name)
 {
-    if (firstPlugin_->removePluginByName(name) == firstPlugin_) firstPlugin_ = firstPlugin_->getNext();
-    if (firstPlugin_->getName() == name) firstPlugin_ = firstPlugin_->getNext();
+    if (firstPlugin_->removePluginByName(name) == firstPlugin_)
+        firstPlugin_ = firstPlugin_->getNext();
+    if (firstPlugin_->getName() == name)
+        firstPlugin_ = firstPlugin_->getNext();
     firstPlugin_->removePluginByName(name);
 }
 
 int TestRegistry::countPlugins()
 {
     int count = 0;
-    for (TestPlugin* plugin = firstPlugin_; plugin != NullTestPlugin::instance(); plugin = plugin->getNext())
+    for (TestPlugin* plugin = firstPlugin_;
+         plugin != NullTestPlugin::instance(); plugin = plugin->getNext())
         count++;
     return count;
 }
-
 
 UtestShell* TestRegistry::getFirstTest()
 {
@@ -290,4 +302,3 @@ UtestShell* TestRegistry::findTestWithGroup(const SimpleString& group)
     }
     return NULLPTR;
 }
-

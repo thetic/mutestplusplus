@@ -26,22 +26,24 @@
  */
 
 #include "CppUTest/CommandLineTestRunner.h"
-#include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/SimpleStringInternalCache.h"
+#include "CppUTest/TestMemoryAllocator.h"
 
-int main(int ac, char **av)
+int main(int ac, char** av)
 {
     int returnValue = 0;
     GlobalSimpleStringCache stringCache;
 
     {
-        /* These checks are here to make sure assertions outside test runs don't crash */
+        /* These checks are here to make sure assertions outside test runs don't
+         * crash */
         CHECK(true);
         LONGS_EQUAL(1, 1);
 
-        returnValue = CommandLineTestRunner::RunAllTests(ac, av); /* cover alternate method */
+        returnValue = CommandLineTestRunner::RunAllTests(
+            ac, av
+        ); /* cover alternate method */
     }
 
     return returnValue;
 }
-

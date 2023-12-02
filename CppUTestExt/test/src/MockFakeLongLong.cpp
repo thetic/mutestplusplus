@@ -34,7 +34,6 @@
 #include "CppUTestExt/MockFailure.h"
 #include "MockFailureReporterForTest.h"
 
-
 TEST_GROUP(FakeLongLongs)
 {
     TestTestingFixture fixture;
@@ -42,7 +41,8 @@ TEST_GROUP(FakeLongLongs)
 
 #ifndef CPPUTEST_USE_LONG_LONG
 
-#define CHECK_TEST_FAILS_PROPER_WITH_TEXT(text) fixture.checkTestFailsWithProperTestLocation(text, __FILE__, __LINE__)
+    #define CHECK_TEST_FAILS_PROPER_WITH_TEXT(text)                            \
+        fixture.checkTestFailsWithProperTestLocation(text, __FILE__, __LINE__)
 
 static void actualCallWithFakeLongLongParameter_()
 {
@@ -73,7 +73,8 @@ TEST(FakeLongLongs, ActualCallWithFakeUnsignedLongLongParameterFAILS)
 {
     fixture.runTestWithMethod(actualCallWithFakeUnsignedLongLongParameter_);
     mock().clear();
-    CHECK_TEST_FAILS_PROPER_WITH_TEXT("Unsigned Long Long type is not supported");
+    CHECK_TEST_FAILS_PROPER_WITH_TEXT("Unsigned Long Long type is not supported"
+    );
 }
 
 static void actualCallWithFakeLongLongReturn_()
@@ -101,7 +102,8 @@ TEST(FakeLongLongs, ActualCallWithFakeUnsignedLongLongReturnFAILS)
 {
     fixture.runTestWithMethod(actualCallWithFakeUnsignedLongLongReturn_);
     mock().clear();
-    CHECK_TEST_FAILS_PROPER_WITH_TEXT("Unsigned Long Long type is not supported");
+    CHECK_TEST_FAILS_PROPER_WITH_TEXT("Unsigned Long Long type is not supported"
+    );
 }
 
 static void expectOneCallWithFakeLongLongParameter_()
@@ -133,7 +135,8 @@ TEST(FakeLongLongs, ExpectedCallWithFakeUnsignedLongLongParameterFAILS)
 {
     fixture.runTestWithMethod(expectOneCallWithFakeUnsignedLongLongParameter_);
     mock().clear();
-    CHECK_TEST_FAILS_PROPER_WITH_TEXT("Unsigned Long Long type is not supported");
+    CHECK_TEST_FAILS_PROPER_WITH_TEXT("Unsigned Long Long type is not supported"
+    );
 }
 
 static void expectOneCallWithFakeLongLongReturn_()
@@ -165,7 +168,8 @@ TEST(FakeLongLongs, ExpectedCallWithFakeUnsignedLongLongReturnFAILS)
 {
     fixture.runTestWithMethod(expectOneCallWithFakeUnsignedLongLongReturn_);
     mock().clear();
-    CHECK_TEST_FAILS_PROPER_WITH_TEXT("Unsigned Long Long type is not supported");
+    CHECK_TEST_FAILS_PROPER_WITH_TEXT("Unsigned Long Long type is not supported"
+    );
 }
 
 #endif
