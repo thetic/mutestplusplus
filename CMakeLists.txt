@@ -19,9 +19,9 @@ endif()
 # Conan support
 ###############
 if (EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    message(STATUS "conan_basic_setup()")
-    conan_basic_setup()
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  message(STATUS "conan_basic_setup()")
+  conan_basic_setup()
 endif()
 
 include(CTest)
@@ -45,8 +45,6 @@ cmake_dependent_option(CPPUTEST_USE_LONG_LONG "Support long long"
 
 cmake_dependent_option(CPPUTEST_BUILD_TESTING "Compile and make tests for CppUTest"
   ${PROJECT_IS_TOP_LEVEL} "BUILD_TESTING" OFF)
-cmake_dependent_option(CPPUTEST_SPLIT_TESTS "Split tests into small executables"
-  OFF "CPPUTEST_BUILD_TESTING" OFF)
 cmake_dependent_option(CPPUTEST_TEST_DISCOVERY "Build time test discover"
   ON "CPPUTEST_BUILD_TESTING;CMAKE_CROSSCOMPILING_EMULATOR OR NOT CMAKE_CROSSCOMPILING" OFF)
 cmake_dependent_option(CPPUTEST_TEST_GTEST "Test GoogleTest integration"
@@ -70,8 +68,6 @@ if(NOT DEFINED CPPUTEST_PLATFORM)
       set(CPPUTEST_PLATFORM Iar)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "ARMCC")
       set(CPPUTEST_PLATFORM armcc)
-    elseif(DOS)
-      set(CPPUTEST_PLATFORM Dos)
     elseif(BORLAND)
       set(CPPUTEST_PLATFORM Borland)
     else()
@@ -84,7 +80,7 @@ set(CPPUTEST_PLATFORM "${CPPUTEST_PLATFORM}" CACHE STRING "Platform implementati
 set_property(
   CACHE CPPUTEST_PLATFORM
   PROPERTY STRINGS
-    armcc Borland C2000 Dos Gcc Iar Keil Symbian VisualCpp OFF
+    armcc Borland C2000 Gcc Iar Keil Symbian VisualCpp OFF
 )
 
 include(CheckCXXSymbolExists)
@@ -116,28 +112,15 @@ if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "IAR")
 endif()
 check_type_size("long long" SIZEOF_LONGLONG LANGUAGE CXX)
 if(HAVE_SIZEOF_LONGLONG)
-    set(CPPUTEST_HAVE_LONG_LONG_INT ON)
+  set(CPPUTEST_HAVE_LONG_LONG_INT ON)
 endif()
 
-configure_file (
-    "${PROJECT_SOURCE_DIR}/config.h.cmake"
-    "${PROJECT_BINARY_DIR}/generated/CppUTestGeneratedConfig.h"
-)
 
-add_subdirectory(src)
+add_subdirectory(CppUTest)
 
-target_include_directories(CppUTest
-    PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-)
-target_compile_definitions(CppUTest
-  PUBLIC
-    HAVE_CONFIG_H
-)
-
-if (CPPUTEST_BUILD_TESTING)
-    add_subdirectory(tests)
-endif ()
+if(CPPUTEST_EXTENSIONS)
+  add_subdirectory(CppUTestExt)
+endif()
 
 if (CPPUTEST_EXAMPLES)
   add_subdirectory(examples)

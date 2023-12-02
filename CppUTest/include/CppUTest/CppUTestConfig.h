@@ -29,7 +29,7 @@
 #define CPPUTESTCONFIG_H_
 
 #ifndef CPPUTEST_USE_OWN_CONFIGURATION
-#include "CppUTestGeneratedConfig.h"
+#include "CppUTest/CppUTestGeneratedConfig.h"
 #endif
 
 /*

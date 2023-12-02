@@ -113,9 +113,6 @@ jobs:
           - name: No Exceptions
             os: ubuntu-latest
             preset: no-exceptions
-          - name: No C Standard Library
-            os: ubuntu-latest
-            preset: no-std-c
           - name: Coverage
             os: ubuntu-latest
             preset: coverage
@@ -152,10 +149,6 @@ jobs:
             os: macos-latest
             cmake_args: -DCMAKE_CXX_STANDARD=14
             preset: GNU
-          - name: OpenWatcom DOS
-            os: ubuntu-latest
-            preset: DOS
-            apt_packages: dosbox
           - name: Cygwin
             os: windows-latest
             preset: GNU
@@ -172,12 +165,6 @@ jobs:
 
       - uses: carlosperate/arm-none-eabi-gcc-action@v1
         if: ${{ matrix.name == 'GCC ARM embedded' }}
-
-      - name: Install OpenWatcom
-        uses: open-watcom/setup-watcom@v0
-        with:
-          version: "2.0"
-        if: ${{ matrix.name == 'OpenWatcom DOS' }}
 
       - run: git config --global core.autocrlf input
         if: ${{ matrix.name == 'Cygwin' }}
@@ -200,34 +187,27 @@ jobs:
       - name: Configure
         run: cmake --preset ${{ matrix.preset }} ${{ matrix.cmake_args }}
       - name: Build
-        run: cmake --build cpputest_build --verbose -j
-      - name: Save map files
-        uses: actions/upload-artifact@v3
-        with:
-          name: "${{ matrix.name }} map files"
-          path: cpputest_build/**/*.map
+        run: cmake --build build --verbose -j
       - name: Test
         run: >
           ctest
-          --test-dir cpputest_build
+          --test-dir build
           ${{ matrix.ctest_args }}
           --output-on-failure
 
       # POST PROCESSING
 
       - name: Install (*nix)
-        run: |
-          sudo cmake --install cpputest_build/
-          pkg-config --print-provides cpputest
+        run: sudo cmake --install build/
         if: ${{ matrix.install && !startswith(matrix.os, 'windows')}}
       - name: Install (Windows)
-        run: cmake --install cpputest_build/ --config=Debug
+        run: cmake --install build/ --config=Debug
         if: ${{ matrix.install && startswith(matrix.os, 'windows')}}
       - name: Use install
         run: |
-          cmake -B build -S examples
-          cmake --build build -j
-          ctest --test-dir build
+          cmake -B example_build -S examples
+          cmake --build example_build -j
+          ctest --test-dir example_build
         if: ${{ matrix.install }}
 
       - name: Coverage
@@ -235,19 +215,6 @@ jobs:
           lcov --capture --directory . --no-external --output-file lcov.info
           lcov --remove lcov.info --output-file lcov.info '*/tests/*'
         if: ${{ matrix.name == 'Coverage' }}
-  test_report:
-    name: JUnit Test Report
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@main
-      - run: cmake --preset=defaults -DCPPUTEST_JUNIT_REPORT=TRUE
-      - run: cmake --build cpputest_build -j
-      - run: ctest --test-dir cpputest_build
-      - uses: actions/upload-artifact@v3
-        if: success() || failure()
-        with:
-          name: test-results
-          path: "cpputest_build/**/cpputest_*.xml"
 
   cmake_msys:
     name: CMake MSYS
@@ -272,6 +239,6 @@ jobs:
       - name: Configure
         run: cmake --preset=GNU
       - name: Build
-        run: cmake --build cpputest_build -j
+        run: cmake --build build -j
       - name: Test
-        run: ctest --test-dir cpputest_build --output-on-failure
+        run: ctest --test-dir build --output-on-failure
