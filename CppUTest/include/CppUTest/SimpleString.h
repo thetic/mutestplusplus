@@ -153,16 +153,6 @@ private:
     SimpleStringCollection(SimpleStringCollection&);
 };
 
-class GlobalSimpleStringAllocatorStash
-{
-public:
-    GlobalSimpleStringAllocatorStash();
-    void save();
-    void restore();
-private:
-    TestMemoryAllocator* originalAllocator_;
-};
-
 class MemoryAccountant;
 class AccountingTestMemoryAllocator;
 

@@ -1,7 +1,4 @@
-# 2.6.3 is needed for ctest support
-# 3.1 is needed for target_sources
-# 3.8 is needed for try_compile improvements (CMP0067)
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.13)
 
 project(CppUTest
   VERSION 4.0
@@ -28,15 +25,8 @@ include(CTest)
 
 include(CMakeDependentOption)
 option(CPPUTEST_STD_C_LIB_DISABLED "Disable the standard C library")
-
-if((CMAKE_CXX_COMPILER_ID STREQUAL "Clang") AND (CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
-  set(is_clang_cl TRUE)
-endif()
-
 cmake_dependent_option(CPPUTEST_STD_CPP_LIB_DISABLED "Use the standard C++ library"
   OFF "NOT CPPUTEST_STD_C_LIB_DISABLED" ON)
-cmake_dependent_option(CPPUTEST_MEM_LEAK_DETECTION_DISABLED "Enable memory leak detection"
-  OFF "NOT BORLAND;NOT CPPUTEST_STD_C_LIB_DISABLED;NOT is_clang_cl" ON)
 option(CPPUTEST_EXTENSIONS "Use the CppUTest extension library" ON)
 include(CheckTypeSize)
 check_type_size("long long" SIZEOF_LONGLONG)
@@ -47,8 +37,6 @@ cmake_dependent_option(CPPUTEST_BUILD_TESTING "Compile and make tests for CppUTe
   ${PROJECT_IS_TOP_LEVEL} "BUILD_TESTING" OFF)
 cmake_dependent_option(CPPUTEST_TEST_DISCOVERY "Build time test discover"
   ON "CPPUTEST_BUILD_TESTING;CMAKE_CROSSCOMPILING_EMULATOR OR NOT CMAKE_CROSSCOMPILING" OFF)
-cmake_dependent_option(CPPUTEST_TEST_GTEST "Test GoogleTest integration"
-  OFF "CPPUTEST_BUILD_TESTING" OFF)
 cmake_dependent_option(CPPUTEST_EXAMPLES "Compile and make examples?"
   ${PROJECT_IS_TOP_LEVEL} "CPPUTEST_EXTENSIONS;NOT CPPUTEST_STD_CPP_LIB_DISABLED" OFF)
 
@@ -83,11 +71,6 @@ set_property(
     armcc Borland C2000 Gcc Iar Keil Symbian VisualCpp OFF
 )
 
-include(CheckCXXSymbolExists)
-check_cxx_symbol_exists(fopen_s "stdio.h" CPPUTEST_HAVE_SECURE_STDLIB)
-cmake_dependent_option(CPPUTEST_USE_SECURE_STDLIB "Use MSVC safe functions"
-  ON "WIN32;CPPUTEST_HAVE_SECURE_STDLIB" OFF)
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 if(NOT PROJECT_IS_TOP_LEVEL)
   set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" PARENT_SCOPE)
@@ -98,23 +81,7 @@ if(PROJECT_IS_TOP_LEVEL)
 endif()
 include(GNUInstallDirs)
 
-# Check for symbols before setting a lot of stuff
-include(CheckTypeSize)
-include(CheckStructHasMember)
 set(CMAKE_REQUIRED_FLAGS ${CMAKE_CXX_FLAGS})
-check_cxx_symbol_exists(fork "unistd.h" CPPUTEST_HAVE_FORK)
-check_cxx_symbol_exists(waitpid "sys/wait.h" CPPUTEST_HAVE_WAITPID)
-check_cxx_symbol_exists(gettimeofday "sys/time.h" CPPUTEST_HAVE_GETTIMEOFDAY)
-check_cxx_symbol_exists(pthread_mutex_lock "pthread.h" CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK)
-
-if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "IAR")
-  check_cxx_symbol_exists(strdup "string.h" CPPUTEST_HAVE_STRDUP)
-endif()
-check_type_size("long long" SIZEOF_LONGLONG LANGUAGE CXX)
-if(HAVE_SIZEOF_LONGLONG)
-  set(CPPUTEST_HAVE_LONG_LONG_INT ON)
-endif()
-
 
 add_subdirectory(CppUTest)
 

@@ -42,5 +42,4 @@
 #include "TestResult.h"
 #include "TestFailure.h"
 #include "TestPlugin.h"
-#include "MemoryLeakWarningPlugin.h"
 #endif

@@ -1,18 +1,10 @@
 add_executable(CppUTestTests
     src/AllTests.cpp
-    src/AllocLetTestFree.c
-    src/AllocLetTestFreeTest.cpp
-    src/AllocationInCFile.c
-    src/AllocationInCppFile.cpp
     src/CheatSheetTest.cpp
     src/CommandLineArgumentsTest.cpp
     src/CommandLineTestRunnerTest.cpp
     src/CompatabilityTests.cpp
-    src/DummyMemoryLeakDetector.cpp
     src/JUnitOutputTest.cpp
-    src/MemoryLeakDetectorTest.cpp
-    src/MemoryLeakWarningTest.cpp
-    src/MemoryOperatorOverloadTest.cpp
     src/PluginTest.cpp
     src/PreprocessorTest.cpp
     src/SetPluginTest.cpp

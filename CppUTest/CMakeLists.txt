@@ -1,6 +1,5 @@
 add_library(CppUTest
     src/CommandLineArguments.cpp
-    src/MemoryLeakWarningPlugin.cpp
     src/TestHarness_c.cpp
     src/TestRegistry.cpp
     src/CommandLineTestRunner.cpp
@@ -12,7 +11,6 @@ add_library(CppUTest
     src/TeamCityTestOutput.cpp
     src/TestFailure.cpp
     src/TestOutput.cpp
-    src/MemoryLeakDetector.cpp
     src/TestFilter.cpp
     src/TestPlugin.cpp
     src/TestTestingFixture.cpp
@@ -21,15 +19,15 @@ add_library(CppUTest
 )
 
 if(CPPUTEST_PLATFORM)
-    target_sources(CppUTest
-        PRIVATE
-            platform/${CPPUTEST_PLATFORM}/UtestPlatform.cpp
-    )
+    add_subdirectory(platform/${CPPUTEST_PLATFORM})
 endif()
 
-if (MINGW)
-    include(CheckStructHasMember)
-    check_struct_has_member("struct timespec" tv_sec time.h HAVE_STRUCT_TIMESPEC LANGUAGE CXX)
+include(CheckCXXSymbolExists)
+check_cxx_symbol_exists(strdup "string.h" CPPUTEST_HAVE_STRDUP)
+include(CheckTypeSize)
+check_type_size("long long" SIZEOF_LONGLONG LANGUAGE CXX)
+if(HAVE_SIZEOF_LONGLONG)
+    set(CPPUTEST_HAVE_LONG_LONG_INT ON)
 endif()
 
 configure_file(
@@ -45,38 +43,7 @@ target_include_directories(CppUTest
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_compile_definitions(CppUTest
-    PRIVATE
-        $<$<BOOL:${CPPUTEST_USE_SECURE_STDLIB}>:STDC_WANT_SECURE_LIB>
-        # Apply workaround for MinGW timespec redefinition (pthread.h / time.h).
-        $<$<BOOL:${HAVE_STRUCT_TIMESPEC}>:_TIMESPEC_DEFINED>
-)
-
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads)
-
-target_link_libraries(CppUTest
-    PRIVATE
-        $<$<BOOL:${WIN32}>:winmm>
-        $<$<BOOL:${CMAKE_USE_PTHREADS_INIT}>:${CMAKE_THREAD_LIBS_INIT}>
-)
-
 add_library(CppUTest::CppUTest ALIAS CppUTest)
-
-if(NOT CPPUTEST_MEM_LEAK_DETECTION_DISABLED)
-    if(MSVC)
-        set(force_include "/FI")
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "IAR")
-        set(force_include "--preinclude ")
-    else()
-        set(force_include "-include")
-    endif()
-    target_compile_options(CppUTest
-        PUBLIC
-            "$<$<COMPILE_LANGUAGE:C,CXX>:${force_include}CppUTest/MemoryLeakDetectorMallocMacros.h>"
-            "$<$<COMPILE_LANGUAGE:CXX>:${force_include}CppUTest/MemoryLeakDetectorNewMacros.h>"
-    )
-endif()
 
 if(CPPUTEST_BUILD_TESTING)
     add_subdirectory(test)
