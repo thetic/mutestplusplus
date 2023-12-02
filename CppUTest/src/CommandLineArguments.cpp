@@ -48,8 +48,8 @@ CommandLineArguments::CommandLineArguments(int ac, const char* const* av) :
     shufflingPreSeeded_(false),
     repeat_(1),
     shuffleSeed_(0),
-    groupFilters_(NULLPTR),
-    nameFilters_(NULLPTR),
+    groupFilters_(nullptr),
+    nameFilters_(nullptr),
     outputType_(OUTPUT_ECLIPSE)
 {
 }

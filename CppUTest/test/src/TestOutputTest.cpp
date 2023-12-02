@@ -50,7 +50,7 @@ TEST_GROUP(TestOutput)
     TestFailure* f3;
     TestResult* result;
 
-    void setup() _override
+    void setup() override
     {
         mock = new StringBufferTestOutput();
         printer = mock;
@@ -66,7 +66,7 @@ TEST_GROUP(TestOutput)
         );
         TestOutput::setWorkingEnvironment(TestOutput::eclipse);
     }
-    void teardown() _override
+    void teardown() override
     {
         TestOutput::setWorkingEnvironment(TestOutput::detectEnvironment);
         delete printer;
@@ -316,34 +316,34 @@ class CompositeTestOutputTestStringBufferTestOutput
     : public StringBufferTestOutput
 {
 public:
-    virtual void printTestsStarted() _override
+    virtual void printTestsStarted() override
     {
         output += "Test Start\n";
     }
 
-    virtual void printTestsEnded(const TestResult& result) _override
+    virtual void printTestsEnded(const TestResult& result) override
     {
         output += StringFromFormat("Test End %d\n", (int)result.getTestCount());
     }
 
-    void printCurrentGroupStarted(const UtestShell& test) _override
+    void printCurrentGroupStarted(const UtestShell& test) override
     {
         output += StringFromFormat(
             "Group %s Start\n", test.getGroup().asCharString()
         );
     }
 
-    void printCurrentGroupEnded(const TestResult& res) _override
+    void printCurrentGroupEnded(const TestResult& res) override
     {
         output += StringFromFormat("Group End %d\n", (int)res.getTestCount());
     }
 
-    virtual void printCurrentTestStarted(const UtestShell&) _override
+    virtual void printCurrentTestStarted(const UtestShell&) override
     {
         output += "s";
     }
 
-    void flush() _override
+    void flush() override
     {
         output += "flush";
     }
@@ -372,7 +372,7 @@ TEST_GROUP(CompositeTestOutput)
     TestResult* result;
     UtestShell* test;
 
-    void setup() _override
+    void setup() override
     {
         output1 = new CompositeTestOutputTestStringBufferTestOutput;
         output2 = new CompositeTestOutputTestStringBufferTestOutput;
@@ -382,7 +382,7 @@ TEST_GROUP(CompositeTestOutput)
         test = new UtestShell("Group", "Name", "file", 10);
     }
 
-    void teardown() _override
+    void teardown() override
     {
         delete test;
         delete result;

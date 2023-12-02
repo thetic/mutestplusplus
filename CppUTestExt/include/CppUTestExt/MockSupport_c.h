@@ -62,12 +62,8 @@ typedef struct SMockValue_c
         unsigned int unsignedIntValue;
         long int longIntValue;
         unsigned long int unsignedLongIntValue;
-#if CPPUTEST_USE_LONG_LONG
-        cpputest_longlong longLongIntValue;
-        cpputest_ulonglong unsignedLongLongIntValue;
-#else
-        char longLongPlaceholder[CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE];
-#endif
+        long long longLongIntValue;
+        unsigned long long unsignedLongLongIntValue;
         double doubleValue;
         const char* stringValue;
         void* pointerValue;
@@ -94,10 +90,10 @@ struct SMockActualCall_c
         const char* name, unsigned long int value
     );
     MockActualCall_c* (*withLongLongIntParameters)(
-        const char* name, cpputest_longlong value
+        const char* name, long long value
     );
     MockActualCall_c* (*withUnsignedLongLongIntParameters)(
-        const char* name, cpputest_ulonglong value
+        const char* name, unsigned long long value
     );
     MockActualCall_c* (*withDoubleParameters)(const char* name, double value);
     MockActualCall_c* (*withStringParameters)(
@@ -134,13 +130,11 @@ struct SMockActualCall_c
     unsigned long int (*returnUnsignedLongIntValueOrDefault)(
         unsigned long int defaultValue
     );
-    cpputest_longlong (*longLongIntReturnValue)(void);
-    cpputest_longlong (*returnLongLongIntValueOrDefault)(
-        cpputest_longlong defaultValue
-    );
-    cpputest_ulonglong (*unsignedLongLongIntReturnValue)(void);
-    cpputest_ulonglong (*returnUnsignedLongLongIntValueOrDefault)(
-        cpputest_ulonglong defaultValue
+    long long (*longLongIntReturnValue)(void);
+    long long (*returnLongLongIntValueOrDefault)(long long defaultValue);
+    unsigned long long (*unsignedLongLongIntReturnValue)(void);
+    unsigned long long (*returnUnsignedLongLongIntValueOrDefault)(
+        unsigned long long defaultValue
     );
     const char* (*stringReturnValue)(void);
     const char* (*returnStringValueOrDefault)(const char* defaultValue);
@@ -170,10 +164,10 @@ struct SMockExpectedCall_c
         const char* name, unsigned long int value
     );
     MockExpectedCall_c* (*withLongLongIntParameters)(
-        const char* name, cpputest_longlong value
+        const char* name, long long value
     );
     MockExpectedCall_c* (*withUnsignedLongLongIntParameters)(
-        const char* name, cpputest_ulonglong value
+        const char* name, unsigned long long value
     );
     MockExpectedCall_c* (*withDoubleParameters)(const char* name, double value);
     MockExpectedCall_c* (*withDoubleParametersAndTolerance)(
@@ -210,9 +204,9 @@ struct SMockExpectedCall_c
     MockExpectedCall_c* (*andReturnLongIntValue)(long int value);
     MockExpectedCall_c* (*andReturnUnsignedLongIntValue)(unsigned long int value
     );
-    MockExpectedCall_c* (*andReturnLongLongIntValue)(cpputest_longlong value);
+    MockExpectedCall_c* (*andReturnLongLongIntValue)(long long value);
     MockExpectedCall_c* (*andReturnUnsignedLongLongIntValue)(
-        cpputest_ulonglong value
+        unsigned long long value
     );
     MockExpectedCall_c* (*andReturnDoubleValue)(double value);
     MockExpectedCall_c* (*andReturnStringValue)(const char* value);
@@ -249,13 +243,11 @@ struct SMockSupport_c
     unsigned long int (*returnUnsignedLongIntValueOrDefault)(
         unsigned long int defaultValue
     );
-    cpputest_longlong (*longLongIntReturnValue)(void);
-    cpputest_longlong (*returnLongLongIntValueOrDefault)(
-        cpputest_longlong defaultValue
-    );
-    cpputest_ulonglong (*unsignedLongLongIntReturnValue)(void);
-    cpputest_ulonglong (*returnUnsignedLongLongIntValueOrDefault)(
-        cpputest_ulonglong defaultValue
+    long long (*longLongIntReturnValue)(void);
+    long long (*returnLongLongIntValueOrDefault)(long long defaultValue);
+    unsigned long long (*unsignedLongLongIntReturnValue)(void);
+    unsigned long long (*returnUnsignedLongLongIntValueOrDefault)(
+        unsigned long long defaultValue
     );
     const char* (*stringReturnValue)(void);
     const char* (*returnStringValueOrDefault)(const char* defaultValue);

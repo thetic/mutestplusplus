@@ -37,7 +37,7 @@ TEST_GROUP(SimpleString)
 
 TEST(SimpleString, defaultAllocatorIsNewArrayAllocator)
 {
-    SimpleString::setStringAllocator(NULLPTR);
+    SimpleString::setStringAllocator(nullptr);
     POINTERS_EQUAL(
         defaultNewArrayAllocator(), SimpleString::getStringAllocator()
     );
@@ -47,10 +47,10 @@ class MyOwnStringAllocator : public TestMemoryAllocator
 {
 public:
     MyOwnStringAllocator() : memoryWasAllocated(false) {}
-    virtual ~MyOwnStringAllocator() _destructor_override {}
+    virtual ~MyOwnStringAllocator() override {}
 
     bool memoryWasAllocated;
-    char* alloc_memory(size_t size, const char* file, size_t line) _override
+    char* alloc_memory(size_t size, const char* file, size_t line) override
     {
         memoryWasAllocated = true;
         return TestMemoryAllocator::alloc_memory(size, file, line);
@@ -63,7 +63,7 @@ TEST(SimpleString, allocatorForSimpleStringCanBeReplaced)
     SimpleString::setStringAllocator(&myOwnAllocator);
     SimpleString simpleString;
     CHECK(myOwnAllocator.memoryWasAllocated);
-    SimpleString::setStringAllocator(NULLPTR);
+    SimpleString::setStringAllocator(nullptr);
 }
 
 TEST(SimpleString, CreateSequence)
@@ -427,9 +427,9 @@ TEST(SimpleString, copyInBufferNormal)
 TEST(SimpleString, copyInBufferWithEmptyBuffer)
 {
     SimpleString str("Hello World");
-    char* buffer = NULLPTR;
+    char* buffer = nullptr;
     str.copyToBuffer(buffer, 0);
-    POINTERS_EQUAL(NULLPTR, buffer);
+    POINTERS_EQUAL(nullptr, buffer);
 }
 
 TEST(SimpleString, copyInBufferWithBiggerBufferThanNeeded)
@@ -455,19 +455,19 @@ TEST(SimpleString, copyInBufferWithSmallerBufferThanNeeded)
 
 TEST(SimpleString, ContainsNull)
 {
-    SimpleString s(NULLPTR);
+    SimpleString s(nullptr);
     STRCMP_EQUAL("", s.asCharString());
 }
 
 TEST(SimpleString, NULLReportsNullString)
 {
-    STRCMP_EQUAL("(null)", StringFromOrNull((char*)NULLPTR).asCharString());
+    STRCMP_EQUAL("(null)", StringFromOrNull((char*)nullptr).asCharString());
 }
 
 TEST(SimpleString, NULLReportsNullStringPrintable)
 {
     STRCMP_EQUAL(
-        "(null)", PrintableStringFromOrNull((char*)NULLPTR).asCharString()
+        "(null)", PrintableStringFromOrNull((char*)nullptr).asCharString()
     );
 }
 
@@ -520,8 +520,6 @@ TEST(SimpleString, UnsignedLongInts)
     CHECK(s == s2);
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
 TEST(SimpleString, LongLongInts)
 {
     SimpleString s(StringFrom((long long)1));
@@ -534,8 +532,6 @@ TEST(SimpleString, UnsignedLongLongInts)
     SimpleString s2(StringFrom((unsigned long long)1));
     CHECK(s == s2);
 }
-
-#endif /* CPPUTEST_USE_LONG_LONG */
 
 TEST(SimpleString, Doubles)
 {
@@ -580,7 +576,7 @@ TEST(SimpleString, Sizes)
 
 TEST(SimpleString, nullptr_type)
 {
-    SimpleString s(StringFrom(NULLPTR));
+    SimpleString s(StringFrom(nullptr));
     STRCMP_EQUAL("(null)", s.asCharString());
 }
 
@@ -593,10 +589,8 @@ TEST(SimpleString, HexStrings)
     SimpleString h1 = HexStringFrom(0xffffL);
     STRCMP_EQUAL("ffff", h1.asCharString());
 
-#if CPPUTEST_USE_LONG_LONG
     SimpleString h15 = HexStringFrom(0xffffLL);
     STRCMP_EQUAL("ffff", h15.asCharString());
-#endif
 
     SimpleString h2 = HexStringFrom((void*)0xfffeL);
     STRCMP_EQUAL("fffe", h2.asCharString());
@@ -853,7 +847,7 @@ TEST(SimpleString, StrNCpy_zero_termination)
 
 TEST(SimpleString, StrNCpy_null_proof)
 {
-    POINTERS_EQUAL(NULLPTR, SimpleString::StrNCpy(NULLPTR, "woman", 6));
+    POINTERS_EQUAL(nullptr, SimpleString::StrNCpy(nullptr, "woman", 6));
 }
 
 TEST(SimpleString, StrNCpy_stops_at_end_of_string)
@@ -930,9 +924,9 @@ TEST(SimpleString, StrStr)
     char foobarfoo[] = "foobarfoo";
     char barf[] = "barf";
     CHECK(SimpleString::StrStr(foo, empty) == foo);
-    CHECK(SimpleString::StrStr(empty, foo) == NULLPTR);
+    CHECK(SimpleString::StrStr(empty, foo) == nullptr);
     CHECK(SimpleString::StrStr(foobarfoo, barf) == foobarfoo + 3);
-    CHECK(SimpleString::StrStr(barf, foobarfoo) == NULLPTR);
+    CHECK(SimpleString::StrStr(barf, foobarfoo) == nullptr);
     CHECK(SimpleString::StrStr(foo, foo) == foo);
 }
 
@@ -983,7 +977,7 @@ TEST(SimpleString, Binary)
         StringFromBinaryOrNull(value, sizeof(value)).asCharString()
     );
     STRCMP_EQUAL("", StringFromBinary(value, 0).asCharString());
-    STRCMP_EQUAL("(null)", StringFromBinaryOrNull(NULLPTR, 0).asCharString());
+    STRCMP_EQUAL("(null)", StringFromBinaryOrNull(nullptr, 0).asCharString());
 }
 
 TEST(SimpleString, BinaryWithSize)
@@ -1004,7 +998,7 @@ TEST(SimpleString, BinaryWithSize)
         StringFromBinaryWithSize(value, 0).asCharString()
     );
     STRCMP_EQUAL(
-        "(null)", StringFromBinaryWithSizeOrNull(NULLPTR, 0).asCharString()
+        "(null)", StringFromBinaryWithSizeOrNull(nullptr, 0).asCharString()
     );
 }
 
@@ -1027,7 +1021,7 @@ TEST(SimpleString, MemCmp)
     LONGS_EQUAL(0, SimpleString::MemCmp(smaller, smaller, sizeof(smaller)));
     CHECK(SimpleString::MemCmp(smaller, greater, sizeof(smaller)) < 0);
     CHECK(SimpleString::MemCmp(greater, smaller, sizeof(smaller)) > 0);
-    LONGS_EQUAL(0, SimpleString::MemCmp(NULLPTR, NULLPTR, 0));
+    LONGS_EQUAL(0, SimpleString::MemCmp(nullptr, nullptr, 0));
 }
 
 TEST(SimpleString, MemCmpFirstLastNotMatching)
@@ -1232,32 +1226,16 @@ TEST(SimpleString, BracketsFormattedHexStringFromForLong)
 
     STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
 }
-#if CPPUTEST_USE_LONG_LONG
 
 TEST(SimpleString, BracketsFormattedHexStringFromForLongLong)
 {
-    cpputest_longlong value = 1;
+    long long value = 1;
 
     STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
 }
 TEST(SimpleString, BracketsFormattedHexStringFromForULongLong)
 {
-    cpputest_ulonglong value = 1;
+    unsigned long long value = 1;
 
     STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
 }
-#else
-TEST(SimpleString, BracketsFormattedHexStringFromForLongLong)
-{
-    cpputest_longlong value;
-
-    STRCMP_EQUAL("", BracketsFormattedHexStringFrom(value).asCharString());
-}
-TEST(SimpleString, BracketsFormattedHexStringFromForULongLong)
-{
-    cpputest_ulonglong value;
-
-    STRCMP_EQUAL("", BracketsFormattedHexStringFrom(value).asCharString());
-}
-
-#endif

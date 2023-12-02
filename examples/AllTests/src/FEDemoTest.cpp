@@ -47,7 +47,7 @@ extern "C" {
 
 TEST_GROUP(FE_Demo)
 {
-    void setup() _override
+    void setup() override
     {
         IEEE754ExceptionsPlugin::disableInexact();
     }

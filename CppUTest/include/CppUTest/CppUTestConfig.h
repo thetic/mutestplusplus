@@ -86,7 +86,7 @@
     #define __has_attribute(x) 0
 #endif
 
-#if defined(__cplusplus) && __cplusplus >= 201103L
+#if defined(__cplusplus)
     #define _no_return_ [[noreturn]]
 #elif __has_attribute(noreturn)
     #define _no_return_ __attribute__((noreturn))
@@ -109,7 +109,7 @@
     ) /* type, format_parameter, other_parameters */
 #endif
 
-#if defined(__cplusplus) && __cplusplus >= 201103L
+#if defined(__cplusplus)
     #define DEFAULT_COPY_CONSTRUCTOR(classname)                                \
         classname(const classname&) = default;
 #else
@@ -163,7 +163,7 @@
     #endif
 
     #if CPPUTEST_HAVE_EXCEPTIONS
-        #if defined(__cplusplus) && __cplusplus >= 201103L
+        #if defined(__cplusplus)
             #define UT_THROW(exception)
             #define UT_NOTHROW noexcept
         #else
@@ -243,82 +243,6 @@ class CppUTestBadAlloc
  */
 #if CPPUTEST_USE_STD_C_LIB && (INT_MAX == 0x7fff)
     #define CPPUTEST_16BIT_INTS
-#endif
-
-/*
- * Support for "long long" type.
- *
- * Not supported when CPPUTEST_LONG_LONG_DISABLED is set.
- * Can be overridden by using CPPUTEST_USE_LONG_LONG
- *
- * CPPUTEST_HAVE_LONG_LONG_INT is set by configure or CMake.
- * LLONG_MAX is set in limits.h. This is a crude attempt to detect long long
- * support when no configure is used
- *
- */
-#ifndef CPPUTEST_USE_LONG_LONG
-    #if !defined(CPPUTEST_LONG_LONG_DISABLED) &&                               \
-        (defined(CPPUTEST_HAVE_LONG_LONG_INT) || defined(LLONG_MAX))
-        #define CPPUTEST_USE_LONG_LONG 1
-    #else
-        #define CPPUTEST_USE_LONG_LONG 0
-    #endif
-#endif
-
-#if CPPUTEST_USE_LONG_LONG
-typedef long long cpputest_longlong;
-typedef unsigned long long cpputest_ulonglong;
-#else
-    /* Define some placeholders to disable the overloaded methods.
-     * It's not required to have these match the size of the "real" type, but
-     * it's occasionally convenient.
-     */
-
-    #if defined(CPPUTEST_64BIT) && !defined(CPPUTEST_64BIT_32BIT_LONGS)
-        #define CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE 16
-    #else
-        #define CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE 8
-    #endif
-
-    #if defined(__cplusplus)
-extern "C" {
-    #endif
-
-typedef struct
-{
-    char dummy[CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE];
-} cpputest_longlong;
-
-typedef struct
-{
-    char dummy[CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE];
-} cpputest_ulonglong;
-
-    #if defined(__cplusplus)
-} /* extern "C" */
-    #endif
-
-#endif
-
-#ifdef __cplusplus
-    /* Visual C++ 10.0+ (2010+) supports the override keyword, but doesn't
-     * define the C++ version as C++11 */
-    #if (__cplusplus >= 201103L) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
-        #define _override override
-        #define NULLPTR nullptr
-    #else
-        #define _override
-        #define NULLPTR NULL
-    #endif
-#endif
-
-#ifdef __cplusplus
-    /* Visual C++ 11.0+ (2012+) supports the override keyword on destructors */
-    #if (__cplusplus >= 201103L) || (defined(_MSC_VER) && (_MSC_VER >= 1700))
-        #define _destructor_override override
-    #else
-        #define _destructor_override
-    #endif
 #endif
 
 #endif

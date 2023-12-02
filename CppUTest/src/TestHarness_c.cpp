@@ -103,8 +103,8 @@ void CHECK_EQUAL_C_ULONG_LOCATION(
 }
 
 void CHECK_EQUAL_C_LONGLONG_LOCATION(
-    cpputest_longlong expected,
-    cpputest_longlong actual,
+    long long expected,
+    long long actual,
     const char* text,
     const char* fileName,
     size_t lineNumber
@@ -117,8 +117,8 @@ void CHECK_EQUAL_C_LONGLONG_LOCATION(
 }
 
 void CHECK_EQUAL_C_ULONGLONG_LOCATION(
-    cpputest_ulonglong expected,
-    cpputest_ulonglong actual,
+    unsigned long long expected,
+    unsigned long long actual,
     const char* text,
     const char* fileName,
     size_t lineNumber

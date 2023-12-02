@@ -103,7 +103,7 @@ protected:
         MockExpectedCallsListNode* next_;
         MockExpectedCallsListNode(MockCheckedExpectedCall* expectedCall) :
             expectedCall_(expectedCall),
-            next_(NULLPTR)
+            next_(nullptr)
         {
         }
     };

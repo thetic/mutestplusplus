@@ -220,8 +220,8 @@ public:
         UtestShell* test,
         const char* fileName,
         size_t lineNumber,
-        cpputest_longlong expected,
-        cpputest_longlong actual,
+        long long expected,
+        long long actual,
         const SimpleString& text
     );
 };
@@ -233,8 +233,8 @@ public:
         UtestShell* test,
         const char* fileName,
         size_t lineNumber,
-        cpputest_ulonglong expected,
-        cpputest_ulonglong actual,
+        unsigned long long expected,
+        unsigned long long actual,
         const SimpleString& text
     );
 };

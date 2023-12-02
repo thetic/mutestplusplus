@@ -18,17 +18,18 @@ add_library(CppUTest
     src/Utest.cpp
 )
 
+target_compile_features(CppUTest
+    PUBLIC
+        cxx_std_11
+        c_std_99
+)
+
 if(CPPUTEST_PLATFORM)
     add_subdirectory(platform/${CPPUTEST_PLATFORM})
 endif()
 
 include(CheckCXXSymbolExists)
 check_cxx_symbol_exists(strdup "string.h" CPPUTEST_HAVE_STRDUP)
-include(CheckTypeSize)
-check_type_size("long long" SIZEOF_LONGLONG LANGUAGE CXX)
-if(HAVE_SIZEOF_LONGLONG)
-    set(CPPUTEST_HAVE_LONG_LONG_INT ON)
-endif()
 
 configure_file(
     CppUTestGeneratedConfig.h.cmake

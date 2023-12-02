@@ -43,8 +43,8 @@ struct SimpleStringInternalCacheNode
 
 SimpleStringInternalCache::SimpleStringInternalCache() :
     allocator_(defaultMallocAllocator()),
-    cache_(NULLPTR),
-    nonCachedAllocations_(NULLPTR),
+    cache_(nullptr),
+    nonCachedAllocations_(nullptr),
     hasWarnedAboutDeallocations(false)
 {
     cache_ = createInternalCacheNodes();
@@ -71,8 +71,8 @@ SimpleStringInternalCache::createInternalCacheNodes()
         );
 
     for (int i = 0; i < amountOfInternalCacheNodes; i++) {
-        node[i].freeMemoryHead_ = NULLPTR;
-        node[i].usedMemoryHead_ = NULLPTR;
+        node[i].freeMemoryHead_ = nullptr;
+        node[i].usedMemoryHead_ = nullptr;
     }
     node[0].size_ = 32;
     node[1].size_ = 64;
@@ -160,7 +160,7 @@ SimpleStringInternalCache::addToSimpleStringMemoryBlockList(
 
 bool SimpleStringInternalCache::hasFreeBlocksOfSize(size_t size)
 {
-    return getCacheNodeFromSize(size)->freeMemoryHead_ != NULLPTR;
+    return getCacheNodeFromSize(size)->freeMemoryHead_ != nullptr;
 }
 
 SimpleStringMemoryBlock* SimpleStringInternalCache::reserveCachedBlockFrom(
@@ -286,7 +286,7 @@ void SimpleStringInternalCache::clearCache()
         destroySimpleStringMemoryBlockList(
             cache_[i].freeMemoryHead_, cache_[i].size_
         );
-        cache_[i].freeMemoryHead_ = NULLPTR;
+        cache_[i].freeMemoryHead_ = nullptr;
     }
 }
 
@@ -299,12 +299,12 @@ void SimpleStringInternalCache::clearAllIncludingCurrentlyUsedMemory()
         destroySimpleStringMemoryBlockList(
             cache_[i].usedMemoryHead_, cache_[i].size_
         );
-        cache_[i].freeMemoryHead_ = NULLPTR;
-        cache_[i].usedMemoryHead_ = NULLPTR;
+        cache_[i].freeMemoryHead_ = nullptr;
+        cache_[i].usedMemoryHead_ = nullptr;
     }
 
     destroySimpleStringMemoryBlockList(nonCachedAllocations_, 0);
-    nonCachedAllocations_ = NULLPTR;
+    nonCachedAllocations_ = nullptr;
 }
 
 GlobalSimpleStringCache::GlobalSimpleStringCache()
@@ -338,7 +338,7 @@ SimpleStringCacheAllocator::SimpleStringCacheAllocator(
 
 SimpleStringCacheAllocator::~SimpleStringCacheAllocator()
 {
-    cache_.setAllocator(NULLPTR);
+    cache_.setAllocator(nullptr);
 }
 
 char* SimpleStringCacheAllocator::alloc_memory(size_t size, const char*, size_t)

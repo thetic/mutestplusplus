@@ -401,8 +401,8 @@ LongLongsEqualFailure::LongLongsEqualFailure(
     UtestShell* test,
     const char* fileName,
     size_t lineNumber,
-    cpputest_longlong expected,
-    cpputest_longlong actual,
+    long long expected,
+    long long actual,
     const SimpleString& text
 ) :
     TestFailure(test, fileName, lineNumber)
@@ -425,8 +425,8 @@ UnsignedLongLongsEqualFailure::UnsignedLongLongsEqualFailure(
     UtestShell* test,
     const char* fileName,
     size_t lineNumber,
-    cpputest_ulonglong expected,
-    cpputest_ulonglong actual,
+    unsigned long long expected,
+    unsigned long long actual,
     const SimpleString& text
 ) :
     TestFailure(test, fileName, lineNumber)
@@ -612,11 +612,11 @@ UnexpectedExceptionFailure::UnexpectedExceptionFailure(UtestShell* test) :
 static SimpleString getExceptionTypeName(const std::exception& e)
 {
     const char* name = typeid(e).name();
-            #if defined(__GNUC__) && (__cplusplus >= 201103L)
+            #if defined(__GNUC__)
     int status = -1;
 
     std::unique_ptr<char, void (*)(void*)> demangledName(
-        abi::__cxa_demangle(name, NULLPTR, NULLPTR, &status), std::free
+        abi::__cxa_demangle(name, nullptr, nullptr, &status), std::free
     );
 
     return (status == 0) ? demangledName.get() : name;

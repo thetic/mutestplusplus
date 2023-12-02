@@ -48,7 +48,7 @@ class TypeForTestingExpectedFunctionCallComparator
     : public MockNamedValueComparator
 {
 public:
-    virtual bool isEqual(const void* object1, const void* object2) _override
+    virtual bool isEqual(const void* object1, const void* object2) override
     {
         const TypeForTestingExpectedFunctionCall* obj1 =
             (const TypeForTestingExpectedFunctionCall*)object1;
@@ -56,7 +56,7 @@ public:
             (const TypeForTestingExpectedFunctionCall*)object2;
         return *(obj1->value) == *(obj2->value);
     }
-    virtual SimpleString valueToString(const void* object) _override
+    virtual SimpleString valueToString(const void* object) override
     {
         const TypeForTestingExpectedFunctionCall* obj =
             (const TypeForTestingExpectedFunctionCall*)object;
@@ -67,7 +67,7 @@ public:
 class TypeForTestingExpectedFunctionCallCopier : public MockNamedValueCopier
 {
 public:
-    virtual void copy(void* dst_, const void* src_) _override
+    virtual void copy(void* dst_, const void* src_) override
     {
         TypeForTestingExpectedFunctionCall* dst =
             (TypeForTestingExpectedFunctionCall*)dst_;
@@ -79,7 +79,7 @@ public:
 
 TEST_GROUP(MockNamedValueHandlerRepository)
 {
-    void teardown() _override
+    void teardown() override
     {
         CHECK_NO_MOCK_FAILURE();
         MockFailureReporterForTest::clearReporter();
@@ -89,7 +89,7 @@ TEST_GROUP(MockNamedValueHandlerRepository)
 TEST(MockNamedValueHandlerRepository, getComparatorForNonExistingName)
 {
     MockNamedValueComparatorsAndCopiersRepository repository;
-    POINTERS_EQUAL(NULLPTR, repository.getComparatorForType("typeName"));
+    POINTERS_EQUAL(nullptr, repository.getComparatorForType("typeName"));
 }
 
 TEST(MockNamedValueHandlerRepository, installComparator)
@@ -116,7 +116,7 @@ TEST(MockNamedValueHandlerRepository, installMultipleComparators)
 TEST(MockNamedValueHandlerRepository, getCopierForNonExistingName)
 {
     MockNamedValueComparatorsAndCopiersRepository repository;
-    POINTERS_EQUAL(NULLPTR, repository.getCopierForType("typeName"));
+    POINTERS_EQUAL(nullptr, repository.getCopierForType("typeName"));
 }
 
 TEST(MockNamedValueHandlerRepository, installCopier)
@@ -163,14 +163,14 @@ TEST_GROUP(MockExpectedCall)
 {
     MockCheckedExpectedCall* call;
     MockNamedValueComparatorsAndCopiersRepository* originalComparatorRepository;
-    void setup() _override
+    void setup() override
     {
         originalComparatorRepository =
             MockNamedValue::getDefaultComparatorsAndCopiersRepository();
         call = new MockCheckedExpectedCall(1);
         call->withName("funcName");
     }
-    void teardown() _override
+    void teardown() override
     {
         MockNamedValue::setDefaultComparatorsAndCopiersRepository(
             originalComparatorRepository
@@ -269,8 +269,6 @@ TEST(MockExpectedCall, callWithLongIntegerParameter)
     );
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
 TEST(MockExpectedCall, callWithUnsignedLongLongIntegerParameter)
 {
     const SimpleString paramName = "paramName";
@@ -307,8 +305,6 @@ TEST(MockExpectedCall, callWithLongLongIntegerParameter)
         call->callToString().asCharString()
     );
 }
-
-#endif
 
 TEST(MockExpectedCall, callWithDoubleParameter)
 {
@@ -930,7 +926,7 @@ TEST(MockExpectedCall, hasUnmodifiedOutputParameter)
 {
     call->withUnmodifiedOutputParameter("foo");
     MockNamedValue foo("foo");
-    foo.setValue((const void*)NULLPTR);
+    foo.setValue((const void*)nullptr);
     foo.setSize(0);
     CHECK(call->hasOutputParameter(foo));
 }
@@ -988,27 +984,25 @@ TEST(MockIgnoredExpectedCall, worksAsItShould)
     ignored.withName("func");
     ignored.withCallOrder(1);
     ignored.withCallOrder(1, 1);
-    ignored.onObject(NULLPTR);
+    ignored.onObject(nullptr);
     ignored.withBoolParameter("umm", true);
     ignored.withIntParameter("bla", (int)1);
     ignored.withUnsignedIntParameter("foo", (unsigned int)1);
     ignored.withLongIntParameter("hey", (long int)1);
     ignored.withUnsignedLongIntParameter("bah", (unsigned long int)1);
-#if CPPUTEST_USE_LONG_LONG
     ignored.withLongLongIntParameter("yo", (long long int)1);
     ignored.withUnsignedLongLongIntParameter("grr", (unsigned long long int)1);
-#endif
     ignored.withDoubleParameter("hah", (double)1.1f);
     ignored.withDoubleParameter("gah", 2.1, 0.3);
     ignored.withStringParameter("goo", "hello");
-    ignored.withPointerParameter("pie", (void*)NULLPTR);
-    ignored.withConstPointerParameter("woo", (const void*)NULLPTR);
-    ignored.withFunctionPointerParameter("fop", (void (*)())NULLPTR);
-    ignored.withMemoryBufferParameter("waa", (const unsigned char*)NULLPTR, 0);
-    ignored.withParameterOfType("mytype", "top", (const void*)NULLPTR);
-    ignored.withOutputParameterReturning("bar", (void*)NULLPTR, 1);
+    ignored.withPointerParameter("pie", (void*)nullptr);
+    ignored.withConstPointerParameter("woo", (const void*)nullptr);
+    ignored.withFunctionPointerParameter("fop", (void (*)())nullptr);
+    ignored.withMemoryBufferParameter("waa", (const unsigned char*)nullptr, 0);
+    ignored.withParameterOfType("mytype", "top", (const void*)nullptr);
+    ignored.withOutputParameterReturning("bar", (void*)nullptr, 1);
     ignored.withOutputParameterOfTypeReturning(
-        "mytype", "bar", (const void*)NULLPTR
+        "mytype", "bar", (const void*)nullptr
     );
     ignored.withUnmodifiedOutputParameter("unmod");
     ignored.ignoreOtherParameters();
@@ -1018,12 +1012,10 @@ TEST(MockIgnoredExpectedCall, worksAsItShould)
     ignored.andReturnValue((int)1);
     ignored.andReturnValue((unsigned long int)1);
     ignored.andReturnValue((long int)1);
-#if CPPUTEST_USE_LONG_LONG
     ignored.andReturnValue((unsigned long long int)1);
     ignored.andReturnValue((long long int)1);
-#endif
     ignored.andReturnValue("boo");
-    ignored.andReturnValue((void*)NULLPTR);
-    ignored.andReturnValue((const void*)NULLPTR);
-    ignored.andReturnValue((void (*)())NULLPTR);
+    ignored.andReturnValue((void*)nullptr);
+    ignored.andReturnValue((const void*)nullptr);
+    ignored.andReturnValue((void (*)())nullptr);
 }

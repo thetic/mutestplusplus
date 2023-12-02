@@ -30,7 +30,7 @@
 #include "CppUTest/TestHarness.h"
 
 MockNamedValueComparatorsAndCopiersRepository*
-    MockNamedValue::defaultRepository_ = NULLPTR;
+    MockNamedValue::defaultRepository_ = nullptr;
 const double MockNamedValue::defaultDoubleTolerance = 0.005;
 
 void MockNamedValue::setDefaultComparatorsAndCopiersRepository(
@@ -50,8 +50,8 @@ MockNamedValue::MockNamedValue(const SimpleString& name) :
     name_(name),
     type_("int"),
     size_(0),
-    comparator_(NULLPTR),
-    copier_(NULLPTR)
+    comparator_(nullptr),
+    copier_(nullptr)
 {
     value_.intValue_ = 0;
 }
@@ -88,33 +88,17 @@ void MockNamedValue::setValue(unsigned long int value)
     value_.unsignedLongIntValue_ = value;
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
-void MockNamedValue::setValue(cpputest_longlong value)
+void MockNamedValue::setValue(long long value)
 {
     type_ = "long long int";
     value_.longLongIntValue_ = value;
 }
 
-void MockNamedValue::setValue(cpputest_ulonglong value)
+void MockNamedValue::setValue(unsigned long long value)
 {
     type_ = "unsigned long long int";
     value_.unsignedLongLongIntValue_ = value;
 }
-
-#else
-
-void MockNamedValue::setValue(cpputest_longlong)
-{
-    FAIL("Long Long type is not supported");
-}
-
-void MockNamedValue::setValue(cpputest_ulonglong)
-{
-    FAIL("Unsigned Long Long type is not supported");
-}
-
-#endif
 
 void MockNamedValue::setValue(double value)
 {
@@ -249,9 +233,7 @@ unsigned long int MockNamedValue::getUnsignedLongIntValue() const
     }
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
-cpputest_longlong MockNamedValue::getLongLongIntValue() const
+long long MockNamedValue::getLongLongIntValue() const
 {
     if (type_ == "int")
         return value_.intValue_;
@@ -267,7 +249,7 @@ cpputest_longlong MockNamedValue::getLongLongIntValue() const
     }
 }
 
-cpputest_ulonglong MockNamedValue::getUnsignedLongLongIntValue() const
+unsigned long long MockNamedValue::getUnsignedLongLongIntValue() const
 {
     if (type_ == "unsigned int")
         return value_.unsignedIntValue_;
@@ -284,24 +266,6 @@ cpputest_ulonglong MockNamedValue::getUnsignedLongLongIntValue() const
         return value_.unsignedLongLongIntValue_;
     }
 }
-
-#else
-
-cpputest_longlong MockNamedValue::getLongLongIntValue() const
-{
-    FAIL("Long Long type is not supported");
-    cpputest_longlong ret = {};
-    return ret;
-}
-
-cpputest_ulonglong MockNamedValue::getUnsignedLongLongIntValue() const
-{
-    FAIL("Unsigned Long Long type is not supported");
-    cpputest_ulonglong ret = {};
-    return ret;
-}
-
-#endif
 
 double MockNamedValue::getDoubleValue() const
 {
@@ -408,7 +372,6 @@ bool MockNamedValue::equals(const MockNamedValue& p) const
         return (p.value_.longIntValue_ >= 0) &&
                (value_.unsignedLongIntValue_ ==
                 (unsigned long)p.value_.longIntValue_);
-#if CPPUTEST_USE_LONG_LONG
     else if ((type_ == "long long int") && (p.type_ == "int"))
         return value_.longLongIntValue_ == p.value_.intValue_;
     else if ((type_ == "int") && (p.type_ == "long long int"))
@@ -467,7 +430,6 @@ bool MockNamedValue::equals(const MockNamedValue& p) const
     else if ((type_ == "unsigned long int") && (p.type_ == "unsigned long long int"))
         return value_.unsignedLongIntValue_ ==
                p.value_.unsignedLongLongIntValue_;
-#endif
 
     if (type_ != p.type_)
         return false;
@@ -482,13 +444,11 @@ bool MockNamedValue::equals(const MockNamedValue& p) const
         return value_.longIntValue_ == p.value_.longIntValue_;
     else if (type_ == "unsigned long int")
         return value_.unsignedLongIntValue_ == p.value_.unsignedLongIntValue_;
-#if CPPUTEST_USE_LONG_LONG
     else if (type_ == "long long int")
         return value_.longLongIntValue_ == p.value_.longLongIntValue_;
     else if (type_ == "unsigned long long int")
         return value_.unsignedLongLongIntValue_ ==
                p.value_.unsignedLongLongIntValue_;
-#endif
     else if (type_ == "const char*")
         return SimpleString(value_.stringValue_) ==
                SimpleString(p.value_.stringValue_);
@@ -547,14 +507,12 @@ SimpleString MockNamedValue::toString() const
     else if (type_ == "unsigned long int")
         return StringFrom(value_.unsignedLongIntValue_) + " " +
                BracketsFormattedHexStringFrom(value_.unsignedLongIntValue_);
-#if CPPUTEST_USE_LONG_LONG
     else if (type_ == "long long int")
         return StringFrom(value_.longLongIntValue_) + " " +
                BracketsFormattedHexStringFrom(value_.longLongIntValue_);
     else if (type_ == "unsigned long long int")
         return StringFrom(value_.unsignedLongLongIntValue_) + " " +
                BracketsFormattedHexStringFrom(value_.unsignedLongLongIntValue_);
-#endif
     else if (type_ == "const char*")
         return value_.stringValue_;
     else if (type_ == "void*")
@@ -598,7 +556,7 @@ void MockNamedValueListNode::destroy()
 
 MockNamedValueListNode::MockNamedValueListNode(MockNamedValue* newValue) :
     data_(newValue),
-    next_(NULLPTR)
+    next_(nullptr)
 {
 }
 
@@ -612,7 +570,7 @@ SimpleString MockNamedValueListNode::getType() const
     return data_->getType();
 }
 
-MockNamedValueList::MockNamedValueList() : head_(NULLPTR) {}
+MockNamedValueList::MockNamedValueList() : head_(nullptr) {}
 
 void MockNamedValueList::clear()
 {
@@ -627,7 +585,7 @@ void MockNamedValueList::clear()
 void MockNamedValueList::add(MockNamedValue* newValue)
 {
     MockNamedValueListNode* newNode = new MockNamedValueListNode(newValue);
-    if (head_ == NULLPTR)
+    if (head_ == nullptr)
         head_ = newNode;
     else {
         MockNamedValueListNode* lastNode = head_;
@@ -642,7 +600,7 @@ MockNamedValue* MockNamedValueList::getValueByName(const SimpleString& name)
     for (MockNamedValueListNode* p = head_; p; p = p->next())
         if (p->getName() == name)
             return p->item();
-    return NULLPTR;
+    return nullptr;
 }
 
 MockNamedValueListNode* MockNamedValueList::begin()
@@ -659,7 +617,7 @@ struct MockNamedValueComparatorsAndCopiersRepositoryNode
     ) :
         name_(name),
         comparator_(comparator),
-        copier_(NULLPTR),
+        copier_(nullptr),
         next_(next)
     {
     }
@@ -669,7 +627,7 @@ struct MockNamedValueComparatorsAndCopiersRepositoryNode
         MockNamedValueComparatorsAndCopiersRepositoryNode* next
     ) :
         name_(name),
-        comparator_(NULLPTR),
+        comparator_(nullptr),
         copier_(copier),
         next_(next)
     {
@@ -694,7 +652,7 @@ struct MockNamedValueComparatorsAndCopiersRepositoryNode
 
 MockNamedValueComparatorsAndCopiersRepository::
     MockNamedValueComparatorsAndCopiersRepository() :
-    head_(NULLPTR)
+    head_(nullptr)
 {
 }
 
@@ -740,7 +698,7 @@ MockNamedValueComparatorsAndCopiersRepository::getComparatorForType(
          p = p->next_)
         if (p->name_ == name && p->comparator_)
             return p->comparator_;
-    return NULLPTR;
+    return nullptr;
 }
 
 MockNamedValueCopier*
@@ -752,7 +710,7 @@ MockNamedValueComparatorsAndCopiersRepository::getCopierForType(
          p = p->next_)
         if (p->name_ == name && p->copier_)
             return p->copier_;
-    return NULLPTR;
+    return nullptr;
 }
 
 void MockNamedValueComparatorsAndCopiersRepository::

@@ -30,7 +30,7 @@
 
 TEST_GROUP(MockReturnValueTest)
 {
-    void teardown() _override
+    void teardown() override
     {
         mock().checkExpectations();
         mock().clear();
@@ -126,8 +126,6 @@ TEST(MockReturnValueTest, UnsignedIntReturnValueCanBeRetrievedAsUnsignedLongInt)
         mock().actualCall("foo").returnValue().getUnsignedLongIntValue()
     );
 }
-
-#if CPPUTEST_USE_LONG_LONG
 
 TEST(
     MockReturnValueTest,
@@ -253,8 +251,6 @@ TEST(MockReturnValueTest, LongLongIntReturnValueCanBeRetrieved)
         mock().actualCall("foo").returnValue().getLongLongIntValue()
     );
 }
-
-#endif
 
 TEST(MockReturnValueTest, UnsignedIntegerReturnValueSetsDifferentValues)
 {
@@ -472,8 +468,6 @@ TEST(
     );
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
 TEST(
     MockReturnValueTest,
     WhenAUnsignedLongLongIntegerReturnValueIsExpectedAndAlsoThereIsADefaultShouldlIgnoreTheDefault
@@ -551,8 +545,6 @@ TEST(
         mock().returnLongLongIntValueOrDefault(default_return_value)
     );
 }
-
-#endif
 
 TEST(
     MockReturnValueTest,
@@ -905,8 +897,6 @@ TEST(
     );
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
 TEST(MockReturnValueTest, LongLongIntegerReturnValue)
 {
     long long int expected_value = 7;
@@ -1067,8 +1057,6 @@ TEST(
         another_ret_value, mock().returnValue().getUnsignedLongLongIntValue()
     );
 }
-
-#endif
 
 TEST(MockReturnValueTest, MatchingReturnValueOnWhileSignature)
 {

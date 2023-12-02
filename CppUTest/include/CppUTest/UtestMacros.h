@@ -46,9 +46,9 @@
 
 #define TEST_GROUP(testGroup) TEST_GROUP_BASE(testGroup, Utest)
 
-#define TEST_SETUP() virtual void setup() _override
+#define TEST_SETUP() virtual void setup() override
 
-#define TEST_TEARDOWN() virtual void teardown() _override
+#define TEST_TEARDOWN() virtual void teardown() override
 
 #define TEST(testGroup, testName)                                              \
     /* External declarations for strict compilers */                           \
@@ -64,11 +64,11 @@
             TEST_GROUP_##CppUTestGroup##testGroup()                            \
         {                                                                      \
         }                                                                      \
-        void testBody() _override;                                             \
+        void testBody() override;                                              \
     };                                                                         \
     class TEST_##testGroup##_##testName##_TestShell : public UtestShell        \
     {                                                                          \
-        virtual Utest* createTest() _override                                  \
+        virtual Utest* createTest() override                                   \
         {                                                                      \
             return new TEST_##testGroup##_##testName##_Test;                   \
         }                                                                      \
@@ -95,12 +95,12 @@
         }                                                                      \
                                                                                \
     public:                                                                    \
-        void testBody() _override;                                             \
+        void testBody() override;                                              \
     };                                                                         \
     class IGNORE##testGroup##_##testName##_TestShell                           \
         : public IgnoredUtestShell                                             \
     {                                                                          \
-        virtual Utest* createTest() _override                                  \
+        virtual Utest* createTest() override                                   \
         {                                                                      \
             return new IGNORE##testGroup##_##testName##_Test;                  \
         }                                                                      \
@@ -127,7 +127,7 @@
 
 #define CHECK(condition)                                                       \
     CHECK_TRUE_LOCATION(                                                       \
-        condition, "CHECK", #condition, NULLPTR, __FILE__, __LINE__            \
+        condition, "CHECK", #condition, nullptr, __FILE__, __LINE__            \
     )
 
 #define CHECK_TEXT(condition, text)                                            \
@@ -137,7 +137,7 @@
 
 #define CHECK_TRUE(condition)                                                  \
     CHECK_TRUE_LOCATION(                                                       \
-        (bool)(condition), "CHECK_TRUE", #condition, NULLPTR, __FILE__,        \
+        (bool)(condition), "CHECK_TRUE", #condition, nullptr, __FILE__,        \
         __LINE__                                                               \
     )
 
@@ -148,7 +148,7 @@
 
 #define CHECK_FALSE(condition)                                                 \
     CHECK_FALSE_LOCATION(                                                      \
-        condition, "CHECK_FALSE", #condition, NULLPTR, __FILE__, __LINE__      \
+        condition, "CHECK_FALSE", #condition, nullptr, __FILE__, __LINE__      \
     )
 
 #define CHECK_FALSE_TEXT(condition, text)                                      \
@@ -176,7 +176,7 @@
 
 // This check needs the operator!=(), and a StringFrom(YourType) function
 #define CHECK_EQUAL(expected, actual)                                          \
-    CHECK_EQUAL_LOCATION(expected, actual, NULLPTR, __FILE__, __LINE__)
+    CHECK_EQUAL_LOCATION(expected, actual, nullptr, __FILE__, __LINE__)
 
 #define CHECK_EQUAL_TEXT(expected, actual, text)                               \
     CHECK_EQUAL_LOCATION(expected, actual, text, __FILE__, __LINE__)
@@ -206,7 +206,7 @@
             );                                                                 \
         } else {                                                               \
             UtestShell::getCurrent()->assertLongsEqual(                        \
-                (long)0, (long)0, NULLPTR, file, line                          \
+                (long)0, (long)0, nullptr, file, line                          \
             );                                                                 \
         }                                                                      \
     } while (0)
@@ -217,7 +217,7 @@
     CHECK_EQUAL_TEXT(0, (actual), (text))
 
 #define CHECK_COMPARE(first, relop, second)                                    \
-    CHECK_COMPARE_TEXT(first, relop, second, NULLPTR)
+    CHECK_COMPARE_TEXT(first, relop, second, nullptr)
 
 #define CHECK_COMPARE_TEXT(first, relop, second, text)                         \
     CHECK_COMPARE_LOCATION(first, relop, second, text, __FILE__, __LINE__)
@@ -243,7 +243,7 @@
 // This makes up for the fact that CHECK_EQUAL only compares the pointers to
 // char*'s
 #define STRCMP_EQUAL(expected, actual)                                         \
-    STRCMP_EQUAL_LOCATION(expected, actual, NULLPTR, __FILE__, __LINE__)
+    STRCMP_EQUAL_LOCATION(expected, actual, nullptr, __FILE__, __LINE__)
 
 #define STRCMP_EQUAL_TEXT(expected, actual, text)                              \
     STRCMP_EQUAL_LOCATION(expected, actual, text, __FILE__, __LINE__)
@@ -257,7 +257,7 @@
 
 #define STRNCMP_EQUAL(expected, actual, length)                                \
     STRNCMP_EQUAL_LOCATION(                                                    \
-        expected, actual, length, NULLPTR, __FILE__, __LINE__                  \
+        expected, actual, length, nullptr, __FILE__, __LINE__                  \
     )
 
 #define STRNCMP_EQUAL_TEXT(expected, actual, length, text)                     \
@@ -271,7 +271,7 @@
     } while (0)
 
 #define STRCMP_NOCASE_EQUAL(expected, actual)                                  \
-    STRCMP_NOCASE_EQUAL_LOCATION(expected, actual, NULLPTR, __FILE__, __LINE__)
+    STRCMP_NOCASE_EQUAL_LOCATION(expected, actual, nullptr, __FILE__, __LINE__)
 
 #define STRCMP_NOCASE_EQUAL_TEXT(expected, actual, text)                       \
     STRCMP_NOCASE_EQUAL_LOCATION(expected, actual, text, __FILE__, __LINE__)
@@ -284,7 +284,7 @@
     } while (0)
 
 #define STRCMP_CONTAINS(expected, actual)                                      \
-    STRCMP_CONTAINS_LOCATION(expected, actual, NULLPTR, __FILE__, __LINE__)
+    STRCMP_CONTAINS_LOCATION(expected, actual, nullptr, __FILE__, __LINE__)
 
 #define STRCMP_CONTAINS_TEXT(expected, actual, text)                           \
     STRCMP_CONTAINS_LOCATION(expected, actual, text, __FILE__, __LINE__)
@@ -298,7 +298,7 @@
 
 #define STRCMP_NOCASE_CONTAINS(expected, actual)                               \
     STRCMP_NOCASE_CONTAINS_LOCATION(                                           \
-        expected, actual, NULLPTR, __FILE__, __LINE__                          \
+        expected, actual, nullptr, __FILE__, __LINE__                          \
     )
 
 #define STRCMP_NOCASE_CONTAINS_TEXT(expected, actual, text)                    \
@@ -323,7 +323,7 @@
 
 #define UNSIGNED_LONGS_EQUAL(expected, actual)                                 \
     UNSIGNED_LONGS_EQUAL_LOCATION(                                             \
-        (expected), (actual), NULLPTR, __FILE__, __LINE__                      \
+        (expected), (actual), nullptr, __FILE__, __LINE__                      \
     )
 
 #define UNSIGNED_LONGS_EQUAL_TEXT(expected, actual, text)                      \
@@ -345,41 +345,36 @@
         );                                                                     \
     } while (0)
 
-#if CPPUTEST_USE_LONG_LONG
-    #define LONGLONGS_EQUAL(expected, actual)                                  \
-        LONGLONGS_EQUAL_LOCATION(expected, actual, NULLPTR, __FILE__, __LINE__)
+#define LONGLONGS_EQUAL(expected, actual)                                      \
+    LONGLONGS_EQUAL_LOCATION(expected, actual, nullptr, __FILE__, __LINE__)
 
-    #define LONGLONGS_EQUAL_TEXT(expected, actual, text)                       \
-        LONGLONGS_EQUAL_LOCATION(expected, actual, text, __FILE__, __LINE__)
+#define LONGLONGS_EQUAL_TEXT(expected, actual, text)                           \
+    LONGLONGS_EQUAL_LOCATION(expected, actual, text, __FILE__, __LINE__)
 
-    #define UNSIGNED_LONGLONGS_EQUAL(expected, actual)                         \
-        UNSIGNED_LONGLONGS_EQUAL_LOCATION(                                     \
-            expected, actual, NULLPTR, __FILE__, __LINE__                      \
-        )
+#define UNSIGNED_LONGLONGS_EQUAL(expected, actual)                             \
+    UNSIGNED_LONGLONGS_EQUAL_LOCATION(                                         \
+        expected, actual, nullptr, __FILE__, __LINE__                          \
+    )
 
-    #define UNSIGNED_LONGLONGS_EQUAL_TEXT(expected, actual, text)              \
-        UNSIGNED_LONGLONGS_EQUAL_LOCATION(                                     \
-            expected, actual, text, __FILE__, __LINE__                         \
-        )
+#define UNSIGNED_LONGLONGS_EQUAL_TEXT(expected, actual, text)                  \
+    UNSIGNED_LONGLONGS_EQUAL_LOCATION(                                         \
+        expected, actual, text, __FILE__, __LINE__                             \
+    )
 
-    #define LONGLONGS_EQUAL_LOCATION(expected, actual, text, file, line)       \
-        do {                                                                   \
-            UtestShell::getCurrent()->assertLongLongsEqual(                    \
-                (cpputest_longlong)expected, (cpputest_longlong)actual, text,  \
-                file, line                                                     \
-            );                                                                 \
-        } while (0)
+#define LONGLONGS_EQUAL_LOCATION(expected, actual, text, file, line)           \
+    do {                                                                       \
+        UtestShell::getCurrent()->assertLongLongsEqual(                        \
+            (long long)expected, (long long)actual, text, file, line           \
+        );                                                                     \
+    } while (0)
 
-    #define UNSIGNED_LONGLONGS_EQUAL_LOCATION(                                 \
-        expected, actual, text, file, line                                     \
-    )                                                                          \
-        do {                                                                   \
-            UtestShell::getCurrent()->assertUnsignedLongLongsEqual(            \
-                (cpputest_ulonglong)expected, (cpputest_ulonglong)actual,      \
-                text, file, line                                               \
-            );                                                                 \
-        } while (0)
-#endif // CPPUTEST_USE_LONG_LONG
+#define UNSIGNED_LONGLONGS_EQUAL_LOCATION(expected, actual, text, file, line)  \
+    do {                                                                       \
+        UtestShell::getCurrent()->assertUnsignedLongLongsEqual(                \
+            (unsigned long long)expected, (unsigned long long)actual, text,    \
+            file, line                                                         \
+        );                                                                     \
+    } while (0)
 
 #define BYTES_EQUAL(expected, actual)                                          \
     LONGS_EQUAL((expected)&0xff, (actual)&0xff)
@@ -393,7 +388,7 @@
 #define SIGNED_BYTES_EQUAL_LOCATION(expected, actual, file, line)              \
     do {                                                                       \
         UtestShell::getCurrent()->assertSignedBytesEqual(                      \
-            expected, actual, NULLPTR, file, line                              \
+            expected, actual, nullptr, file, line                              \
         );                                                                     \
     } while (0)
 
@@ -408,7 +403,7 @@
     } while (0)
 
 #define POINTERS_EQUAL(expected, actual)                                       \
-    POINTERS_EQUAL_LOCATION((expected), (actual), NULLPTR, __FILE__, __LINE__)
+    POINTERS_EQUAL_LOCATION((expected), (actual), nullptr, __FILE__, __LINE__)
 
 #define POINTERS_EQUAL_TEXT(expected, actual, text)                            \
     POINTERS_EQUAL_LOCATION((expected), (actual), text, __FILE__, __LINE__)
@@ -422,7 +417,7 @@
 
 #define FUNCTIONPOINTERS_EQUAL(expected, actual)                               \
     FUNCTIONPOINTERS_EQUAL_LOCATION(                                           \
-        (expected), (actual), NULLPTR, __FILE__, __LINE__                      \
+        (expected), (actual), nullptr, __FILE__, __LINE__                      \
     )
 
 #define FUNCTIONPOINTERS_EQUAL_TEXT(expected, actual, text)                    \
@@ -440,7 +435,7 @@
 // Check two doubles for equality within a tolerance threshold
 #define DOUBLES_EQUAL(expected, actual, threshold)                             \
     DOUBLES_EQUAL_LOCATION(                                                    \
-        expected, actual, threshold, NULLPTR, __FILE__, __LINE__               \
+        expected, actual, threshold, nullptr, __FILE__, __LINE__               \
     )
 
 #define DOUBLES_EQUAL_TEXT(expected, actual, threshold, text)                  \
@@ -456,7 +451,7 @@
     } while (0)
 
 #define MEMCMP_EQUAL(expected, actual, size)                                   \
-    MEMCMP_EQUAL_LOCATION(expected, actual, size, NULLPTR, __FILE__, __LINE__)
+    MEMCMP_EQUAL_LOCATION(expected, actual, size, nullptr, __FILE__, __LINE__)
 
 #define MEMCMP_EQUAL_TEXT(expected, actual, size, text)                        \
     MEMCMP_EQUAL_LOCATION(expected, actual, size, text, __FILE__, __LINE__)
@@ -469,7 +464,7 @@
     } while (0)
 
 #define BITS_EQUAL(expected, actual, mask)                                     \
-    BITS_LOCATION(expected, actual, mask, NULLPTR, __FILE__, __LINE__)
+    BITS_LOCATION(expected, actual, mask, nullptr, __FILE__, __LINE__)
 
 #define BITS_EQUAL_TEXT(expected, actual, mask, text)                          \
     BITS_LOCATION(expected, actual, mask, text, __FILE__, __LINE__)
@@ -491,7 +486,7 @@
 
 #define ENUMS_EQUAL_TYPE(underlying_type, expected, actual)                    \
     ENUMS_EQUAL_TYPE_LOCATION(                                                 \
-        underlying_type, expected, actual, NULLPTR, __FILE__, __LINE__         \
+        underlying_type, expected, actual, nullptr, __FILE__, __LINE__         \
     )
 
 #define ENUMS_EQUAL_TYPE_TEXT(underlying_type, expected, actual, text)         \
@@ -514,7 +509,7 @@
             );                                                                 \
         } else {                                                               \
             UtestShell::getCurrent()->assertLongsEqual(                        \
-                (long)0, long(0), NULLPTR, file, line                          \
+                (long)0, long(0), nullptr, file, line                          \
             );                                                                 \
         }                                                                      \
     } while (0)

@@ -35,11 +35,11 @@ struct JUnitTestCaseResultNode
 {
     JUnitTestCaseResultNode() :
         execTime_(0),
-        failure_(NULLPTR),
+        failure_(nullptr),
         ignored_(false),
         lineNumber_(0),
         checkCount_(0),
-        next_(NULLPTR)
+        next_(nullptr)
     {
     }
 
@@ -61,8 +61,8 @@ struct JUnitTestGroupResult
         totalCheckCount_(0),
         startTime_(0),
         groupExecTime_(0),
-        head_(NULLPTR),
-        tail_(NULLPTR)
+        head_(nullptr),
+        tail_(nullptr)
     {
     }
 
@@ -104,8 +104,8 @@ void JUnitTestOutput::resetTestGroupResult()
         delete cur;
         cur = tmp;
     }
-    impl_->results_.head_ = NULLPTR;
-    impl_->results_.tail_ = NULLPTR;
+    impl_->results_.head_ = nullptr;
+    impl_->results_.tail_ = nullptr;
 }
 
 void JUnitTestOutput::printTestsStarted() {}
@@ -134,7 +134,7 @@ void JUnitTestOutput::printCurrentTestStarted(const UtestShell& test)
     impl_->results_.group_ = test.getGroup();
     impl_->results_.startTime_ = (size_t)GetPlatformSpecificTimeInMillis();
 
-    if (impl_->results_.tail_ == NULLPTR) {
+    if (impl_->results_.tail_ == nullptr) {
         impl_->results_.head_ = impl_->results_.tail_ =
             new JUnitTestCaseResultNode;
     } else {
@@ -174,7 +174,7 @@ SimpleString JUnitTestOutput::encodeFileName(const SimpleString& fileName)
 
 void JUnitTestOutput::setPackageName(const SimpleString& package)
 {
-    if (impl_ != NULLPTR) {
+    if (impl_ != nullptr) {
         impl_->package_ = package;
     }
 }
@@ -295,7 +295,7 @@ void JUnitTestOutput::flush() {}
 
 void JUnitTestOutput::printFailure(const TestFailure& failure)
 {
-    if (impl_->results_.tail_->failure_ == NULLPTR) {
+    if (impl_->results_.tail_->failure_ == nullptr) {
         impl_->results_.failureCount_++;
         impl_->results_.tail_->failure_ = new TestFailure(failure);
     }

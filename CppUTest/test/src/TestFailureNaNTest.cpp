@@ -45,13 +45,13 @@ TEST_GROUP(TestFailureNanAndInf)
 {
     UtestShell* test;
 
-    void setup() _override
+    void setup() override
     {
         test = new UtestShell(
             "groupname", "testname", failFileName, failLineNumber - 1
         );
     }
-    void teardown() _override
+    void teardown() override
     {
         delete test;
     }

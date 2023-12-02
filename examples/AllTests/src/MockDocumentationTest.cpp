@@ -69,7 +69,7 @@ public:
 class ClassFromProductionCodeMock : public ClassFromProductionCode
 {
 public:
-    virtual void importantFunction() _override
+    virtual void importantFunction() override
     {
         mock().actualCall("importantFunction").onObject(this);
     }
@@ -111,11 +111,11 @@ TEST(MockDocumentation, parameters)
 class MyTypeComparator : public MockNamedValueComparator
 {
 public:
-    virtual bool isEqual(const void* object1, const void* object2) _override
+    virtual bool isEqual(const void* object1, const void* object2) override
     {
         return object1 == object2;
     }
-    virtual SimpleString valueToString(const void* object) _override
+    virtual SimpleString valueToString(const void* object) override
     {
         return StringFrom(object);
     }
@@ -223,12 +223,12 @@ TEST(MockDocumentation, CInterface)
 
 TEST_GROUP(FooTestGroup)
 {
-    void setup() _override
+    void setup() override
     {
         // Init stuff
     }
 
-    void teardown() _override
+    void teardown() override
     {
         // Uninit stuff
     }
@@ -246,7 +246,7 @@ TEST(FooTestGroup, MoreFoo)
 
 TEST_GROUP(BarTestGroup)
 {
-    void setup() _override
+    void setup() override
     {
         // Init Bar
     }

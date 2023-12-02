@@ -31,14 +31,14 @@
 TestFilter::TestFilter() :
     strictMatching_(false),
     invertMatching_(false),
-    next_(NULLPTR)
+    next_(nullptr)
 {
 }
 
 TestFilter::TestFilter(const SimpleString& filter) :
     strictMatching_(false),
     invertMatching_(false),
-    next_(NULLPTR)
+    next_(nullptr)
 {
     filter_ = filter;
 }
@@ -46,7 +46,7 @@ TestFilter::TestFilter(const SimpleString& filter) :
 TestFilter::TestFilter(const char* filter) :
     strictMatching_(false),
     invertMatching_(false),
-    next_(NULLPTR)
+    next_(nullptr)
 {
     filter_ = filter;
 }

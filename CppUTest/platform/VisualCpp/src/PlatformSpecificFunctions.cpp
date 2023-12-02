@@ -111,7 +111,7 @@ long (*GetPlatformSpecificTimeInMillis)() = VisualCppTimeInMillis;
 
 static const char* VisualCppTimeString()
 {
-    time_t the_time = time(NULLPTR);
+    time_t the_time = time(nullptr);
     struct tm the_local_time;
     static char dateTime[80];
     LOCALTIME(&the_local_time, &the_time);
@@ -126,7 +126,7 @@ const char* (*GetPlatformSpecificTimeString)() = VisualCppTimeString;
 static int
 VisualCppVSNprintf(char* str, size_t size, const char* format, va_list args)
 {
-    char* buf = NULLPTR;
+    char* buf = nullptr;
     size_t sizeGuess = size;
 
     int result = _VSNPRINTF(str, size, _TRUNCATE, format, args);

@@ -86,7 +86,7 @@ static int waitpid_while_debugging_stub_forced_failures = 0;
 
 extern "C" {
 
-static int (*original_waitpid)(int, int*, int) = NULLPTR;
+static int (*original_waitpid)(int, int*, int) = nullptr;
 
 static int fork_failed_stub(void)
 {
@@ -152,7 +152,7 @@ TEST(
 static int accessViolationTestFunction_()
 {
     return *(volatile int*)
-        NULLPTR; // NOLINT(clang-analyzer-core.NullDereference)
+        nullptr; // NOLINT(clang-analyzer-core.NullDereference)
 }
 
 TEST(
@@ -253,11 +253,11 @@ TEST(
 )
 {
     fixture.setRunTestsInSeperateProcess();
-    fixture.runTestWithMethod(NULLPTR);
+    fixture.runTestWithMethod(nullptr);
     fixture.runTestWithMethod(stoppedTestFunction_);
-    fixture.runTestWithMethod(NULLPTR);
+    fixture.runTestWithMethod(nullptr);
     fixture.runTestWithMethod(exitNonZeroFunction_);
-    fixture.runTestWithMethod(NULLPTR);
+    fixture.runTestWithMethod(nullptr);
     fixture.assertPrintContains("Failed in separate process");
     fixture.assertPrintContains("Stopped in separate process");
     fixture.assertPrintContains(

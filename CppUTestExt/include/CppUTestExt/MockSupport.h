@@ -39,7 +39,7 @@ class MockSupport;
 /* This allows access to "the global" mocking support for easier testing */
 MockSupport& mock(
     const SimpleString& mockName = "",
-    MockFailureReporter* failureReporterForThisCall = NULLPTR
+    MockFailureReporter* failureReporterForThisCall = nullptr
 );
 
 class MockSupport
@@ -66,12 +66,11 @@ public:
     virtual unsigned long int unsignedLongIntReturnValue();
     virtual unsigned long int
     returnUnsignedLongIntValueOrDefault(unsigned long int defaultValue);
-    virtual cpputest_longlong longLongIntReturnValue();
-    virtual cpputest_longlong
-    returnLongLongIntValueOrDefault(cpputest_longlong defaultValue);
-    virtual cpputest_ulonglong unsignedLongLongIntReturnValue();
-    virtual cpputest_ulonglong
-    returnUnsignedLongLongIntValueOrDefault(cpputest_ulonglong defaultValue);
+    virtual long long longLongIntReturnValue();
+    virtual long long returnLongLongIntValueOrDefault(long long defaultValue);
+    virtual unsigned long long unsignedLongLongIntReturnValue();
+    virtual unsigned long long
+    returnUnsignedLongLongIntValueOrDefault(unsigned long long defaultValue);
     virtual unsigned int
     returnUnsignedIntValueOrDefault(unsigned int defaultValue);
     virtual const char* stringReturnValue();

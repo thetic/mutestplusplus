@@ -30,11 +30,11 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestMemoryAllocator.h"
 
-TestMemoryAllocator* SimpleString::stringAllocator_ = NULLPTR;
+TestMemoryAllocator* SimpleString::stringAllocator_ = nullptr;
 
 TestMemoryAllocator* SimpleString::getStringAllocator()
 {
-    if (stringAllocator_ == NULLPTR)
+    if (stringAllocator_ == nullptr)
         return defaultNewArrayAllocator();
     return stringAllocator_;
 }
@@ -128,7 +128,7 @@ char* SimpleString::StrNCpy(char* s1, const char* s2, size_t n)
 {
     char* result = s1;
 
-    if ((NULLPTR == s1) || (0 == n))
+    if ((nullptr == s1) || (0 == n))
         return result;
 
     *s1 = *s2;
@@ -145,7 +145,7 @@ const char* SimpleString::StrStr(const char* s1, const char* s2)
     for (; *s1; s1++)
         if (StrNCmp(s1, s2, StrLen(s2)) == 0)
             return s1;
-    return NULLPTR;
+    return nullptr;
 }
 
 char SimpleString::ToLower(char ch)
@@ -172,7 +172,7 @@ void SimpleString::deallocateInternalBuffer()
 {
     if (buffer_) {
         deallocStringBuffer(buffer_, bufferSize_, __FILE__, __LINE__);
-        buffer_ = NULLPTR;
+        buffer_ = nullptr;
         bufferSize_ = 0;
     }
 }
@@ -229,17 +229,17 @@ const char* SimpleString::getBuffer() const
 }
 
 SimpleString::SimpleString(const char* otherBuffer) :
-    buffer_(NULLPTR),
+    buffer_(nullptr),
     bufferSize_(0)
 {
-    if (otherBuffer == NULLPTR)
+    if (otherBuffer == nullptr)
         setInternalBufferAsEmptyString();
     else
         copyBufferToNewInternalBuffer(otherBuffer);
 }
 
 SimpleString::SimpleString(const char* other, size_t repeatCount) :
-    buffer_(NULLPTR),
+    buffer_(nullptr),
     bufferSize_(0)
 {
     size_t otherStringLength = StrLen(other);
@@ -254,7 +254,7 @@ SimpleString::SimpleString(const char* other, size_t repeatCount) :
 }
 
 SimpleString::SimpleString(const SimpleString& other) :
-    buffer_(NULLPTR),
+    buffer_(nullptr),
     bufferSize_(0)
 {
     copyBufferToNewInternalBuffer(other.getBuffer());
@@ -269,7 +269,7 @@ SimpleString& SimpleString::operator=(const SimpleString& other)
 
 bool SimpleString::contains(const SimpleString& other) const
 {
-    return StrStr(getBuffer(), other.getBuffer()) != NULLPTR;
+    return StrStr(getBuffer(), other.getBuffer()) != nullptr;
 }
 
 bool SimpleString::containsNoCase(const SimpleString& other) const
@@ -306,7 +306,7 @@ size_t SimpleString::count(const SimpleString& substr) const
 {
     size_t num = 0;
     const char* str = getBuffer();
-    const char* strpart = NULLPTR;
+    const char* strpart = nullptr;
     if (*str) {
         strpart = StrStr(str, substr.getBuffer());
     }
@@ -574,7 +574,7 @@ char* SimpleString::copyToNewBuffer(const char* bufferToCopy, size_t bufferSize)
 
 void SimpleString::copyToBuffer(char* bufferToCopy, size_t bufferSize) const
 {
-    if (bufferToCopy == NULLPTR || bufferSize == 0)
+    if (bufferToCopy == nullptr || bufferSize == 0)
         return;
 
     size_t sizeToCopy = (bufferSize - 1 < size()) ? (bufferSize - 1) : size();
@@ -720,115 +720,45 @@ SimpleString StringFrom(const std::nullptr_t value)
 }
 #endif
 
-#if CPPUTEST_USE_LONG_LONG
-
-SimpleString StringFrom(cpputest_longlong value)
+SimpleString StringFrom(long long value)
 {
     return StringFromFormat("%lld", value);
 }
 
-SimpleString StringFrom(cpputest_ulonglong value)
+SimpleString StringFrom(unsigned long long value)
 {
     return StringFromFormat("%llu", value);
 }
 
-SimpleString HexStringFrom(cpputest_longlong value)
+SimpleString HexStringFrom(long long value)
 {
     return StringFromFormat("%llx", value);
 }
 
-SimpleString HexStringFrom(cpputest_ulonglong value)
+SimpleString HexStringFrom(unsigned long long value)
 {
     return StringFromFormat("%llx", value);
 }
 
 SimpleString HexStringFrom(const void* value)
 {
-    return HexStringFrom((cpputest_ulonglong)value);
+    return HexStringFrom((unsigned long long)value);
 }
 
 SimpleString HexStringFrom(void (*value)())
 {
-    return HexStringFrom((cpputest_ulonglong)value);
+    return HexStringFrom((unsigned long long)value);
 }
 
-SimpleString BracketsFormattedHexStringFrom(cpputest_longlong value)
+SimpleString BracketsFormattedHexStringFrom(long long value)
 {
     return BracketsFormattedHexString(HexStringFrom(value));
 }
 
-SimpleString BracketsFormattedHexStringFrom(cpputest_ulonglong value)
+SimpleString BracketsFormattedHexStringFrom(unsigned long long value)
 {
     return BracketsFormattedHexString(HexStringFrom(value));
 }
-
-#else /* CPPUTEST_USE_LONG_LONG */
-
-static long convertPointerToLongValue(const void* value)
-{
-    /*
-     * This way of converting also can convert a 64bit pointer in a 32bit
-     * integer by truncating. This isn't the right way to convert pointers
-     * values and need to change by implementing a proper portable way to
-     * convert pointers to strings.
-     */
-    long* long_value = (long*)&value;
-    return *long_value;
-}
-
-static long convertFunctionPointerToLongValue(void (*value)())
-{
-    /*
-     * This way of converting also can convert a 64bit pointer in a 32bit
-     * integer by truncating. This isn't the right way to convert pointers
-     * values and need to change by implementing a proper portable way to
-     * convert pointers to strings.
-     */
-    long* long_value = (long*)&value;
-    return *long_value;
-}
-
-SimpleString StringFrom(cpputest_longlong)
-{
-    return "<longlong_unsupported>";
-}
-
-SimpleString StringFrom(cpputest_ulonglong)
-{
-    return "<ulonglong_unsupported>";
-}
-
-SimpleString HexStringFrom(cpputest_longlong)
-{
-    return "<longlong_unsupported>";
-}
-
-SimpleString HexStringFrom(cpputest_ulonglong)
-{
-    return "<ulonglong_unsupported>";
-}
-
-SimpleString HexStringFrom(const void* value)
-{
-    return StringFromFormat("%lx", convertPointerToLongValue(value));
-}
-
-SimpleString HexStringFrom(void (*value)())
-{
-    return StringFromFormat("%lx", convertFunctionPointerToLongValue(value));
-}
-
-SimpleString BracketsFormattedHexStringFrom(cpputest_longlong)
-{
-    return "";
-}
-
-SimpleString BracketsFormattedHexStringFrom(cpputest_ulonglong)
-{
-    return "";
-}
-
-#endif /* CPPUTEST_USE_LONG_LONG */
 
 SimpleString StringFrom(double value, int precision)
 {
@@ -996,7 +926,7 @@ SimpleString StringFromOrdinalNumber(unsigned int number)
 
 SimpleStringCollection::SimpleStringCollection()
 {
-    collection_ = NULLPTR;
+    collection_ = nullptr;
     size_ = 0;
 }
 
