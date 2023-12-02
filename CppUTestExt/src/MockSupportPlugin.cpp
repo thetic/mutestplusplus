@@ -25,17 +25,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTestExt/MockSupportPlugin.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
-#include "CppUTestExt/MockSupportPlugin.h"
 
 class MockSupportPluginReporter : public MockFailureReporter
 {
     UtestShell& test_;
     TestResult& result_;
+
 public:
-    MockSupportPluginReporter(UtestShell& test, TestResult& result)
-        : test_(test), result_(result)
+    MockSupportPluginReporter(UtestShell& test, TestResult& result) :
+        test_(test),
+        result_(result)
     {
     }
 
@@ -50,8 +52,8 @@ public:
     }
 };
 
-MockSupportPlugin::MockSupportPlugin(const SimpleString& name)
-    : TestPlugin(name)
+MockSupportPlugin::MockSupportPlugin(const SimpleString& name) :
+    TestPlugin(name)
 {
 }
 
@@ -81,12 +83,16 @@ void MockSupportPlugin::postTestAction(UtestShell& test, TestResult& result)
     mock().removeAllComparatorsAndCopiers();
 }
 
-void MockSupportPlugin::installComparator(const SimpleString& name, MockNamedValueComparator& comparator)
+void MockSupportPlugin::installComparator(
+    const SimpleString& name, MockNamedValueComparator& comparator
+)
 {
     repository_.installComparator(name, comparator);
 }
 
-void MockSupportPlugin::installCopier(const SimpleString& name, MockNamedValueCopier& copier)
+void MockSupportPlugin::installCopier(
+    const SimpleString& name, MockNamedValueCopier& copier
+)
 {
     repository_.installCopier(name, copier);
 }

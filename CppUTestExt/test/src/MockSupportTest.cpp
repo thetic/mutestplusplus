@@ -25,25 +25,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTestExt/MockSupport.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestTestingFixture.h"
-#include "CppUTestExt/MockSupport.h"
 #include "CppUTestExt/MockExpectedCall.h"
 #include "CppUTestExt/MockFailure.h"
 #include "MockFailureReporterForTest.h"
 
 TEST_GROUP(MockSupportTest)
 {
-  MockExpectedCallsListForTest expectations;
-  MockFailureReporterInstaller failureReporterInstaller;
+    MockExpectedCallsListForTest expectations;
+    MockFailureReporterInstaller failureReporterInstaller;
 
-  void teardown() _override
-  {
-      mock().checkExpectations();
-      CHECK_NO_MOCK_FAILURE();
-      MockFailureReporterForTest::clearReporter();
-      mock().clear();
-  }
+    void teardown() _override
+    {
+        mock().checkExpectations();
+        CHECK_NO_MOCK_FAILURE();
+        MockFailureReporterForTest::clearReporter();
+        mock().clear();
+    }
 };
 
 TEST(MockSupportTest, setDataForUnsignedIntegerValues)
@@ -109,28 +109,30 @@ TEST(MockSupportTest, setDataDouble)
 
 TEST(MockSupportTest, setDataPointer)
 {
-    void * ptr = (void*) 0x001;
+    void* ptr = (void*)0x001;
     mock().setData("data", ptr);
     POINTERS_EQUAL(ptr, mock().getData("data").getPointerValue());
 }
 
 TEST(MockSupportTest, setConstDataPointer)
 {
-    const void * ptr = (const void*) 0x001;
+    const void* ptr = (const void*)0x001;
     mock().setData("data", ptr);
     POINTERS_EQUAL(ptr, mock().getData("data").getConstPointerValue());
 }
 
 TEST(MockSupportTest, setDataFunctionPointer)
 {
-    void (*ptr)() = (void(*)()) 0x001;
+    void (*ptr)() = (void (*)())0x001;
     mock().setData("data", ptr);
-    FUNCTIONPOINTERS_EQUAL(ptr, mock().getData("data").getFunctionPointerValue());
+    FUNCTIONPOINTERS_EQUAL(
+        ptr, mock().getData("data").getFunctionPointerValue()
+    );
 }
 
 TEST(MockSupportTest, setDataObject)
 {
-    void * ptr = (void*) 0x001;
+    void* ptr = (void*)0x001;
     mock().setDataObject("data", "type", ptr);
     POINTERS_EQUAL(ptr, mock().getData("data").getObjectPointer());
     STRCMP_EQUAL("type", mock().getData("data").getType().asCharString());
@@ -138,7 +140,7 @@ TEST(MockSupportTest, setDataObject)
 
 TEST(MockSupportTest, setDataConstObject)
 {
-    void * ptr = (void*) 0x011;
+    void* ptr = (void*)0x011;
     mock().setDataConstObject("data", "type", ptr);
     POINTERS_EQUAL(ptr, mock().getData("data").getConstObjectPointer());
     STRCMP_EQUAL("type", mock().getData("data").getType().asCharString());
@@ -148,8 +150,16 @@ TEST(MockSupportTest, tracing)
 {
     mock().tracing(true);
 
-    mock().actualCall("boo").withParameter("double", 1.0).withParameter("int", 1).withParameter("string", "string");
-    mock("scope").actualCall("foo").withParameter("double", 1.0).withParameter("int", 1).withParameter("string", "string");
+    mock()
+        .actualCall("boo")
+        .withParameter("double", 1.0)
+        .withParameter("int", 1)
+        .withParameter("string", "string");
+    mock("scope")
+        .actualCall("foo")
+        .withParameter("double", 1.0)
+        .withParameter("int", 1)
+        .withParameter("string", "string");
     mock().checkExpectations();
 
     STRCMP_CONTAINS("boo", mock().getTraceOutput());
@@ -183,21 +193,30 @@ TEST_GROUP(MockSupportTestWithFixture)
 static void CHECK_EXPECTED_MOCK_FAILURE_LOCATION_failedTestMethod_()
 {
     MockExpectedCallsList list;
-    MockUnexpectedCallHappenedFailure expectedFailure(UtestShell::getCurrent(), "unexpected", list);
+    MockUnexpectedCallHappenedFailure expectedFailure(
+        UtestShell::getCurrent(), "unexpected", list
+    );
     mock().actualCall("boo");
     CHECK_EXPECTED_MOCK_FAILURE_LOCATION(expectedFailure, "file", 1);
 }
 
 TEST(MockSupportTestWithFixture, CHECK_EXPECTED_MOCK_FAILURE_LOCATION_failed)
 {
-    mock().setMockFailureStandardReporter(MockFailureReporterForTest::getReporter());
-    fixture.setTestFunction(CHECK_EXPECTED_MOCK_FAILURE_LOCATION_failedTestMethod_);
+    mock().setMockFailureStandardReporter(
+        MockFailureReporterForTest::getReporter()
+    );
+    fixture.setTestFunction(
+        CHECK_EXPECTED_MOCK_FAILURE_LOCATION_failedTestMethod_
+    );
     fixture.runAllTests();
     fixture.assertPrintContains("MockFailures are different.");
     fixture.assertPrintContains("Expected MockFailure:");
-    fixture.assertPrintContains("Mock Failure: Unexpected call to function: unexpected");
+    fixture.assertPrintContains(
+        "Mock Failure: Unexpected call to function: unexpected"
+    );
     fixture.assertPrintContains("Actual MockFailure:");
-    fixture.assertPrintContains("Mock Failure: Unexpected call to function: boo");
+    fixture.assertPrintContains("Mock Failure: Unexpected call to function: boo"
+    );
 }
 
 static void CHECK_NO_MOCK_FAILURE_LOCATION_failedTestMethod_()
@@ -208,11 +227,14 @@ static void CHECK_NO_MOCK_FAILURE_LOCATION_failedTestMethod_()
 
 TEST(MockSupportTestWithFixture, CHECK_NO_MOCK_FAILURE_LOCATION_failed)
 {
-    mock().setMockFailureStandardReporter(MockFailureReporterForTest::getReporter());
+    mock().setMockFailureStandardReporter(
+        MockFailureReporterForTest::getReporter()
+    );
     fixture.setTestFunction(CHECK_NO_MOCK_FAILURE_LOCATION_failedTestMethod_);
     fixture.runAllTests();
     fixture.assertPrintContains("Unexpected mock failure:");
-    fixture.assertPrintContains("Mock Failure: Unexpected call to function: boo");
+    fixture.assertPrintContains("Mock Failure: Unexpected call to function: boo"
+    );
 }
 
 static bool cpputestHasCrashed;
@@ -244,7 +266,9 @@ TEST(MockSupportTestWithFixture, shouldCrashOnFailure)
     UtestShell::resetCrashMethod();
 }
 
-TEST(MockSupportTestWithFixture, ShouldNotCrashOnFailureAfterCrashMethodWasReset)
+TEST(
+    MockSupportTestWithFixture, ShouldNotCrashOnFailureAfterCrashMethodWasReset
+)
 {
     cpputestHasCrashed = false;
     UtestShell::setCrashMethod(crashMethod);
@@ -276,11 +300,13 @@ TEST(MockSupportTestWithFixture, failedMockShouldFailAgainWhenRepeated)
 {
     fixture.setTestFunction(unexpectedCallTestFunction_);
     int repeatCount = 2;
-    while(repeatCount--)
-    {
+    while (repeatCount--) {
         fixture.runAllTests();
         fixture.assertPrintContains("Unexpected call to function: unexpected");
-        fixture.assertPrintContains("Errors (1 failures, 1 tests, 1 ran, 0 checks, 0 ignored, 0 filtered out");
+        fixture.assertPrintContains(
+            "Errors (1 failures, 1 tests, 1 ran, 0 checks, 0 ignored, 0 "
+            "filtered out"
+        );
         fixture.flushOutputAndResetResult();
     }
 }

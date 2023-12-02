@@ -25,9 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestHarness.h"
 #include "CppUTest/TestTestingFixture.h"
 
 TEST_GROUP(TestMemoryAllocatorTest)
@@ -83,7 +83,9 @@ TEST(TestMemoryAllocatorTest, SetCurrentMallocAllocator)
 TEST(TestMemoryAllocatorTest, MemoryAllocation)
 {
     allocator = new TestMemoryAllocator();
-    allocator->free_memory(allocator->alloc_memory(100, "file", 1), 100, "file", 1);
+    allocator->free_memory(
+        allocator->alloc_memory(100, "file", 1), 100, "file", 1
+    );
 }
 
 TEST(TestMemoryAllocatorTest, MallocNames)
@@ -102,12 +104,15 @@ TEST(TestMemoryAllocatorTest, NewNames)
 
 TEST(TestMemoryAllocatorTest, NewArrayNames)
 {
-    STRCMP_EQUAL("Standard New [] Allocator", defaultNewArrayAllocator()->name());
+    STRCMP_EQUAL(
+        "Standard New [] Allocator", defaultNewArrayAllocator()->name()
+    );
     STRCMP_EQUAL("new []", defaultNewArrayAllocator()->alloc_name());
     STRCMP_EQUAL("delete []", defaultNewArrayAllocator()->free_name());
 }
 
-#define MAX_SIZE_FOR_ALLOC ((size_t) -1 > (unsigned short)-1) ? (size_t)(-97) : (size_t)(-1)
+#define MAX_SIZE_FOR_ALLOC                                                     \
+    ((size_t)-1 > (unsigned short)-1) ? (size_t)(-97) : (size_t)(-1)
 
 static void failTryingToAllocateTooMuchMemory(void)
 {
@@ -123,13 +128,10 @@ TEST(TestMemoryAllocatorTest, TryingToAllocateTooMuchFailsTest)
     fixture.assertPrintContains("malloc returned null pointer");
 }
 
-class MemoryAccountantExecFunction
-    : public ExecFunction
+class MemoryAccountantExecFunction : public ExecFunction
 {
 public:
-    virtual ~MemoryAccountantExecFunction() _destructor_override
-    {
-    }
+    virtual ~MemoryAccountantExecFunction() _destructor_override {}
 
     void (*testFunction_)(MemoryAccountant*);
     MemoryAccountant* parameter_;
@@ -223,7 +225,11 @@ TEST(TestMemoryAccountant, countMaximumAllocationsAtATime)
 
 TEST(TestMemoryAccountant, reportNoAllocations)
 {
-    STRCMP_EQUAL("CppUTest Memory Accountant has not noticed any allocations or deallocations. Sorry\n", accountant.report().asCharString());
+    STRCMP_EQUAL(
+        "CppUTest Memory Accountant has not noticed any allocations or "
+        "deallocations. Sorry\n",
+        accountant.report().asCharString()
+    );
 }
 
 TEST(TestMemoryAccountant, reportAllocations)
@@ -235,12 +241,15 @@ TEST(TestMemoryAccountant, reportAllocations)
     accountant.alloc(4);
     accountant.dealloc(4);
     accountant.alloc(4);
-    STRCMP_EQUAL("CppUTest Memory Accountant report:\n"
-                 "Allocation size     # allocations    # deallocations   max # allocations at one time\n"
-                 "    4                   2                1                 1\n"
-                 "    8                   0                3                 0\n"
-                 "   Thank you for your business\n"
-                 , accountant.report().asCharString());
+    STRCMP_EQUAL(
+        "CppUTest Memory Accountant report:\n"
+        "Allocation size     # allocations    # deallocations   max # "
+        "allocations at one time\n"
+        "    4                   2                1                 1\n"
+        "    8                   0                3                 0\n"
+        "   Thank you for your business\n",
+        accountant.report().asCharString()
+    );
 }
 
 TEST(TestMemoryAccountant, reportAllocationsWithSizeZero)
@@ -251,14 +260,16 @@ TEST(TestMemoryAccountant, reportAllocationsWithSizeZero)
     accountant.dealloc(4);
     accountant.alloc(4);
 
-    STRCMP_EQUAL("CppUTest Memory Accountant report:\n"
-                 "Allocation size     # allocations    # deallocations   max # allocations at one time\n"
-                 "other                   0                1                 0\n"
-                 "    4                   1                2                 1\n"
-                 "   Thank you for your business\n"
-                 , accountant.report().asCharString());
+    STRCMP_EQUAL(
+        "CppUTest Memory Accountant report:\n"
+        "Allocation size     # allocations    # deallocations   max # "
+        "allocations at one time\n"
+        "other                   0                1                 0\n"
+        "    4                   1                2                 1\n"
+        "   Thank you for your business\n",
+        accountant.report().asCharString()
+    );
 }
-
 
 static void failUseCacheSizesAfterAllocation_(MemoryAccountant* accountant)
 {
@@ -274,7 +285,10 @@ TEST(TestMemoryAccountant, withCacheSizesFailsWhenAlreadyAllocatedMemory)
 
     fixture.runAllTests();
 
-    fixture.assertPrintContains("MemoryAccountant: Cannot set cache sizes as allocations already occured!");
+    fixture.assertPrintContains(
+        "MemoryAccountant: Cannot set cache sizes as allocations already "
+        "occured!"
+    );
 }
 
 TEST(TestMemoryAccountant, reportWithCacheSizesEmpty)
@@ -284,13 +298,15 @@ TEST(TestMemoryAccountant, reportWithCacheSizesEmpty)
     accountant.useCacheSizes(cacheSizes, 0);
     accountant.alloc(4);
 
-    STRCMP_EQUAL("CppUTest Memory Accountant report (with cache sizes):\n"
-                 "Cache size          # allocations    # deallocations   max # allocations at one time\n"
-                 "other                   1                0                 1\n"
-                 "   Thank you for your business\n"
-                 , accountant.report().asCharString());
+    STRCMP_EQUAL(
+        "CppUTest Memory Accountant report (with cache sizes):\n"
+        "Cache size          # allocations    # deallocations   max # "
+        "allocations at one time\n"
+        "other                   1                0                 1\n"
+        "   Thank you for your business\n",
+        accountant.report().asCharString()
+    );
 }
-
 
 TEST(TestMemoryAccountant, reportWithCacheSizes)
 {
@@ -304,12 +320,15 @@ TEST(TestMemoryAccountant, reportWithCacheSizes)
     accountant.alloc(4);
     accountant.dealloc(4);
     accountant.alloc(4);
-    STRCMP_EQUAL("CppUTest Memory Accountant report (with cache sizes):\n"
-                 "Cache size          # allocations    # deallocations   max # allocations at one time\n"
-                 "    4                   2                1                 1\n"
-                 "other                   0                3                 0\n"
-                 "   Thank you for your business\n"
-                 , accountant.report().asCharString());
+    STRCMP_EQUAL(
+        "CppUTest Memory Accountant report (with cache sizes):\n"
+        "Cache size          # allocations    # deallocations   max # "
+        "allocations at one time\n"
+        "    4                   2                1                 1\n"
+        "other                   0                3                 0\n"
+        "   Thank you for your business\n",
+        accountant.report().asCharString()
+    );
 }
 
 TEST(TestMemoryAccountant, reportWithCacheSizesMultipleCaches)
@@ -324,25 +343,29 @@ TEST(TestMemoryAccountant, reportWithCacheSizesMultipleCaches)
     accountant.alloc(4);
     accountant.dealloc(4);
     accountant.alloc(4);
-    STRCMP_EQUAL("CppUTest Memory Accountant report (with cache sizes):\n"
-                 "Cache size          # allocations    # deallocations   max # allocations at one time\n"
-                 "    4                   2                1                 1\n"
-                 "   10                   1                0                 1\n"
-                 "   20                   2                0                 2\n"
-                 "other                   0                0                 0\n"
-                 "   Thank you for your business\n"
-                 , accountant.report().asCharString());
+    STRCMP_EQUAL(
+        "CppUTest Memory Accountant report (with cache sizes):\n"
+        "Cache size          # allocations    # deallocations   max # "
+        "allocations at one time\n"
+        "    4                   2                1                 1\n"
+        "   10                   1                0                 1\n"
+        "   20                   2                0                 2\n"
+        "other                   0                0                 0\n"
+        "   Thank you for your business\n",
+        accountant.report().asCharString()
+    );
 }
-
 
 TEST_GROUP(AccountingTestMemoryAllocator)
 {
     MemoryAccountant accountant;
-    AccountingTestMemoryAllocator *allocator;
+    AccountingTestMemoryAllocator* allocator;
 
     void setup() _override
     {
-        allocator = new AccountingTestMemoryAllocator(accountant, getCurrentMallocAllocator());
+        allocator = new AccountingTestMemoryAllocator(
+            accountant, getCurrentMallocAllocator()
+        );
     }
 
     void teardown() _override
@@ -361,14 +384,17 @@ TEST(AccountingTestMemoryAllocator, canAllocateAndAccountMemory)
     LONGS_EQUAL(1, accountant.totalDeallocationsOfSize(10));
 }
 
-TEST(AccountingTestMemoryAllocator, canAllocateAndAccountMemoryMultipleAllocations)
+TEST(
+    AccountingTestMemoryAllocator,
+    canAllocateAndAccountMemoryMultipleAllocations
+)
 {
     char* memory1 = allocator->alloc_memory(10, __FILE__, __LINE__);
     char* memory2 = allocator->alloc_memory(8, __FILE__, __LINE__);
     char* memory3 = allocator->alloc_memory(12, __FILE__, __LINE__);
 
-    allocator->free_memory(memory1, 10,  __FILE__, __LINE__);
-    allocator->free_memory(memory3, 12,  __FILE__, __LINE__);
+    allocator->free_memory(memory1, 10, __FILE__, __LINE__);
+    allocator->free_memory(memory3, 12, __FILE__, __LINE__);
 
     char* memory4 = allocator->alloc_memory(15, __FILE__, __LINE__);
     char* memory5 = allocator->alloc_memory(20, __FILE__, __LINE__);
@@ -387,9 +413,13 @@ TEST(AccountingTestMemoryAllocator, canAllocateAndAccountMemoryMultipleAllocatio
     LONGS_EQUAL(7, accountant.totalDeallocations());
 }
 
-TEST(AccountingTestMemoryAllocator, useOriginalAllocatorWhenDeallocatingMemoryNotAllocatedByAllocator)
+TEST(
+    AccountingTestMemoryAllocator,
+    useOriginalAllocatorWhenDeallocatingMemoryNotAllocatedByAllocator
+)
 {
-    char* memory = getCurrentMallocAllocator()->alloc_memory(10, __FILE__, __LINE__);
+    char* memory =
+        getCurrentMallocAllocator()->alloc_memory(10, __FILE__, __LINE__);
     allocator->free_memory(memory, 10, __FILE__, __LINE__);
 
     LONGS_EQUAL(0, accountant.totalAllocations());

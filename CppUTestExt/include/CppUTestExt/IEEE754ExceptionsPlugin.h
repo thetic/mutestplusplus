@@ -30,10 +30,12 @@
 
 #include "CppUTest/TestPlugin.h"
 
-class IEEE754ExceptionsPlugin: public TestPlugin
+class IEEE754ExceptionsPlugin : public TestPlugin
 {
 public:
-    IEEE754ExceptionsPlugin(const SimpleString& name = "IEEE754ExceptionsPlugin");
+    IEEE754ExceptionsPlugin(
+        const SimpleString& name = "IEEE754ExceptionsPlugin"
+    );
 
     virtual void preTestAction(UtestShell& test, TestResult& result) _override;
     virtual void postTestAction(UtestShell& test, TestResult& result) _override;
@@ -46,7 +48,9 @@ public:
     static bool checkIeee754DivByZeroExceptionFlag();
 
 private:
-    void ieee754Check(UtestShell& test, TestResult& result, int flag, const char* text);
+    void ieee754Check(
+        UtestShell& test, TestResult& result, int flag, const char* text
+    );
     static bool inexactDisabled_;
 };
 

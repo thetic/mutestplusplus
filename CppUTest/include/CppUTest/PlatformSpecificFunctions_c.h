@@ -33,16 +33,17 @@
  *
  *******************************************************************************/
 
-
 #ifndef PLATFORMSPECIFICFUNCTIONS_C_H_
 #define PLATFORMSPECIFICFUNCTIONS_C_H_
+
+#include "CppUTest/StandardCLibrary.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Jumping operations. They manage their own jump buffers */
-extern int (*PlatformSpecificSetJmp)(void (*function) (void*), void* data);
+extern int (*PlatformSpecificSetJmp)(void (*function)(void*), void* data);
 extern void (*PlatformSpecificLongJmp)(void);
 extern void (*PlatformSpecificRestoreJumpBuffer)(void);
 
@@ -51,21 +52,27 @@ extern long (*GetPlatformSpecificTimeInMillis)(void);
 extern const char* (*GetPlatformSpecificTimeString)(void);
 
 /* String operations */
-extern int (*PlatformSpecificVSNprintf)(char *str, size_t size, const char* format, va_list va_args_list);
+extern int (*PlatformSpecificVSNprintf)(
+    char* str, size_t size, const char* format, va_list va_args_list
+);
 
 /* Misc */
 extern double (*PlatformSpecificFabs)(double d);
 extern int (*PlatformSpecificIsNan)(double d);
 extern int (*PlatformSpecificIsInf)(double d);
-extern int (*PlatformSpecificAtExit)(void(*func)(void));
+extern int (*PlatformSpecificAtExit)(void (*func)(void));
 
 /* IO operations */
 typedef void* PlatformSpecificFile;
 
 extern PlatformSpecificFile PlatformSpecificStdOut;
 
-extern PlatformSpecificFile (*PlatformSpecificFOpen)(const char* filename, const char* flag);
-extern void (*PlatformSpecificFPuts)(const char* str, PlatformSpecificFile file);
+extern PlatformSpecificFile (*PlatformSpecificFOpen)(
+    const char* filename, const char* flag
+);
+extern void (*PlatformSpecificFPuts)(
+    const char* str, PlatformSpecificFile file
+);
 extern void (*PlatformSpecificFClose)(PlatformSpecificFile file);
 
 extern void (*PlatformSpecificFlush)(void);

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2014, Michael Feathers, James Grenning, Bas Vodde and Chen YewMing
- * All rights reserved.
+ * Copyright (c) 2014, Michael Feathers, James Grenning, Bas Vodde and Chen
+ * YewMing All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -37,18 +37,19 @@ public:
     ~SimpleMutex(void);
     void Lock(void);
     void Unlock(void);
+
 private:
     PlatformSpecificMutex psMtx;
 };
 
-
 class ScopedMutexLock
 {
 public:
-    ScopedMutexLock(SimpleMutex *);
+    ScopedMutexLock(SimpleMutex*);
     ~ScopedMutexLock(void);
+
 private:
-    SimpleMutex * mutex;
+    SimpleMutex* mutex;
 };
 
 #endif

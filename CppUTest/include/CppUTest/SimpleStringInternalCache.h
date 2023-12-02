@@ -48,26 +48,40 @@ public:
 
     void clearCache();
     void clearAllIncludingCurrentlyUsedMemory();
+
 private:
     void printDeallocatingUnknownMemory(char* memory);
 
-    enum { amountOfInternalCacheNodes = 5};
+    enum
+    {
+        amountOfInternalCacheNodes = 5
+    };
     bool isCached(size_t size);
     size_t getIndexForCache(size_t size);
     SimpleStringInternalCacheNode* getCacheNodeFromSize(size_t size);
 
     SimpleStringInternalCacheNode* createInternalCacheNodes();
-    void destroyInternalCacheNode(SimpleStringInternalCacheNode * node);
-    SimpleStringMemoryBlock* createSimpleStringMemoryBlock(size_t sizeOfString, SimpleStringMemoryBlock* next);
-    void destroySimpleStringMemoryBlock(SimpleStringMemoryBlock * block, size_t size);
-    void destroySimpleStringMemoryBlockList(SimpleStringMemoryBlock * block, size_t size);
+    void destroyInternalCacheNode(SimpleStringInternalCacheNode* node);
+    SimpleStringMemoryBlock* createSimpleStringMemoryBlock(
+        size_t sizeOfString, SimpleStringMemoryBlock* next
+    );
+    void
+    destroySimpleStringMemoryBlock(SimpleStringMemoryBlock* block, size_t size);
+    void destroySimpleStringMemoryBlockList(
+        SimpleStringMemoryBlock* block, size_t size
+    );
 
-    SimpleStringMemoryBlock* reserveCachedBlockFrom(SimpleStringInternalCacheNode* node);
-    void releaseCachedBlockFrom(char* memory, SimpleStringInternalCacheNode* node);
+    SimpleStringMemoryBlock*
+    reserveCachedBlockFrom(SimpleStringInternalCacheNode* node);
+    void
+    releaseCachedBlockFrom(char* memory, SimpleStringInternalCacheNode* node);
     void releaseNonCachedMemory(char* memory, size_t size);
 
-    SimpleStringMemoryBlock* allocateNewCacheBlockFrom(SimpleStringInternalCacheNode* node);
-    SimpleStringMemoryBlock* addToSimpleStringMemoryBlockList(SimpleStringMemoryBlock* newBlock, SimpleStringMemoryBlock* previousHead);
+    SimpleStringMemoryBlock*
+    allocateNewCacheBlockFrom(SimpleStringInternalCacheNode* node);
+    SimpleStringMemoryBlock* addToSimpleStringMemoryBlockList(
+        SimpleStringMemoryBlock* newBlock, SimpleStringMemoryBlock* previousHead
+    );
 
     TestMemoryAllocator* allocator_;
     SimpleStringInternalCacheNode* cache_;
@@ -78,11 +92,16 @@ private:
 class SimpleStringCacheAllocator : public TestMemoryAllocator
 {
 public:
-    SimpleStringCacheAllocator(SimpleStringInternalCache& cache, TestMemoryAllocator* previousAllocator);
+    SimpleStringCacheAllocator(
+        SimpleStringInternalCache& cache, TestMemoryAllocator* previousAllocator
+    );
     virtual ~SimpleStringCacheAllocator() _destructor_override;
 
-    virtual char* alloc_memory(size_t size, const char* file, size_t line) _override;
-    virtual void free_memory(char* memory, size_t size, const char* file, size_t line) _override;
+    virtual char*
+    alloc_memory(size_t size, const char* file, size_t line) _override;
+    virtual void free_memory(
+        char* memory, size_t size, const char* file, size_t line
+    ) _override;
 
     virtual const char* name() const _override;
     virtual const char* alloc_name() const _override;
@@ -90,6 +109,7 @@ public:
 
     virtual TestMemoryAllocator* actualAllocator() _override;
     TestMemoryAllocator* originalAllocator();
+
 private:
     SimpleStringInternalCache& cache_;
     TestMemoryAllocator* originalAllocator_;

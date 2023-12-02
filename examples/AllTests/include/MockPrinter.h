@@ -35,8 +35,8 @@
 //  MockPrinter is responsible for providing a test stub for Printer
 //
 ///////////////////////////////////////////////////////////////////////////////
-#include "Printer.h"
 #include "CppUTest/SimpleString.h"
+#include "Printer.h"
 #include <stdlib.h>
 #include <string>
 

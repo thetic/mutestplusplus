@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
 #include "CppUTest/SimpleStringInternalCache.h"
+#include "CppUTest/TestHarness.h"
 #include "CppUTest/TestTestingFixture.h"
 
 class TestFunctionWithCache : public ExecFunction
@@ -123,7 +123,6 @@ TEST(SimpleStringInternalCache, allocatingMoreThanCacheAvailable)
     cache.setAllocator(allocator);
 }
 
-
 TEST(SimpleStringInternalCache, allocationWillReuseTheAllocatedBlocks)
 {
     cache.setAllocator(allocator);
@@ -136,8 +135,9 @@ TEST(SimpleStringInternalCache, allocationWillReuseTheAllocatedBlocks)
     LONGS_EQUAL(1, accountant.totalAllocationsOfSize(32));
 }
 
-
-TEST(SimpleStringInternalCache, multipleDifferentSizeAllocationsAndDeallocations)
+TEST(
+    SimpleStringInternalCache, multipleDifferentSizeAllocationsAndDeallocations
+)
 {
     cache.setAllocator(allocator);
 
@@ -175,7 +175,10 @@ TEST(SimpleStringInternalCache, deallocOfCachedMemoryWillNotDealloc)
     LONGS_EQUAL(0, accountant.totalDeallocationsOfSize(32));
 }
 
-TEST(SimpleStringInternalCache, clearCacheWillRemoveAllCachedMemoryButNotAllUsedMemory)
+TEST(
+    SimpleStringInternalCache,
+    clearCacheWillRemoveAllCachedMemoryButNotAllUsedMemory
+)
 {
     cache.setAllocator(allocator);
 
@@ -200,8 +203,6 @@ TEST(SimpleStringInternalCache, clearAllIncludingCurrentlyUsedMemory)
 
     LONGS_EQUAL(1, accountant.totalDeallocationsOfSize(64));
 }
-
-
 
 TEST(SimpleStringInternalCache, allocatingLargerStringThanCached)
 {
@@ -230,8 +231,10 @@ TEST(SimpleStringInternalCache, allocatingMultipleLargerStringThanCached)
     LONGS_EQUAL(3, accountant.totalDeallocationsOfSize(1234));
 }
 
-
-TEST(SimpleStringInternalCache, clearAllIncludingCurrentlyUsedMemoryAlsoReleasesLargeNonCachesMemory)
+TEST(
+    SimpleStringInternalCache,
+    clearAllIncludingCurrentlyUsedMemoryAlsoReleasesLargeNonCachesMemory
+)
 {
     cache.setAllocator(allocator);
 
@@ -245,44 +248,66 @@ TEST(SimpleStringInternalCache, clearAllIncludingCurrentlyUsedMemoryAlsoReleases
     LONGS_EQUAL(3, accountant.totalDeallocationsOfSize(1234));
 }
 
-static void deallocatingStringMemoryThatWasntAllocatedWithCache_(SimpleStringInternalCache* cache, size_t allocationSize)
+static void deallocatingStringMemoryThatWasntAllocatedWithCache_(
+    SimpleStringInternalCache* cache, size_t allocationSize
+)
 {
-    char* mem = defaultMallocAllocator()->alloc_memory(allocationSize, __FILE__, __LINE__);
+    char* mem = defaultMallocAllocator()->alloc_memory(
+        allocationSize, __FILE__, __LINE__
+    );
     mem[0] = 'B';
     mem[1] = 'a';
     mem[2] = 's';
     mem[3] = '\0';
     cache->dealloc(mem, allocationSize);
-    defaultMallocAllocator()->free_memory(mem, allocationSize, __FILE__, __LINE__);
+    defaultMallocAllocator()->free_memory(
+        mem, allocationSize, __FILE__, __LINE__
+    );
 }
 
-TEST(SimpleStringInternalCache, deallocatingMemoryThatWasntAllocatedWhileCacheWasInPlaceProducesWarning)
+TEST(
+    SimpleStringInternalCache,
+    deallocatingMemoryThatWasntAllocatedWhileCacheWasInPlaceProducesWarning
+)
 {
-    testFunction.testFunction = deallocatingStringMemoryThatWasntAllocatedWithCache_;
+    testFunction.testFunction =
+        deallocatingStringMemoryThatWasntAllocatedWithCache_;
     testFunction.allocationSize = 123;
 
     cache.setAllocator(allocator);
     fixture.runAllTests();
 
-    fixture.assertPrintContains("\nWARNING: Attempting to deallocate a String buffer that was allocated while not caching. Ignoring it!\n"
-                                "This is likely due statics and will cause problems.\n"
-                                "Only warning once to avoid recursive warnings.\n"
-                                "String we are deallocating: \"Bas\"\n");
-
+    fixture.assertPrintContains(
+        "\nWARNING: Attempting to deallocate a String buffer that was "
+        "allocated while not caching. Ignoring it!\n"
+        "This is likely due statics and will cause problems.\n"
+        "Only warning once to avoid recursive warnings.\n"
+        "String we are deallocating: \"Bas\"\n"
+    );
 }
 
-static void deallocatingStringMemoryTwiceThatWasntAllocatedWithCache_(SimpleStringInternalCache* cache, size_t allocationSize)
+static void deallocatingStringMemoryTwiceThatWasntAllocatedWithCache_(
+    SimpleStringInternalCache* cache, size_t allocationSize
+)
 {
-    char* mem = defaultMallocAllocator()->alloc_memory(allocationSize, __FILE__, __LINE__);
+    char* mem = defaultMallocAllocator()->alloc_memory(
+        allocationSize, __FILE__, __LINE__
+    );
     mem[0] = '\0';
     cache->dealloc(mem, allocationSize);
     cache->dealloc(mem, allocationSize);
-    defaultMallocAllocator()->free_memory(mem, allocationSize, __FILE__, __LINE__);
+    defaultMallocAllocator()->free_memory(
+        mem, allocationSize, __FILE__, __LINE__
+    );
 }
 
-TEST(SimpleStringInternalCache, deallocatingMemoryThatWasntAllocatedWhileCacheWasInPlaceProducesWarningButOnlyOnce)
+TEST(
+    SimpleStringInternalCache,
+    deallocatingMemoryThatWasntAllocatedWhileCacheWasInPlaceProducesWarningButOnlyOnce
+)
 {
-    testFunction.testFunction = deallocatingStringMemoryTwiceThatWasntAllocatedWithCache_;
+    testFunction.testFunction =
+        deallocatingStringMemoryTwiceThatWasntAllocatedWithCache_;
     testFunction.allocationSize = 123;
 
     cache.setAllocator(allocator);
@@ -291,24 +316,34 @@ TEST(SimpleStringInternalCache, deallocatingMemoryThatWasntAllocatedWhileCacheWa
     LONGS_EQUAL(1, fixture.getOutput().count("WARNING"));
 }
 
-TEST(SimpleStringInternalCache, deallocatingLargeMemoryThatWasntAllocatedWhileCacheWasInPlaceProducesWarning)
+TEST(
+    SimpleStringInternalCache,
+    deallocatingLargeMemoryThatWasntAllocatedWhileCacheWasInPlaceProducesWarning
+)
 {
-    testFunction.testFunction = deallocatingStringMemoryThatWasntAllocatedWithCache_;
+    testFunction.testFunction =
+        deallocatingStringMemoryThatWasntAllocatedWithCache_;
     testFunction.allocationSize = 12345;
 
     cache.setAllocator(allocator);
     fixture.runAllTests();
 
-    fixture.assertPrintContains("\nWARNING: Attempting to deallocate a String buffer that was allocated while not caching. Ignoring it!\n"
-                                "This is likely due statics and will cause problems.\n"
-                                "Only warning once to avoid recursive warnings.\n"
-                                "String we are deallocating: \"Bas\"\n");
-
+    fixture.assertPrintContains(
+        "\nWARNING: Attempting to deallocate a String buffer that was "
+        "allocated while not caching. Ignoring it!\n"
+        "This is likely due statics and will cause problems.\n"
+        "Only warning once to avoid recursive warnings.\n"
+        "String we are deallocating: \"Bas\"\n"
+    );
 }
 
-TEST(SimpleStringInternalCache, deallocatingLargeMemoryThatWasntAllocatedWhileCacheWasInPlaceProducesWarningButOnlyOnce)
+TEST(
+    SimpleStringInternalCache,
+    deallocatingLargeMemoryThatWasntAllocatedWhileCacheWasInPlaceProducesWarningButOnlyOnce
+)
 {
-    testFunction.testFunction = deallocatingStringMemoryTwiceThatWasntAllocatedWithCache_;
+    testFunction.testFunction =
+        deallocatingStringMemoryTwiceThatWasntAllocatedWithCache_;
     testFunction.allocationSize = 12345;
 
     cache.setAllocator(allocator);
@@ -326,7 +361,9 @@ TEST_GROUP(SimpleStringCacheAllocator)
 
     void setup() _override
     {
-        accountingAllocator = new AccountingTestMemoryAllocator(accountant, defaultMallocAllocator());
+        accountingAllocator = new AccountingTestMemoryAllocator(
+            accountant, defaultMallocAllocator()
+        );
         allocator = new SimpleStringCacheAllocator(cache, accountingAllocator);
     }
 
@@ -341,13 +378,13 @@ TEST_GROUP(SimpleStringCacheAllocator)
 TEST(SimpleStringCacheAllocator, allocationIsCached)
 {
     char* mem = allocator->alloc_memory(10, __FILE__, __LINE__);
-    allocator->free_memory(mem, 10,  __FILE__, __LINE__);
+    allocator->free_memory(mem, 10, __FILE__, __LINE__);
 
     size_t totalAllocations = accountant.totalAllocations();
     size_t totalDeallocations = accountant.totalDeallocations();
 
     mem = allocator->alloc_memory(10, __FILE__, __LINE__);
-    allocator->free_memory(mem, 10,  __FILE__, __LINE__);
+    allocator->free_memory(mem, 10, __FILE__, __LINE__);
 
     LONGS_EQUAL(totalAllocations, accountant.totalAllocations());
     LONGS_EQUAL(totalDeallocations, accountant.totalDeallocations());
@@ -356,7 +393,9 @@ TEST(SimpleStringCacheAllocator, allocationIsCached)
 TEST(SimpleStringCacheAllocator, originalAllocator)
 {
     POINTERS_EQUAL(defaultMallocAllocator(), allocator->actualAllocator());
-    STRCMP_EQUAL(defaultMallocAllocator()->alloc_name(), allocator->alloc_name());
+    STRCMP_EQUAL(
+        defaultMallocAllocator()->alloc_name(), allocator->alloc_name()
+    );
     STRCMP_EQUAL(defaultMallocAllocator()->free_name(), allocator->free_name());
 }
 
@@ -365,19 +404,23 @@ TEST(SimpleStringCacheAllocator, name)
     STRCMP_EQUAL("SimpleStringCacheAllocator", allocator->name());
 }
 
-
-
 TEST_GROUP(GlobalSimpleStringCache)
 {
 };
 
 TEST(GlobalSimpleStringCache, installsAndRemovedCache)
 {
-    TestMemoryAllocator* originalStringAllocator = SimpleString::getStringAllocator();
+    TestMemoryAllocator* originalStringAllocator =
+        SimpleString::getStringAllocator();
     {
         GlobalSimpleStringCache cache;
-        STRCMP_EQUAL("SimpleStringCacheAllocator", SimpleString::getStringAllocator()->name());
-        POINTERS_EQUAL(cache.getAllocator(), SimpleString::getStringAllocator());
+        STRCMP_EQUAL(
+            "SimpleStringCacheAllocator",
+            SimpleString::getStringAllocator()->name()
+        );
+        POINTERS_EQUAL(
+            cache.getAllocator(), SimpleString::getStringAllocator()
+        );
     }
     POINTERS_EQUAL(originalStringAllocator, SimpleString::getStringAllocator());
 }

@@ -26,15 +26,16 @@
  */
 
 #include "CppUTest/CommandLineTestRunner.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestTestingFixture.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/StandardCLibrary.h"
+#include "CppUTest/TestHarness.h"
 #include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/TestTestingFixture.h"
 
 #if CPPUTEST_USE_STD_C_LIB
 
-// This will cause a crash in VS2010 due to PlatformSpecificFree being uninitialized
+// This will cause a crash in VS2010 due to PlatformSpecificFree being
+// uninitialized
 static const SimpleString str1("abc");
 static const SimpleString str2("def");
 static const SimpleString str3(str1 + str2);
@@ -44,17 +45,22 @@ TEST_GROUP(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess)
     TestTestingFixture fixture;
 };
 
-// There is a possibility that a compiler provides fork but not waitpid.
-#if !defined(CPPUTEST_HAVE_FORK) || !defined(CPPUTEST_HAVE_WAITPID)
+    // There is a possibility that a compiler provides fork but not waitpid.
+    #if !defined(CPPUTEST_HAVE_FORK) || !defined(CPPUTEST_HAVE_WAITPID)
 
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, DummyFailsWithMessage)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    DummyFailsWithMessage
+)
 {
     fixture.setRunTestsInSeperateProcess();
     fixture.runAllTests();
-    fixture.assertPrintContains("-p doesn't work on this platform, as it is lacking fork.\b");
+    fixture.assertPrintContains(
+        "-p doesn't work on this platform, as it is lacking fork.\b"
+    );
 }
 
-#else
+    #else
 
 static void failFunction_()
 {
@@ -64,79 +70,109 @@ static void failFunction_()
 _no_return_ static void exitNonZeroFunction_();
 static void exitNonZeroFunction_()
 {
-    /* destructor of static objects will be called. If StringCache was there then the allocator will report invalid deallocations of static SimpleString */
-    SimpleString::setStringAllocator(SimpleString::getStringAllocator()->actualAllocator());
+    /* destructor of static objects will be called. If StringCache was there
+     * then the allocator will report invalid deallocations of static
+     * SimpleString */
+    SimpleString::setStringAllocator(
+        SimpleString::getStringAllocator()->actualAllocator()
+    );
     exit(1);
 }
 
-#include <errno.h>
+        #include <errno.h>
 
 static int waitpid_while_debugging_stub_number_called = 0;
 static int waitpid_while_debugging_stub_forced_failures = 0;
 
 extern "C" {
 
-    static int (*original_waitpid)(int, int*, int) = NULLPTR;
+static int (*original_waitpid)(int, int*, int) = NULLPTR;
 
-    static int fork_failed_stub(void) { return -1; }
-
-    static int waitpid_while_debugging_stub(int pid, int* status, int options)
-    {
-        static int saved_status;
-
-        if (waitpid_while_debugging_stub_number_called++ < waitpid_while_debugging_stub_forced_failures) {
-            saved_status = *status;
-            errno=EINTR;
-            return -1;
-        }
-        else {
-            *status = saved_status;
-            return original_waitpid(pid, status, options);
-        }
-    }
-
-    static int waitpid_failed_stub(int, int*, int) { return -1; }
+static int fork_failed_stub(void)
+{
+    return -1;
 }
 
-#include <unistd.h>
-#include <signal.h>
+static int waitpid_while_debugging_stub(int pid, int* status, int options)
+{
+    static int saved_status;
+
+    if (waitpid_while_debugging_stub_number_called++ <
+        waitpid_while_debugging_stub_forced_failures) {
+        saved_status = *status;
+        errno = EINTR;
+        return -1;
+    } else {
+        *status = saved_status;
+        return original_waitpid(pid, status, options);
+    }
+}
+
+static int waitpid_failed_stub(int, int*, int)
+{
+    return -1;
+}
+}
+
+        #include <signal.h>
+        #include <unistd.h>
 
 static void stoppedTestFunction_()
 {
     kill(getpid(), SIGSTOP);
 }
 
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, TestInSeparateProcessWorks)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    TestInSeparateProcessWorks
+)
 {
     fixture.setRunTestsInSeperateProcess();
     fixture.runAllTests();
-    fixture.assertPrintContains("OK (1 tests, 1 ran, 0 checks, 0 ignored, 0 filtered out");
+    fixture.assertPrintContains(
+        "OK (1 tests, 1 ran, 0 checks, 0 ignored, 0 filtered out"
+    );
 }
 
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, FailureInSeparateProcessWorks)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    FailureInSeparateProcessWorks
+)
 {
     fixture.setRunTestsInSeperateProcess();
     fixture.setTestFunction(failFunction_);
     fixture.runAllTests();
     fixture.assertPrintContains("Failed in separate process");
-    fixture.assertPrintContains("Errors (1 failures, 1 tests, 1 ran, 0 checks, 0 ignored, 0 filtered out");
+    fixture.assertPrintContains(
+        "Errors (1 failures, 1 tests, 1 ran, 0 checks, 0 ignored, 0 filtered "
+        "out"
+    );
 }
 
 static int accessViolationTestFunction_()
 {
-    return *(volatile int*) NULLPTR; // NOLINT(clang-analyzer-core.NullDereference)
+    return *(volatile int*)
+        NULLPTR; // NOLINT(clang-analyzer-core.NullDereference)
 }
 
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, AccessViolationInSeparateProcessWorks)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    AccessViolationInSeparateProcessWorks
+)
 {
     fixture.setRunTestsInSeperateProcess();
-    fixture.setTestFunction((void(*)())accessViolationTestFunction_);
+    fixture.setTestFunction((void (*)())accessViolationTestFunction_);
     fixture.runAllTests();
-    fixture.assertPrintContains("Failed in separate process - killed by signal 11");
+    fixture.assertPrintContains(
+        "Failed in separate process - killed by signal 11"
+    );
     fixture.assertPrintContains("Errors (1 failures, 1 tests, 1 ran");
 }
 
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, StoppedInSeparateProcessWorks)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    StoppedInSeparateProcessWorks
+)
 {
     fixture.setRunTestsInSeperateProcess();
     fixture.setTestFunction(stoppedTestFunction_);
@@ -145,7 +181,10 @@ TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, StoppedInSepa
     fixture.assertPrintContains("Errors (1 failures, 1 tests, 1 ran");
 }
 
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, CallToForkFailedInSeparateProcessWorks)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    CallToForkFailedInSeparateProcessWorks
+)
 {
     UT_PTR_SET(PlatformSpecificFork, fork_failed_stub);
     fixture.setRunTestsInSeperateProcess();
@@ -154,7 +193,10 @@ TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, CallToForkFai
     fixture.assertPrintContains("Errors (1 failures, 1 tests, 1 ran");
 }
 
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, CallToWaitPidWhileDebuggingInSeparateProcessWorks)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    CallToWaitPidWhileDebuggingInSeparateProcessWorks
+)
 {
     UT_PTR_SET(original_waitpid, PlatformSpecificWaitPid);
     UT_PTR_SET(PlatformSpecificWaitPid, waitpid_while_debugging_stub);
@@ -162,12 +204,21 @@ TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, CallToWaitPid
     waitpid_while_debugging_stub_forced_failures = 10;
     fixture.setRunTestsInSeperateProcess();
     fixture.runAllTests();
-    fixture.assertPrintContains("OK (1 tests, 1 ran, 0 checks, 0 ignored, 0 filtered out");
-    // extra check to confirm that waitpid() was polled until it passed (and passed call adds one)
-    CHECK(waitpid_while_debugging_stub_number_called > waitpid_while_debugging_stub_forced_failures);
+    fixture.assertPrintContains(
+        "OK (1 tests, 1 ran, 0 checks, 0 ignored, 0 filtered out"
+    );
+    // extra check to confirm that waitpid() was polled until it passed (and
+    // passed call adds one)
+    CHECK(
+        waitpid_while_debugging_stub_number_called >
+        waitpid_while_debugging_stub_forced_failures
+    );
 }
 
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, CallToWaitPidStopsAndReportsAnErrorAfter20TimesRetry)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    CallToWaitPidStopsAndReportsAnErrorAfter20TimesRetry
+)
 {
     UT_PTR_SET(original_waitpid, PlatformSpecificWaitPid);
     UT_PTR_SET(PlatformSpecificWaitPid, waitpid_while_debugging_stub);
@@ -175,13 +226,19 @@ TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, CallToWaitPid
     waitpid_while_debugging_stub_forced_failures = 40;
     fixture.setRunTestsInSeperateProcess();
     fixture.runAllTests();
-    fixture.assertPrintContains("Call to waitpid() failed with EINTR. Tried 30 times and giving up! Sometimes happens in debugger");
-    // extra check to confirm that waitpid() was polled until it passed (and passed call adds one)
+    fixture.assertPrintContains(
+        "Call to waitpid() failed with EINTR. Tried 30 times and giving up! "
+        "Sometimes happens in debugger"
+    );
+    // extra check to confirm that waitpid() was polled until it passed (and
+    // passed call adds one)
     CHECK(waitpid_while_debugging_stub_number_called > 30);
 }
 
-
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, CallToWaitPidFailedInSeparateProcessWorks)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    CallToWaitPidFailedInSeparateProcessWorks
+)
 {
     UT_PTR_SET(PlatformSpecificWaitPid, waitpid_failed_stub);
     fixture.setRunTestsInSeperateProcess();
@@ -190,7 +247,10 @@ TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, CallToWaitPid
     fixture.assertPrintContains("Errors (1 failures, 1 tests, 1 ran");
 }
 
-TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, MultipleTestsInSeparateProcessAreCountedProperly)
+TEST(
+    UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
+    MultipleTestsInSeparateProcessAreCountedProperly
+)
 {
     fixture.setRunTestsInSeperateProcess();
     fixture.runTestWithMethod(NULLPTR);
@@ -200,8 +260,11 @@ TEST(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess, MultipleTests
     fixture.runTestWithMethod(NULLPTR);
     fixture.assertPrintContains("Failed in separate process");
     fixture.assertPrintContains("Stopped in separate process");
-    fixture.assertPrintContains("Errors (2 failures, 5 tests, 5 ran, 0 checks, 0 ignored, 0 filtered out");
+    fixture.assertPrintContains(
+        "Errors (2 failures, 5 tests, 5 ran, 0 checks, 0 ignored, 0 filtered "
+        "out"
+    );
 }
 
-#endif
+    #endif
 #endif

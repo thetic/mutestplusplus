@@ -25,9 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "EventDispatcher.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
-#include "EventDispatcher.h"
 
 class ObserverMock : public EventObserver
 {
@@ -42,7 +42,10 @@ public:
     }
     virtual void notifyRegistration(EventObserver* newObserver) _override
     {
-        mock().actualCall("notifyRegistration").onObject(this).withParameter("newObserver", newObserver);
+        mock()
+            .actualCall("notifyRegistration")
+            .onObject(this)
+            .withParameter("newObserver", newObserver);
     }
 };
 
@@ -104,7 +107,10 @@ TEST(EventDispatcher, DifferentEventWithRegistrationDoesNotResultIntoCallback)
     dispatcher->dispatchEvent(event, 10);
 }
 
-TEST(EventDispatcher, RegisterTwoObserversResultIntoTwoCallsAndARegistrationNotification)
+TEST(
+    EventDispatcher,
+    RegisterTwoObserversResultIntoTwoCallsAndARegistrationNotification
+)
 {
     mock()
         .expectOneCall("notify")
@@ -116,7 +122,10 @@ TEST(EventDispatcher, RegisterTwoObserversResultIntoTwoCallsAndARegistrationNoti
         .onObject(&observer2)
         .withParameterOfType("Event", "event", &event)
         .withParameter("timeOutInSeconds", 10);
-    mock().expectOneCall("notifyRegistration").onObject(&observer).withParameter("newObserver", &observer2);
+    mock()
+        .expectOneCall("notifyRegistration")
+        .onObject(&observer)
+        .withParameter("newObserver", &observer2);
 
     event.type = IMPORTANT_EVENT;
     dispatcher->registerObserver(IMPORTANT_EVENT, &observer);

@@ -33,7 +33,7 @@
 
 #if CPPUTEST_HAVE_FENV
 
-#include "IEEE754PluginTest_c.h"
+    #include "IEEE754PluginTest_c.h"
 
 TEST_GROUP(FE_with_Plugin)
 {
@@ -88,7 +88,9 @@ TEST(FE_with_Plugin, should_succeed_with_5_checks_when_no_flags_are_set)
     IEEE754ExceptionsPlugin::enableInexact();
     fixture.setTestFunction(set_nothing_c);
     fixture.runAllTests();
-    fixture.assertPrintContains("OK (1 tests, 1 ran, 5 checks, 0 ignored, 0 filtered out");
+    fixture.assertPrintContains(
+        "OK (1 tests, 1 ran, 5 checks, 0 ignored, 0 filtered out"
+    );
     IEEE754ExceptionsPlugin::disableInexact();
 }
 

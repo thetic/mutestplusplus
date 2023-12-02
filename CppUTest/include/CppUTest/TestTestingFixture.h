@@ -28,29 +28,31 @@
 #ifndef D_TestTestingFixture_H
 #define D_TestTestingFixture_H
 
-#include "TestRegistry.h"
 #include "TestOutput.h"
+#include "TestRegistry.h"
+
+class ExecFunction;
+class ExecFunctionTestShell;
 
 class TestTestingFixture
 {
 public:
-
     TestTestingFixture();
     virtual ~TestTestingFixture();
     void flushOutputAndResetResult();
 
-    void addTest(UtestShell * test);
+    void addTest(UtestShell* test);
     void installPlugin(TestPlugin* plugin);
 
-    void setTestFunction(void(*testFunction)());
+    void setTestFunction(void (*testFunction)());
     void setTestFunction(ExecFunction* testFunction);
-    void setSetup(void(*setupFunction)());
-    void setTeardown(void(*teardownFunction)());
+    void setSetup(void (*setupFunction)());
+    void setTeardown(void (*teardownFunction)());
 
     void setOutputVerbose();
     void setRunTestsInSeperateProcess();
 
-    void runTestWithMethod(void(*method)());
+    void runTestWithMethod(void (*method)());
     void runAllTests();
 
     size_t getFailureCount();
@@ -64,7 +66,9 @@ public:
     bool hasTestFailed();
     void assertPrintContains(const SimpleString& contains);
     void assertPrintContainsNot(const SimpleString& contains);
-    void checkTestFailsWithProperTestLocation(const char* text, const char* file, size_t line);
+    void checkTestFailsWithProperTestLocation(
+        const char* text, const char* file, size_t line
+    );
 
     static void lineExecutedAfterCheck();
 
@@ -77,12 +81,13 @@ private:
     ExecFunctionTestShell* genTest_;
     bool ownsExecFunction_;
     StringBufferTestOutput* output_;
-    TestResult * result_;
+    TestResult* result_;
 };
 
 class SetBooleanOnDestructorCall
 {
     bool& booleanToSet_;
+
 public:
     SetBooleanOnDestructorCall(bool& booleanToSet) : booleanToSet_(booleanToSet)
     {

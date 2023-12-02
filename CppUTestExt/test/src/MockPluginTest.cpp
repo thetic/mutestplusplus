@@ -26,17 +26,17 @@
  */
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
+#include "CppUTest/TestTestingFixture.h"
 #include "CppUTestExt/MockSupport.h"
 #include "CppUTestExt/MockSupportPlugin.h"
 #include "MockFailureReporterForTest.h"
-#include "CppUTest/TestTestingFixture.h"
 
 TEST_GROUP(MockPlugin)
 {
     StringBufferTestOutput output;
 
-    UtestShell *test;
-    TestResult *result;
+    UtestShell* test;
+    TestResult* result;
 
     MockSupportPlugin plugin;
 
@@ -67,7 +67,10 @@ TEST(MockPlugin, checkExpectationsAndClearAtEnd)
 
     plugin.postTestAction(*test, *result);
 
-    STRCMP_CONTAINS(expectedFailure.getMessage().asCharString(), output.getOutput().asCharString());
+    STRCMP_CONTAINS(
+        expectedFailure.getMessage().asCharString(),
+        output.getOutput().asCharString()
+    );
     LONGS_EQUAL(0, mock().expectedCallsLeft());
     CHECK_NO_MOCK_FAILURE();
 }
@@ -77,15 +80,20 @@ TEST(MockPlugin, checkExpectationsWorksAlsoWithHierachicalObjects)
     MockFailureReporterInstaller failureReporterInstaller;
 
     MockExpectedCallsListForTest expectations;
-    expectations.addFunction("differentScope::foobar")->onObject((void*) 1);
-    MockExpectedObjectDidntHappenFailure expectedFailure(test, "differentScope::foobar", expectations);
+    expectations.addFunction("differentScope::foobar")->onObject((void*)1);
+    MockExpectedObjectDidntHappenFailure expectedFailure(
+        test, "differentScope::foobar", expectations
+    );
 
-    mock("differentScope").expectOneCall("foobar").onObject((void*) 1);
+    mock("differentScope").expectOneCall("foobar").onObject((void*)1);
     mock("differentScope").actualCall("foobar");
 
     plugin.postTestAction(*test, *result);
 
-    STRCMP_CONTAINS(expectedFailure.getMessage().asCharString(), output.getOutput().asCharString());
+    STRCMP_CONTAINS(
+        expectedFailure.getMessage().asCharString(),
+        output.getOutput().asCharString()
+    );
     CHECK_NO_MOCK_FAILURE();
 }
 
@@ -132,8 +140,12 @@ TEST(MockPlugin, installCopierRecordsTheCopierButNotInstallsItYet)
 
     DummyCopier copier;
     plugin.installCopier("myType", copier);
-    mock().expectOneCall("foo").withOutputParameterOfTypeReturning("myType", "name", NULLPTR);
-    mock().actualCall("foo").withOutputParameterOfType("myType", "name", NULLPTR);
+    mock().expectOneCall("foo").withOutputParameterOfTypeReturning(
+        "myType", "name", NULLPTR
+    );
+    mock().actualCall("foo").withOutputParameterOfType(
+        "myType", "name", NULLPTR
+    );
 
     MockNoWayToCopyCustomTypeFailure failure(test, "myType");
     CHECK_EXPECTED_MOCK_FAILURE(failure);
@@ -141,7 +153,10 @@ TEST(MockPlugin, installCopierRecordsTheCopierButNotInstallsItYet)
     plugin.clear();
 }
 
-TEST(MockPlugin, preTestActionWillEnableMultipleComparatorsToTheGlobalMockSupportSpace)
+TEST(
+    MockPlugin,
+    preTestActionWillEnableMultipleComparatorsToTheGlobalMockSupportSpace
+)
 {
     DummyComparator comparator;
     DummyComparator comparator2;
@@ -149,10 +164,16 @@ TEST(MockPlugin, preTestActionWillEnableMultipleComparatorsToTheGlobalMockSuppor
     plugin.installComparator("myOtherType", comparator2);
 
     plugin.preTestAction(*test, *result);
-    mock().expectOneCall("foo").withParameterOfType("myType", "name", &comparator);
-    mock().expectOneCall("foo").withParameterOfType("myOtherType", "name", &comparator);
+    mock().expectOneCall("foo").withParameterOfType(
+        "myType", "name", &comparator
+    );
+    mock().expectOneCall("foo").withParameterOfType(
+        "myOtherType", "name", &comparator
+    );
     mock().actualCall("foo").withParameterOfType("myType", "name", &comparator);
-    mock().actualCall("foo").withParameterOfType("myOtherType", "name", &comparator);
+    mock().actualCall("foo").withParameterOfType(
+        "myOtherType", "name", &comparator
+    );
 
     mock().checkExpectations();
     LONGS_EQUAL(0, result->getFailureCount());

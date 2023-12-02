@@ -27,9 +27,9 @@
 
 #include "hello.h"
 
-#include <stdio.h>
-#include <stdarg.h>
 #include "CppUTest/TestHarness.h"
+#include <stdarg.h>
+#include <stdio.h>
 
 static SimpleString* buffer;
 

@@ -25,13 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
 #include "CppUTest/TestTestingFixture.h"
-#include "CppUTest/PlatformSpecificFunctions.h"
 
 #if CPPUTEST_USE_STD_C_LIB
-#include <math.h>
+    #include <math.h>
 #endif
 
 TEST_GROUP(UtestShell)
@@ -166,8 +166,6 @@ TEST(UtestShell, FailWillCrashIfEnabled)
     UtestShell::resetCrashMethod();
 }
 
-
-
 static int teardownCalled = 0;
 
 static void teardownMethod_()
@@ -220,8 +218,7 @@ static bool shouldThrowException = true;
 
 static void thrownUnknownExceptionMethod_()
 {
-    if (shouldThrowException)
-    {
+    if (shouldThrowException) {
         throw 33;
     }
     stopAfterFailure++;
@@ -236,7 +233,9 @@ TEST(UtestShell, TestStopsAfterUnknownExceptionIsThrown)
     fixture.setTestFunction(thrownUnknownExceptionMethod_);
     fixture.runAllTests();
     LONGS_EQUAL(1, fixture.getFailureCount());
-    fixture.assertPrintContains("Unexpected exception of unknown type was thrown");
+    fixture.assertPrintContains(
+        "Unexpected exception of unknown type was thrown"
+    );
     LONGS_EQUAL(0, stopAfterFailure);
     UtestShell::setRethrowExceptions(initialRethrowExceptions);
 }
@@ -249,12 +248,10 @@ TEST(UtestShell, NoExceptionIsRethrownIfEnabledButNotThrown)
     UtestShell::setRethrowExceptions(true);
     shouldThrowException = false;
     fixture.setTestFunction(thrownUnknownExceptionMethod_);
-    try
-    {
+    try {
         fixture.runAllTests();
     }
-    catch(...)
-    {
+    catch (...) {
         exceptionRethrown = true;
     }
     CHECK_FALSE(exceptionRethrown);
@@ -271,27 +268,26 @@ TEST(UtestShell, UnknownExceptionIsRethrownIfEnabled)
     UtestShell::setRethrowExceptions(true);
     shouldThrowException = true;
     fixture.setTestFunction(thrownUnknownExceptionMethod_);
-    try
-    {
+    try {
         fixture.runAllTests();
         stopAfterFailure++;
     }
-    catch(...)
-    {
+    catch (...) {
         exceptionRethrown = true;
     }
     CHECK_TRUE(exceptionRethrown);
     LONGS_EQUAL(1, fixture.getFailureCount());
-    fixture.assertPrintContains("Unexpected exception of unknown type was thrown");
+    fixture.assertPrintContains(
+        "Unexpected exception of unknown type was thrown"
+    );
     LONGS_EQUAL(0, stopAfterFailure);
     UtestShell::setRethrowExceptions(initialRethrowExceptions);
 }
 
-#if CPPUTEST_USE_STD_CPP_LIB
+    #if CPPUTEST_USE_STD_CPP_LIB
 static void thrownStandardExceptionMethod_()
 {
-    if (shouldThrowException)
-    {
+    if (shouldThrowException) {
         throw std::runtime_error("exception text");
     }
     stopAfterFailure++;
@@ -306,13 +302,15 @@ TEST(UtestShell, TestStopsAfterStandardExceptionIsThrown)
     fixture.setTestFunction(thrownStandardExceptionMethod_);
     fixture.runAllTests();
     LONGS_EQUAL(1, fixture.getFailureCount());
-#if CPPUTEST_HAVE_RTTI
+        #if CPPUTEST_HAVE_RTTI
     fixture.assertPrintContains("Unexpected exception of type '");
     fixture.assertPrintContains("runtime_error");
     fixture.assertPrintContains("' was thrown: exception text");
-#else
-    fixture.assertPrintContains("Unexpected exception of unknown type was thrown");
-#endif
+        #else
+    fixture.assertPrintContains(
+        "Unexpected exception of unknown type was thrown"
+    );
+        #endif
     LONGS_EQUAL(0, stopAfterFailure);
     UtestShell::setRethrowExceptions(initialRethrowExceptions);
 }
@@ -325,13 +323,11 @@ TEST(UtestShell, StandardExceptionIsRethrownIfEnabled)
     UtestShell::setRethrowExceptions(true);
     shouldThrowException = true;
     fixture.setTestFunction(thrownStandardExceptionMethod_);
-    try
-    {
+    try {
         fixture.runAllTests();
         stopAfterFailure++;
     }
-    catch(const std::exception &)
-    {
+    catch (const std::exception&) {
         exceptionRethrown = true;
     }
     CHECK_TRUE(exceptionRethrown);
@@ -342,8 +338,8 @@ TEST(UtestShell, StandardExceptionIsRethrownIfEnabled)
     LONGS_EQUAL(0, stopAfterFailure);
     UtestShell::setRethrowExceptions(initialRethrowExceptions);
 }
-#endif // CPPUTEST_USE_STD_CPP_LIB
-#endif // CPPUTEST_HAVE_EXCEPTIONS
+    #endif // CPPUTEST_USE_STD_CPP_LIB
+#endif     // CPPUTEST_HAVE_EXCEPTIONS
 
 TEST(UtestShell, veryVebose)
 {
@@ -354,14 +350,19 @@ TEST(UtestShell, veryVebose)
 
     TestResult result(normalOutput);
     shell.runOneTestInCurrentProcess(&plugin, result);
-    STRCMP_CONTAINS("\n------ before runTest", normalOutput.getOutput().asCharString());
+    STRCMP_CONTAINS(
+        "\n------ before runTest", normalOutput.getOutput().asCharString()
+    );
 }
 
-class defaultUtestShell: public UtestShell
+class defaultUtestShell : public UtestShell
 {
 };
 
-TEST(UtestShell, this_test_covers_the_UtestShell_createTest_and_Utest_testBody_methods)
+TEST(
+    UtestShell,
+    this_test_covers_the_UtestShell_createTest_and_Utest_testBody_methods
+)
 {
     defaultUtestShell shell;
     fixture.addTest(&shell);
@@ -369,15 +370,19 @@ TEST(UtestShell, this_test_covers_the_UtestShell_createTest_and_Utest_testBody_m
     LONGS_EQUAL(2, fixture.getTestCount());
 }
 
-
-static void StubPlatformSpecificRunTestInASeperateProcess(UtestShell* shell, TestPlugin*, TestResult* result)
+static void StubPlatformSpecificRunTestInASeperateProcess(
+    UtestShell* shell, TestPlugin*, TestResult* result
+)
 {
     result->addFailure(TestFailure(shell, "Failed in separate process"));
 }
 
 TEST(UtestShell, RunInSeparateProcessTest)
 {
-    UT_PTR_SET(PlatformSpecificRunTestInASeperateProcess, StubPlatformSpecificRunTestInASeperateProcess);
+    UT_PTR_SET(
+        PlatformSpecificRunTestInASeperateProcess,
+        StubPlatformSpecificRunTestInASeperateProcess
+    );
     fixture.getRegistry()->setRunTestsInSeperateProcess();
     fixture.runAllTests();
     fixture.assertPrintContains("Failed in separate process");
@@ -395,7 +400,8 @@ TEST(UtestShell, TestDefaultCrashMethodInSeparateProcessTest)
     fixture.setTestFunction(UtestShell::crash);
     fixture.setRunTestsInSeperateProcess();
     fixture.runAllTests();
-    fixture.assertPrintContains("Failed in separate process - killed by signal");
+    fixture.assertPrintContains("Failed in separate process - killed by signal"
+    );
 }
 
 #endif
@@ -406,7 +412,9 @@ static bool destructorWasCalledOnFailedTest = false;
 
 static void destructorCalledForLocalObjects_()
 {
-    SetBooleanOnDestructorCall pleaseCallTheDestructor(destructorWasCalledOnFailedTest);
+    SetBooleanOnDestructorCall pleaseCallTheDestructor(
+        destructorWasCalledOnFailedTest
+    );
     destructorWasCalledOnFailedTest = false;
     FAIL("fail");
 }
@@ -461,7 +469,9 @@ TEST(IgnoredUtestShell, runIgnoredOptionNotSpecifiedThenIncreaseIgnoredCount)
     LONGS_EQUAL(1, fixture.getIgnoreCount());
 }
 
-TEST(IgnoredUtestShell, runIgnoredOptionSpecifiedWillNotInfluenceNormalTestCount)
+TEST(
+    IgnoredUtestShell, runIgnoredOptionSpecifiedWillNotInfluenceNormalTestCount
+)
 {
     normalUtestShell.setRunIgnored();
     fixture.runAllTests();
@@ -475,15 +485,24 @@ TEST(IgnoredUtestShell, runIgnoredOptionSpecifiedThenReturnTESTInFormattedName)
     ignoredTest.setTestName("TestName");
     ignoredTest.setRunIgnored();
     fixture.runAllTests();
-    STRCMP_EQUAL("TEST(TestGroup, TestName)", ignoredTest.getFormattedName().asCharString());
+    STRCMP_EQUAL(
+        "TEST(TestGroup, TestName)",
+        ignoredTest.getFormattedName().asCharString()
+    );
 }
 
-TEST(IgnoredUtestShell, runIgnoredOptionNotSpecifiedThenReturnIGNORETESTInFormattedName)
+TEST(
+    IgnoredUtestShell,
+    runIgnoredOptionNotSpecifiedThenReturnIGNORETESTInFormattedName
+)
 {
     ignoredTest.setGroupName("TestGroup");
     ignoredTest.setTestName("TestName");
     fixture.runAllTests();
-    STRCMP_EQUAL("IGNORE_TEST(TestGroup, TestName)", ignoredTest.getFormattedName().asCharString());
+    STRCMP_EQUAL(
+        "IGNORE_TEST(TestGroup, TestName)",
+        ignoredTest.getFormattedName().asCharString()
+    );
 }
 
 TEST(IgnoredUtestShell, runIgnoredOptionNotSpecifiedThenWillRunReturnFalse)
@@ -499,10 +518,7 @@ TEST(IgnoredUtestShell, runIgnoredOptionSpecifiedThenWillRunReturnTrue)
 
 TEST_BASE(MyOwnTest)
 {
-    MyOwnTest() :
-        inTest(false)
-    {
-    }
+    MyOwnTest() : inTest(false) {}
     bool inTest;
 
     void setup() _override
@@ -517,22 +533,21 @@ TEST_BASE(MyOwnTest)
     }
 };
 
-TEST_GROUP_BASE(UtestMyOwn, MyOwnTest)
-{
-};
+TEST_GROUP_BASE(UtestMyOwn, MyOwnTest){};
 
 TEST(UtestMyOwn, test)
 {
     CHECK(inTest);
 }
 
-class NullParameterTest: public UtestShell
+class NullParameterTest : public UtestShell
 {
 };
 
 TEST(UtestMyOwn, NullParameters)
 {
-    NullParameterTest nullTest; /* Bug fix tests for creating a test without a name, fix in SimpleString */
+    NullParameterTest nullTest; /* Bug fix tests for creating a test without a
+                                   name, fix in SimpleString */
     TestFilter emptyFilter;
     CHECK(nullTest.shouldRun(&emptyFilter, &emptyFilter));
 }
@@ -541,6 +556,7 @@ class AllocateAndDeallocateInConstructorAndDestructor
 {
     char* memory_;
     char* morememory_;
+
 public:
     AllocateAndDeallocateInConstructorAndDestructor()
     {
@@ -554,17 +570,22 @@ public:
 
     ~AllocateAndDeallocateInConstructorAndDestructor()
     {
-        delete [] memory_;
-        delete [] morememory_;
+        delete[] memory_;
+        delete[] morememory_;
     }
 };
 
-TEST_GROUP(CanHaveMemberVariablesInTestGroupThatAllocateMemoryWithoutCausingMemoryLeaks)
+TEST_GROUP(
+    CanHaveMemberVariablesInTestGroupThatAllocateMemoryWithoutCausingMemoryLeaks
+)
 {
     AllocateAndDeallocateInConstructorAndDestructor dummy;
 };
 
-TEST(CanHaveMemberVariablesInTestGroupThatAllocateMemoryWithoutCausingMemoryLeaks, testInTestGroupName)
+TEST(
+    CanHaveMemberVariablesInTestGroupThatAllocateMemoryWithoutCausingMemoryLeaks,
+    testInTestGroupName
+)
 {
     dummy.allocateMoreMemory();
 }
@@ -603,7 +624,6 @@ TEST_GROUP(UtestShellPointerArrayTest)
     }
 };
 
-
 TEST(UtestShellPointerArrayTest, empty)
 {
     UtestShellPointerArray tests(NULLPTR);
@@ -619,7 +639,10 @@ TEST(UtestShellPointerArrayTest, testsAreInOrder)
     CHECK(tests.get(2) == test2);
 }
 
-TEST(UtestShellPointerArrayTest, relinkingTestsWillKeepThemTheSameWhenNothingWasDone)
+TEST(
+    UtestShellPointerArrayTest,
+    relinkingTestsWillKeepThemTheSameWhenNothingWasDone
+)
 {
     UtestShellPointerArray tests(test0);
     tests.relinkTestsInOrder();
@@ -627,7 +650,6 @@ TEST(UtestShellPointerArrayTest, relinkingTestsWillKeepThemTheSameWhenNothingWas
     CHECK(tests.get(1) == test1);
     CHECK(tests.get(2) == test2);
 }
-
 
 TEST(UtestShellPointerArrayTest, firstTestisNotTheFirstTestWithSeed1234)
 {
@@ -647,7 +669,8 @@ TEST(UtestShellPointerArrayTest, ShuffleListTestWithRandomAlwaysReturningZero)
     CHECK(tests.get(2) == test0);
 }
 
-// swaps with 4 mod 3 (1) then 4 mod 2 (0): 1, [2], [0] --> [1], [0], 2 --> 0, 1, 2
+// swaps with 4 mod 3 (1) then 4 mod 2 (0): 1, [2], [0] --> [1], [0], 2 --> 0,
+// 1, 2
 TEST(UtestShellPointerArrayTest, ShuffleListTestWithRandomAlwaysReturningOne)
 {
     UT_PTR_SET(PlatformSpecificRand, getOne);

@@ -29,82 +29,89 @@
 #define CPPUTESTCONFIG_H_
 
 #ifndef CPPUTEST_USE_OWN_CONFIGURATION
-#include "CppUTest/CppUTestGeneratedConfig.h"
+    #include "CppUTest/CppUTestGeneratedConfig.h"
 #endif
 
 /*
- * This file is added for some specific CppUTest configurations that earlier were spread out into multiple files.
+ * This file is added for some specific CppUTest configurations that earlier
+ * were spread out into multiple files.
  *
- * The goal of this file is to stay really small and not to include other things, but mainly to remove duplication
- * from other files and resolve dependencies in #includes.
+ * The goal of this file is to stay really small and not to include other
+ * things, but mainly to remove duplication from other files and resolve
+ * dependencies in #includes.
  *
  */
 
 /*
  * Lib C dependencies that are currently still left:
  *
- * stdarg.h -> We use formatting functions and va_list requires to include stdarg.h in SimpleString
- * stdlib.h -> The TestHarness_c.h includes this to try to avoid conflicts in its malloc #define. This dependency can
- * easily be removed by not enabling the MALLOC overrides.
+ * stdarg.h -> We use formatting functions and va_list requires to include
+ * stdarg.h in SimpleString stdlib.h -> The TestHarness_c.h includes this to try
+ * to avoid conflicts in its malloc #define. This dependency can easily be
+ * removed by not enabling the MALLOC overrides.
  *
  * Lib C++ dependencies are all under the CPPUTEST_USE_STD_CPP_LIB.
  * The only dependency is to <new> which has the bad_alloc struct
  *
  */
 
-/* Do we use Standard C or not? When doing Kernel development, standard C usage is out. */
+/* Do we use Standard C or not? When doing Kernel development, standard C usage
+ * is out. */
 #ifndef CPPUTEST_USE_STD_C_LIB
- #ifdef CPPUTEST_STD_C_LIB_DISABLED
-  #define CPPUTEST_USE_STD_C_LIB 0
- #else
-  #define CPPUTEST_USE_STD_C_LIB 1
- #endif
+    #ifdef CPPUTEST_STD_C_LIB_DISABLED
+        #define CPPUTEST_USE_STD_C_LIB 0
+    #else
+        #define CPPUTEST_USE_STD_C_LIB 1
+    #endif
 #endif
-
 
 /* Do we use Standard C++ or not? */
 #ifndef CPPUTEST_USE_STD_CPP_LIB
- #ifdef CPPUTEST_STD_CPP_LIB_DISABLED
-  #define CPPUTEST_USE_STD_CPP_LIB 0
- #else
-  #define CPPUTEST_USE_STD_CPP_LIB 1
- #endif
+    #ifdef CPPUTEST_STD_CPP_LIB_DISABLED
+        #define CPPUTEST_USE_STD_CPP_LIB 0
+    #else
+        #define CPPUTEST_USE_STD_CPP_LIB 1
+    #endif
 #endif
 
 /* Should be the only #include here. Standard C library wrappers */
 #include "StandardCLibrary.h"
 
-/* Create a _no_return_ macro, which is used to flag a function as not returning.
- * Used for functions that always throws for instance.
+/* Create a _no_return_ macro, which is used to flag a function as not
+ * returning. Used for functions that always throws for instance.
  *
  * This is needed for compiling with clang, without breaking other compilers.
  */
 #ifndef __has_attribute
-  #define __has_attribute(x) 0
-#endif
-
-#if defined (__cplusplus) && __cplusplus >= 201103L
-   #define _no_return_ [[noreturn]]
-#elif __has_attribute(noreturn)
-   #define _no_return_ __attribute__((noreturn))
-#else
-   #define _no_return_
-#endif
-
-#if defined(__MINGW32__)
-#define CPPUTEST_CHECK_FORMAT_TYPE __MINGW_PRINTF_FORMAT
-#else
-#define CPPUTEST_CHECK_FORMAT_TYPE printf
-#endif
-
-#if __has_attribute(format)
-  #define _check_format_(type, format_parameter, other_parameters) __attribute__ ((format (type, format_parameter, other_parameters)))
-#else
-  #define _check_format_(type, format_parameter, other_parameters) /* type, format_parameter, other_parameters */
+    #define __has_attribute(x) 0
 #endif
 
 #if defined(__cplusplus) && __cplusplus >= 201103L
-    #define DEFAULT_COPY_CONSTRUCTOR(classname) classname(const classname &) = default;
+    #define _no_return_ [[noreturn]]
+#elif __has_attribute(noreturn)
+    #define _no_return_ __attribute__((noreturn))
+#else
+    #define _no_return_
+#endif
+
+#if defined(__MINGW32__)
+    #define CPPUTEST_CHECK_FORMAT_TYPE __MINGW_PRINTF_FORMAT
+#else
+    #define CPPUTEST_CHECK_FORMAT_TYPE printf
+#endif
+
+#if __has_attribute(format)
+    #define _check_format_(type, format_parameter, other_parameters)           \
+        __attribute__((format(type, format_parameter, other_parameters)))
+#else
+    #define _check_format_(                                                    \
+        type, format_parameter, other_parameters                               \
+    ) /* type, format_parameter, other_parameters */
+#endif
+
+#if defined(__cplusplus) && __cplusplus >= 201103L
+    #define DEFAULT_COPY_CONSTRUCTOR(classname)                                \
+        classname(const classname&) = default;
 #else
     #define DEFAULT_COPY_CONSTRUCTOR(classname)
 #endif
@@ -114,105 +121,110 @@
  * Predominantly works on non-Visual C++ compilers and Visual C++ 2008 and newer
  */
 #ifndef CPPUTEST_HAVE_FENV
-  #if (defined(__STDC_IEC_559__) && __STDC_IEC_559__) && CPPUTEST_USE_STD_C_LIB
-    #define CPPUTEST_HAVE_FENV 1
-  #else
-    #define CPPUTEST_HAVE_FENV 0
- #endif
+    #if (defined(__STDC_IEC_559__) && __STDC_IEC_559__) &&                     \
+        CPPUTEST_USE_STD_C_LIB
+        #define CPPUTEST_HAVE_FENV 1
+    #else
+        #define CPPUTEST_HAVE_FENV 0
+    #endif
 #endif
 
 #ifdef __cplusplus
-  /*
-   * Detection of run-time type information (RTTI) presence. Since it's a
-   * standard language feature, assume it is enabled unless we see otherwise.
-   */
-  #ifndef CPPUTEST_HAVE_RTTI
-    #if ((__cplusplus >= 202002L) && !__cpp_rtti) || \
-        (defined(_MSC_VER) && !_CPPRTTI) || \
-        (defined(__GNUC__) && !__GXX_RTTI) || \
-        (defined(__ghs__) && !__RTTI) || \
-        (defined(__WATCOMC__) && !_CPPRTTI)
-      #define CPPUTEST_HAVE_RTTI 0
-    #else
-      #define CPPUTEST_HAVE_RTTI 1
+    /*
+     * Detection of run-time type information (RTTI) presence. Since it's a
+     * standard language feature, assume it is enabled unless we see otherwise.
+     */
+    #ifndef CPPUTEST_HAVE_RTTI
+        #if ((__cplusplus >= 202002L) && !__cpp_rtti) ||                       \
+            (defined(_MSC_VER) && !_CPPRTTI) ||                                \
+            (defined(__GNUC__) && !__GXX_RTTI) ||                              \
+            (defined(__ghs__) && !__RTTI) ||                                   \
+            (defined(__WATCOMC__) && !_CPPRTTI)
+            #define CPPUTEST_HAVE_RTTI 0
+        #else
+            #define CPPUTEST_HAVE_RTTI 1
+        #endif
     #endif
-  #endif
 
-  /*
-   * Detection of exception support. Since it's a standard language feature,
-   * assume it is enabled unless we see otherwise.
-   */
-  #ifndef CPPUTEST_HAVE_EXCEPTIONS
-    #if ((__cplusplus >= 202002L) && !__cpp_exceptions) || \
-        (defined(_MSC_VER) && !_CPPUNWIND) || \
-        (defined(__GNUC__) && !__EXCEPTIONS) || \
-        (defined(__ghs__) && !__EXCEPTION_HANDLING) || \
-        (defined(__WATCOMC__) && !_CPPUNWIND)
-      #define CPPUTEST_HAVE_EXCEPTIONS 0
-    #else
-      #define CPPUTEST_HAVE_EXCEPTIONS 1
+    /*
+     * Detection of exception support. Since it's a standard language feature,
+     * assume it is enabled unless we see otherwise.
+     */
+    #ifndef CPPUTEST_HAVE_EXCEPTIONS
+        #if ((__cplusplus >= 202002L) && !__cpp_exceptions) ||                 \
+            (defined(_MSC_VER) && !_CPPUNWIND) ||                              \
+            (defined(__GNUC__) && !__EXCEPTIONS) ||                            \
+            (defined(__ghs__) && !__EXCEPTION_HANDLING) ||                     \
+            (defined(__WATCOMC__) && !_CPPUNWIND)
+            #define CPPUTEST_HAVE_EXCEPTIONS 0
+        #else
+            #define CPPUTEST_HAVE_EXCEPTIONS 1
+        #endif
     #endif
-  #endif
 
-  #if CPPUTEST_HAVE_EXCEPTIONS
-    #if defined(__cplusplus) && __cplusplus >= 201103L
-      #define UT_THROW(exception)
-      #define UT_NOTHROW noexcept
+    #if CPPUTEST_HAVE_EXCEPTIONS
+        #if defined(__cplusplus) && __cplusplus >= 201103L
+            #define UT_THROW(exception)
+            #define UT_NOTHROW noexcept
+        #else
+            #define UT_THROW(exception) throw(exception)
+            #define UT_NOTHROW throw()
+        #endif
     #else
-      #define UT_THROW(exception) throw (exception)
-      #define UT_NOTHROW throw()
+        #define UT_THROW(exception)
+        #if defined(__clang__) || defined(__GNUC__)
+            #if defined(__cplusplus) && __cplusplus >= 201103L
+                #define UT_NOTHROW noexcept
+            #else
+                #define UT_NOTHROW throw()
+            #endif
+        #else
+            #define UT_NOTHROW
+        #endif
     #endif
-  #else
-    #define UT_THROW(exception)
-    #if defined(__clang__) || defined(__GNUC__)
-      #if defined(__cplusplus) && __cplusplus >= 201103L
-        #define UT_NOTHROW noexcept
-      #else
-        #define UT_NOTHROW throw()
-      #endif
+
+    /*
+     * Visual C++ doesn't define __cplusplus as C++11 yet (201103), however it
+     * doesn't want the throw(exception) either, but it does want throw().
+     */
+    #ifdef _MSC_VER
+        #undef UT_THROW
+        #define UT_THROW(exception)
+    #endif
+
+    /*
+     * g++-4.7 with stdc++11 enabled On MacOSX! will have a different exception
+     * specifier for operator new (and thank you!) I assume they'll fix this in
+     * the future, but for now, we'll change that here. (This should perhaps
+     * also be done in the configure.ac)
+     */
+    #if defined(__GXX_EXPERIMENTAL_CXX0X__) && defined(__APPLE__) &&           \
+        defined(_GLIBCXX_THROW)
+        #undef UT_THROW
+        #define UT_THROW(exception) _GLIBCXX_THROW(exception)
+    #endif
+
+    #if CPPUTEST_USE_STD_CPP_LIB
+        #define CPPUTEST_BAD_ALLOC std::bad_alloc
     #else
-      #define UT_NOTHROW
+class CppUTestBadAlloc
+{
+};
+        #define CPPUTEST_BAD_ALLOC CppUTestBadAlloc
     #endif
-  #endif
-
-  /*
-   * Visual C++ doesn't define __cplusplus as C++11 yet (201103), however it doesn't want the throw(exception) either, but
-   * it does want throw().
-   */
-  #ifdef _MSC_VER
-    #undef UT_THROW
-    #define UT_THROW(exception)
-  #endif
-
-  /*
-   * g++-4.7 with stdc++11 enabled On MacOSX! will have a different exception specifier for operator new (and thank you!)
-   * I assume they'll fix this in the future, but for now, we'll change that here.
-   * (This should perhaps also be done in the configure.ac)
-   */
-  #if defined(__GXX_EXPERIMENTAL_CXX0X__) && \
-      defined(__APPLE__) && \
-      defined(_GLIBCXX_THROW)
-    #undef UT_THROW
-    #define UT_THROW(exception) _GLIBCXX_THROW(exception)
-  #endif
-
-  #if CPPUTEST_USE_STD_CPP_LIB
-    #define CPPUTEST_BAD_ALLOC std::bad_alloc
-  #else
-    class CppUTestBadAlloc {};
-    #define CPPUTEST_BAD_ALLOC CppUTestBadAlloc
-  #endif
 #endif
 
 /*
  * Detection of different 64 bit environments
  */
 
-#if defined(__LP64__) || defined(_LP64) || (defined(__WORDSIZE) && (__WORDSIZE == 64 )) || defined(__x86_64) || defined(_WIN64)
-#define CPPUTEST_64BIT
-#if defined(_WIN64)
-#define CPPUTEST_64BIT_32BIT_LONGS
-#endif
+#if defined(__LP64__) || defined(_LP64) ||                                     \
+    (defined(__WORDSIZE) && (__WORDSIZE == 64)) || defined(__x86_64) ||        \
+    defined(_WIN64)
+    #define CPPUTEST_64BIT
+    #if defined(_WIN64)
+        #define CPPUTEST_64BIT_32BIT_LONGS
+    #endif
 #endif
 
 /* Handling of systems with a different byte-width (e.g. 16 bit). Since
@@ -220,17 +232,17 @@
  * when building without Std C library.
  */
 #ifndef CPPUTEST_CHAR_BIT
-  #if defined(CHAR_BIT)
-    #define CPPUTEST_CHAR_BIT CHAR_BIT
-  #else
-    #error "Provide a definition for CPPUTEST_CHAR_BIT"
-  #endif
+    #if defined(CHAR_BIT)
+        #define CPPUTEST_CHAR_BIT CHAR_BIT
+    #else
+        #error "Provide a definition for CPPUTEST_CHAR_BIT"
+    #endif
 #endif
 
 /* Handling of systems with a different int-width (e.g. 16 bit).
  */
 #if CPPUTEST_USE_STD_C_LIB && (INT_MAX == 0x7fff)
-#define CPPUTEST_16BIT_INTS
+    #define CPPUTEST_16BIT_INTS
 #endif
 
 /*
@@ -240,69 +252,73 @@
  * Can be overridden by using CPPUTEST_USE_LONG_LONG
  *
  * CPPUTEST_HAVE_LONG_LONG_INT is set by configure or CMake.
- * LLONG_MAX is set in limits.h. This is a crude attempt to detect long long support when no configure is used
+ * LLONG_MAX is set in limits.h. This is a crude attempt to detect long long
+ * support when no configure is used
  *
  */
 #ifndef CPPUTEST_USE_LONG_LONG
-#if !defined(CPPUTEST_LONG_LONG_DISABLED) && (defined(CPPUTEST_HAVE_LONG_LONG_INT) || defined(LLONG_MAX))
-#define CPPUTEST_USE_LONG_LONG 1
-#else
-#define CPPUTEST_USE_LONG_LONG 0
-#endif
+    #if !defined(CPPUTEST_LONG_LONG_DISABLED) &&                               \
+        (defined(CPPUTEST_HAVE_LONG_LONG_INT) || defined(LLONG_MAX))
+        #define CPPUTEST_USE_LONG_LONG 1
+    #else
+        #define CPPUTEST_USE_LONG_LONG 0
+    #endif
 #endif
 
 #if CPPUTEST_USE_LONG_LONG
 typedef long long cpputest_longlong;
 typedef unsigned long long cpputest_ulonglong;
 #else
-/* Define some placeholders to disable the overloaded methods.
- * It's not required to have these match the size of the "real" type, but it's occasionally convenient.
- */
+    /* Define some placeholders to disable the overloaded methods.
+     * It's not required to have these match the size of the "real" type, but
+     * it's occasionally convenient.
+     */
 
-#if defined(CPPUTEST_64BIT) && !defined(CPPUTEST_64BIT_32BIT_LONGS)
-#define CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE 16
-#else
-#define CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE 8
-#endif
+    #if defined(CPPUTEST_64BIT) && !defined(CPPUTEST_64BIT_32BIT_LONGS)
+        #define CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE 16
+    #else
+        #define CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE 8
+    #endif
 
-#if defined(__cplusplus)
+    #if defined(__cplusplus)
 extern "C" {
-#endif
+    #endif
 
 typedef struct
 {
-  char dummy[CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE];
+    char dummy[CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE];
 } cpputest_longlong;
 
 typedef struct
 {
-  char dummy[CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE];
+    char dummy[CPPUTEST_SIZE_OF_FAKE_LONG_LONG_TYPE];
 } cpputest_ulonglong;
 
-#if defined(__cplusplus)
+    #if defined(__cplusplus)
 } /* extern "C" */
-#endif
+    #endif
 
 #endif
 
 #ifdef __cplusplus
-  /* Visual C++ 10.0+ (2010+) supports the override keyword, but doesn't define the C++ version as C++11 */
-  #if (__cplusplus >= 201103L) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
-    #define _override override
-    #define NULLPTR nullptr
-  #else
-    #define _override
-    #define NULLPTR NULL
-  #endif
+    /* Visual C++ 10.0+ (2010+) supports the override keyword, but doesn't
+     * define the C++ version as C++11 */
+    #if (__cplusplus >= 201103L) || (defined(_MSC_VER) && (_MSC_VER >= 1600))
+        #define _override override
+        #define NULLPTR nullptr
+    #else
+        #define _override
+        #define NULLPTR NULL
+    #endif
 #endif
 
 #ifdef __cplusplus
-  /* Visual C++ 11.0+ (2012+) supports the override keyword on destructors */
-  #if (__cplusplus >= 201103L) || (defined(_MSC_VER) && (_MSC_VER >= 1700))
-    #define _destructor_override override
-  #else
-    #define _destructor_override
-  #endif
+    /* Visual C++ 11.0+ (2012+) supports the override keyword on destructors */
+    #if (__cplusplus >= 201103L) || (defined(_MSC_VER) && (_MSC_VER >= 1700))
+        #define _destructor_override override
+    #else
+        #define _destructor_override
+    #endif
 #endif
 
 #endif

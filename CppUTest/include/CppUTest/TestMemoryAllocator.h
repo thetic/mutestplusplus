@@ -28,8 +28,11 @@
 #ifndef D_TestMemoryAllocator_h
 #define D_TestMemoryAllocator_h
 
+#include "CppUTest/CppUTestConfig.h"
+
 struct MemoryLeakNode;
 class TestMemoryAllocator;
+class SimpleString;
 
 extern void setCurrentNewAllocator(TestMemoryAllocator* allocator);
 extern TestMemoryAllocator* getCurrentNewAllocator();
@@ -49,12 +52,17 @@ extern TestMemoryAllocator* defaultMallocAllocator();
 class TestMemoryAllocator
 {
 public:
-    TestMemoryAllocator(const char* name_str = "generic", const char* alloc_name_str = "alloc", const char* free_name_str = "free");
+    TestMemoryAllocator(
+        const char* name_str = "generic",
+        const char* alloc_name_str = "alloc",
+        const char* free_name_str = "free"
+    );
     virtual ~TestMemoryAllocator();
     bool hasBeenDestroyed();
 
     virtual char* alloc_memory(size_t size, const char* file, size_t line);
-    virtual void free_memory(char* memory, size_t size, const char* file, size_t line);
+    virtual void
+    free_memory(char* memory, size_t size, const char* file, size_t line);
 
     virtual const char* name() const;
     virtual const char* alloc_name() const;
@@ -68,7 +76,6 @@ public:
     virtual TestMemoryAllocator* actualAllocator();
 
 protected:
-
     const char* name_;
     const char* alloc_name_;
     const char* free_name_;
@@ -103,12 +110,16 @@ public:
     SimpleString report() const;
 
     void setAllocator(TestMemoryAllocator* allocator);
+
 private:
     MemoryAccountantAllocationNode* findOrCreateNodeOfSize(size_t size);
     MemoryAccountantAllocationNode* findNodeOfSize(size_t size) const;
 
-    MemoryAccountantAllocationNode* createNewAccountantAllocationNode(size_t size, MemoryAccountantAllocationNode* next) const;
-    void destroyAccountantAllocationNode(MemoryAccountantAllocationNode* node) const;
+    MemoryAccountantAllocationNode* createNewAccountantAllocationNode(
+        size_t size, MemoryAccountantAllocationNode* next
+    ) const;
+    void destroyAccountantAllocationNode(MemoryAccountantAllocationNode* node
+    ) const;
 
     void createCacheSizeNodes(size_t sizes[], size_t length);
 
@@ -121,7 +132,6 @@ private:
     SimpleString reportHeader() const;
     SimpleString reportFooter() const;
     SimpleString stringSize(size_t size) const;
-
 };
 
 struct AccountingTestMemoryAllocatorMemoryNode;
@@ -129,23 +139,29 @@ struct AccountingTestMemoryAllocatorMemoryNode;
 class AccountingTestMemoryAllocator : public TestMemoryAllocator
 {
 public:
-    AccountingTestMemoryAllocator(MemoryAccountant& accountant, TestMemoryAllocator* originalAllocator);
+    AccountingTestMemoryAllocator(
+        MemoryAccountant& accountant, TestMemoryAllocator* originalAllocator
+    );
     virtual ~AccountingTestMemoryAllocator() _destructor_override;
 
-    virtual char* alloc_memory(size_t size, const char* file, size_t line) _override;
-    virtual void free_memory(char* memory, size_t size, const char* file, size_t line) _override;
+    virtual char*
+    alloc_memory(size_t size, const char* file, size_t line) _override;
+    virtual void free_memory(
+        char* memory, size_t size, const char* file, size_t line
+    ) _override;
 
     virtual TestMemoryAllocator* actualAllocator() _override;
     TestMemoryAllocator* originalAllocator();
 
     virtual const char* alloc_name() const _override;
     virtual const char* free_name() const _override;
-private:
 
+private:
     void addMemoryToMemoryTrackingToKeepTrackOfSize(char* memory, size_t size);
     size_t removeMemoryFromTrackingAndReturnAllocatedSize(char* memory);
 
-    size_t removeNextNodeAndReturnSize(AccountingTestMemoryAllocatorMemoryNode* node);
+    size_t
+    removeNextNodeAndReturnSize(AccountingTestMemoryAllocatorMemoryNode* node);
     size_t removeHeadAndReturnSize();
 
     MemoryAccountant& accountant_;
@@ -154,4 +170,3 @@ private:
 };
 
 #endif
-

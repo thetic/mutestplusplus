@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2014,  Michael Feathers, James Grenning, Bas Vodde and Chen YewMing
- * All rights reserved.
+ * Copyright (c) 2014,  Michael Feathers, James Grenning, Bas Vodde and Chen
+ * YewMing All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -25,9 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
 #include "CppUTest/SimpleMutex.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestHarness.h"
 
 static int mutexCreateCount = 0;
 static int mutexLockCount = 0;
@@ -55,8 +55,6 @@ static void StubMutexDestroy(PlatformSpecificMutex)
     mutexDestroyCount++;
 }
 
-
-
 TEST_GROUP(SimpleMutexTest)
 {
     void setup() _override
@@ -72,9 +70,7 @@ TEST_GROUP(SimpleMutexTest)
         mutexUnlockCount = 0;
     }
 
-    void teardown() _override
-    {
-    }
+    void teardown() _override {}
 };
 
 TEST(SimpleMutexTest, CreateAndDestroy)
