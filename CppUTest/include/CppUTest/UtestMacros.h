@@ -474,12 +474,14 @@
 #define BITS_EQUAL_TEXT(expected, actual, mask, text)                          \
     BITS_LOCATION(expected, actual, mask, text, __FILE__, __LINE__)
 
+// NOLINTBEGIN(bugprone-sizeof-expression)
 #define BITS_LOCATION(expected, actual, mask, text, file, line)                \
     do {                                                                       \
         UtestShell::getCurrent()->assertBitsEqual(                             \
             expected, actual, mask, sizeof(actual), text, file, line           \
         );                                                                     \
-    } while (0) // NOLINT(bugprone-sizeof-expression)
+    } while (0)
+// NOLINTEND(bugprone-sizeof-expression)
 
 #define ENUMS_EQUAL_INT(expected, actual)                                      \
     ENUMS_EQUAL_TYPE(int, expected, actual)
