@@ -78,8 +78,8 @@ IGNORE_TEST(FE_Demo, should_fail_when__FE_OVERFLOW__is_set)
 IGNORE_TEST(FE_Demo, should_fail_when__FE_INEXACT____is_set)
 {
     IEEE754ExceptionsPlugin::enableInexact();
-    float f = 10.0f;
-    DOUBLES_EQUAL((double)(f / 3.0f), (double)3.333f, (double)0.001f);
+    double f = 10.0;
+    DOUBLES_EQUAL((f / 3.0), 3.333, 0.001);
 }
 
 TEST(FE_Demo, should_succeed_when_no_flags_are_set)

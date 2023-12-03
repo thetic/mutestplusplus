@@ -35,7 +35,7 @@
 
 int CommandLineTestRunner::RunAllTests(int ac, char** av)
 {
-    return RunAllTests(ac, (const char* const*)av);
+    return RunAllTests(ac, reinterpret_cast<const char* const*>(av));
 }
 
 int CommandLineTestRunner::RunAllTests(int ac, const char* const* av)
@@ -152,7 +152,9 @@ int CommandLineTestRunner::runAllTests()
             failedExecutionCount++;
         }
     }
-    return (int)(failedTestCount != 0 ? failedTestCount : failedExecutionCount);
+    return static_cast<int>(
+        failedTestCount != 0 ? failedTestCount : failedExecutionCount
+    );
 }
 
 TestOutput* CommandLineTestRunner::createTeamCityOutput()

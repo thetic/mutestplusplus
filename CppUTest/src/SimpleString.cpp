@@ -102,12 +102,13 @@ int SimpleString::StrCmp(const char* s1, const char* s2)
         ++s1;
         ++s2;
     }
-    return *(const unsigned char*)s1 - *(const unsigned char*)s2;
+    return *reinterpret_cast<const unsigned char*>(s1) -
+           *reinterpret_cast<const unsigned char*>(s2);
 }
 
 size_t SimpleString::StrLen(const char* str)
 {
-    size_t n = (size_t)-1;
+    size_t n = static_cast<size_t>(-1);
     do
         n++;
     while (*str++);
@@ -121,7 +122,9 @@ int SimpleString::StrNCmp(const char* s1, const char* s2, size_t n)
         ++s1;
         ++s2;
     }
-    return n ? *(const unsigned char*)s1 - *(const unsigned char*)s2 : 0;
+    return n ? *reinterpret_cast<const unsigned char*>(s1) -
+                   *reinterpret_cast<const unsigned char*>(s2)
+             : 0;
 }
 
 char* SimpleString::StrNCpy(char* s1, const char* s2, size_t n)
@@ -150,13 +153,14 @@ const char* SimpleString::StrStr(const char* s1, const char* s2)
 
 char SimpleString::ToLower(char ch)
 {
-    return isUpper(ch) ? (char)((int)ch + ('a' - 'A')) : ch;
+    return isUpper(ch) ? static_cast<char>(static_cast<int>(ch) + ('a' - 'A'))
+                       : ch;
 }
 
 int SimpleString::MemCmp(const void* s1, const void* s2, size_t n)
 {
-    const unsigned char* p1 = (const unsigned char*)s1;
-    const unsigned char* p2 = (const unsigned char*)s2;
+    const unsigned char* p1 = reinterpret_cast<const unsigned char*>(s1);
+    const unsigned char* p2 = reinterpret_cast<const unsigned char*>(s2);
 
     while (n--)
         if (*p1 != *p2) {
@@ -393,8 +397,8 @@ SimpleString SimpleString::printable() const
         char c = buffer_[i];
         if (isControlWithShortEscapeSequence(c)) {
             StrNCpy(
-                &result.buffer_[j], shortEscapeCodes[(unsigned char)(c - '\a')],
-                2
+                &result.buffer_[j],
+                shortEscapeCodes[static_cast<unsigned char>(c - '\a')], 2
             );
             j += 2;
         } else if (isControl(c)) {
@@ -742,12 +746,12 @@ SimpleString HexStringFrom(unsigned long long value)
 
 SimpleString HexStringFrom(const void* value)
 {
-    return HexStringFrom((unsigned long long)value);
+    return HexStringFrom(reinterpret_cast<unsigned long long>(value));
 }
 
 SimpleString HexStringFrom(void (*value)())
 {
-    return HexStringFrom((unsigned long long)value);
+    return HexStringFrom(reinterpret_cast<unsigned long long>(value));
 }
 
 SimpleString BracketsFormattedHexStringFrom(long long value)
@@ -823,9 +827,9 @@ SimpleString VStringFromFormat(const char* format, va_list args)
     char defaultBuffer[sizeOfdefaultBuffer];
     SimpleString resultString;
 
-    size_t size = (size_t)PlatformSpecificVSNprintf(
+    size_t size = static_cast<size_t>(PlatformSpecificVSNprintf(
         defaultBuffer, sizeOfdefaultBuffer, format, args
-    );
+    ));
     if (size < sizeOfdefaultBuffer) {
         resultString = SimpleString(defaultBuffer);
     } else {
@@ -862,8 +866,9 @@ SimpleString StringFromBinaryOrNull(const unsigned char* value, size_t size)
 
 SimpleString StringFromBinaryWithSize(const unsigned char* value, size_t size)
 {
-    SimpleString result =
-        StringFromFormat("Size = %u | HexContents = ", (unsigned)size);
+    SimpleString result = StringFromFormat(
+        "Size = %u | HexContents = ", static_cast<unsigned>(size)
+    );
     size_t displayedSize = ((size > 128) ? 128 : size);
     result += StringFromBinaryOrNull(value, displayedSize);
     if (size > displayedSize) {
@@ -886,7 +891,7 @@ StringFromMaskedBits(unsigned long value, unsigned long mask, size_t byteCount)
     size_t bitCount = (byteCount > sizeof(unsigned long))
                           ? (sizeof(unsigned long) * CPPUTEST_CHAR_BIT)
                           : (byteCount * CPPUTEST_CHAR_BIT);
-    const unsigned long msbMask = (((unsigned long)1) << (bitCount - 1));
+    const unsigned long msbMask = (1UL << (bitCount - 1));
 
     for (size_t i = 0; i < bitCount; i++) {
         if (mask & msbMask) {

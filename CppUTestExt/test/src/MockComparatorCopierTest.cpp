@@ -57,13 +57,16 @@ class MyTypeForTestingComparator : public MockNamedValueComparator
 public:
     virtual bool isEqual(const void* object1, const void* object2) override
     {
-        const MyTypeForTesting* obj1 = (const MyTypeForTesting*)object1;
-        const MyTypeForTesting* obj2 = (const MyTypeForTesting*)object2;
+        const MyTypeForTesting* obj1 =
+            reinterpret_cast<const MyTypeForTesting*>(object1);
+        const MyTypeForTesting* obj2 =
+            reinterpret_cast<const MyTypeForTesting*>(object2);
         return *(obj1->value) == *(obj2->value);
     }
     virtual SimpleString valueToString(const void* object) override
     {
-        const MyTypeForTesting* obj = (const MyTypeForTesting*)object;
+        const MyTypeForTesting* obj =
+            reinterpret_cast<const MyTypeForTesting*>(object);
         return StringFrom(*(obj->value));
     }
 };
@@ -73,8 +76,9 @@ class MyTypeForTestingCopier : public MockNamedValueCopier
 public:
     virtual void copy(void* dst_, const void* src_) override
     {
-        MyTypeForTesting* dst = (MyTypeForTesting*)dst_;
-        const MyTypeForTesting* src = (const MyTypeForTesting*)src_;
+        MyTypeForTesting* dst = reinterpret_cast<MyTypeForTesting*>(dst_);
+        const MyTypeForTesting* src =
+            reinterpret_cast<const MyTypeForTesting*>(src_);
         *(dst->value) = *(src->value);
     }
 };
@@ -145,13 +149,13 @@ TEST(MockComparatorCopierTest, customObjectParameterSucceeds)
 
 static bool myTypeIsEqual(const void* object1, const void* object2)
 {
-    return ((const MyTypeForTesting*)object1)->value ==
-           ((const MyTypeForTesting*)object2)->value;
+    return reinterpret_cast<const MyTypeForTesting*>(object1)->value ==
+           reinterpret_cast<const MyTypeForTesting*>(object2)->value;
 }
 
 static SimpleString myTypeValueToString(const void* object)
 {
-    return StringFrom(((const MyTypeForTesting*)object)->value);
+    return StringFrom(reinterpret_cast<const MyTypeForTesting*>(object)->value);
 }
 
 TEST(MockComparatorCopierTest, customObjectWithFunctionComparator)
@@ -638,8 +642,9 @@ TEST(MockComparatorCopierTest, customTypeOutputParameterWithIgnoredParameters)
 
 static void myTypeCopy(void* dst_, const void* src_)
 {
-    MyTypeForTesting* dst = (MyTypeForTesting*)dst_;
-    const MyTypeForTesting* src = (const MyTypeForTesting*)src_;
+    MyTypeForTesting* dst = reinterpret_cast<MyTypeForTesting*>(dst_);
+    const MyTypeForTesting* src =
+        reinterpret_cast<const MyTypeForTesting*>(src_);
     *(dst->value) = *(src->value);
 }
 

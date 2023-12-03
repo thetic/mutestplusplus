@@ -95,17 +95,17 @@ extern "C" {
 
 static void helperDoTestSetup(void* data)
 {
-    ((Utest*)data)->setup();
+    reinterpret_cast<Utest*>(data)->setup();
 }
 
 static void helperDoTestBody(void* data)
 {
-    ((Utest*)data)->testBody();
+    reinterpret_cast<Utest*>(data)->testBody();
 }
 
 static void helperDoTestTeardown(void* data)
 {
-    ((Utest*)data)->teardown();
+    reinterpret_cast<Utest*>(data)->teardown();
 }
 
 struct HelperTestRunInfo
@@ -126,7 +126,7 @@ struct HelperTestRunInfo
 
 static void helperDoRunOneTestInCurrentProcess(void* data)
 {
-    HelperTestRunInfo* runInfo = (HelperTestRunInfo*)data;
+    HelperTestRunInfo* runInfo = reinterpret_cast<HelperTestRunInfo*>(data);
 
     UtestShell* shell = runInfo->shell_;
     TestPlugin* plugin = runInfo->plugin_;
@@ -137,7 +137,7 @@ static void helperDoRunOneTestInCurrentProcess(void* data)
 
 static void helperDoRunOneTestSeperateProcess(void* data)
 {
-    HelperTestRunInfo* runInfo = (HelperTestRunInfo*)data;
+    HelperTestRunInfo* runInfo = reinterpret_cast<HelperTestRunInfo*>(data);
 
     UtestShell* shell = runInfo->shell_;
     TestPlugin* plugin = runInfo->plugin_;
@@ -763,16 +763,18 @@ void UtestShell::assertBinaryEqual(
     if (actual == nullptr || expected == nullptr)
         failWith(
             BinaryEqualFailure(
-                this, fileName, lineNumber, (const unsigned char*)expected,
-                (const unsigned char*)actual, length, text
+                this, fileName, lineNumber,
+                reinterpret_cast<const unsigned char*>(expected),
+                reinterpret_cast<const unsigned char*>(actual), length, text
             ),
             testTerminator
         );
     if (SimpleString::MemCmp(expected, actual, length) != 0)
         failWith(
             BinaryEqualFailure(
-                this, fileName, lineNumber, (const unsigned char*)expected,
-                (const unsigned char*)actual, length, text
+                this, fileName, lineNumber,
+                reinterpret_cast<const unsigned char*>(expected),
+                reinterpret_cast<const unsigned char*>(actual), length, text
             ),
             testTerminator
         );
@@ -1182,14 +1184,14 @@ void UtestShellPointerArray::shuffle(size_t seed)
     if (count_ == 0)
         return;
 
-    PlatformSpecificSrand((unsigned int)seed);
+    PlatformSpecificSrand(static_cast<unsigned int>(seed));
 
     for (size_t i = count_ - 1; i >= 1; --i) {
         if (count_ == 0)
             return;
 
         const size_t j =
-            ((size_t)PlatformSpecificRand()) %
+            (static_cast<size_t>(PlatformSpecificRand())) %
             (i + 1
             ); // distribution biased by modulo, but good enough for shuffling
         swap(i, j);

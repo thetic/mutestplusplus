@@ -31,7 +31,7 @@
 
 static char* checkedMalloc(size_t size)
 {
-    char* mem = (char*)PlatformSpecificMalloc(size);
+    char* mem = reinterpret_cast<char*>(PlatformSpecificMalloc(size));
     if (mem == nullptr)
         FAIL("malloc returned null pointer");
     return mem;
@@ -249,8 +249,10 @@ MemoryAccountant::createNewAccountantAllocationNode(
 ) const
 {
     MemoryAccountantAllocationNode* node =
-        (MemoryAccountantAllocationNode*)(void*)allocator_->alloc_memory(
-            sizeof(MemoryAccountantAllocationNode), __FILE__, __LINE__
+        reinterpret_cast<MemoryAccountantAllocationNode*>(
+            reinterpret_cast<void*>(allocator_->alloc_memory(
+                sizeof(MemoryAccountantAllocationNode), __FILE__, __LINE__
+            ))
         );
     node->size_ = size;
     node->allocations_ = 0;
@@ -265,7 +267,9 @@ void MemoryAccountant::destroyAccountantAllocationNode(
     MemoryAccountantAllocationNode* node
 ) const
 {
-    allocator_->free_memory((char*)node, sizeof(*node), __FILE__, __LINE__);
+    allocator_->free_memory(
+        reinterpret_cast<char*>(node), sizeof(*node), __FILE__, __LINE__
+    );
 }
 
 MemoryAccountant::MemoryAccountant() :
@@ -463,7 +467,7 @@ SimpleString MemoryAccountant::reportFooter() const
 SimpleString MemoryAccountant::stringSize(size_t size) const
 {
     return (size == 0) ? StringFrom("other")
-                       : StringFromFormat("%5d", (int)size);
+                       : StringFromFormat("%5d", static_cast<int>(size));
 }
 
 SimpleString MemoryAccountant::report() const
@@ -476,8 +480,10 @@ SimpleString MemoryAccountant::report() const
     for (MemoryAccountantAllocationNode* node = head_; node; node = node->next_)
         accountantReport += StringFromFormat(
             MEMORY_ACCOUNTANT_ROW_FORMAT,
-            stringSize(node->size_).asCharString(), (int)node->allocations_,
-            (int)node->deallocations_, (int)node->maxAllocations_
+            stringSize(node->size_).asCharString(),
+            static_cast<int>(node->allocations_),
+            static_cast<int>(node->deallocations_),
+            static_cast<int>(node->maxAllocations_)
         );
 
     return accountantReport + reportFooter();
@@ -506,11 +512,12 @@ void AccountingTestMemoryAllocator::addMemoryToMemoryTrackingToKeepTrackOfSize(
 )
 {
     AccountingTestMemoryAllocatorMemoryNode* node =
-        (AccountingTestMemoryAllocatorMemoryNode*)(void*)
-            originalAllocator_->alloc_memory(
+        reinterpret_cast<AccountingTestMemoryAllocatorMemoryNode*>(
+            reinterpret_cast<void*>(originalAllocator_->alloc_memory(
                 sizeof(AccountingTestMemoryAllocatorMemoryNode), __FILE__,
                 __LINE__
-            );
+            ))
+        );
     node->memory_ = memory;
     node->size_ = size;
     node->next_ = head_;
@@ -525,7 +532,9 @@ size_t AccountingTestMemoryAllocator::removeNextNodeAndReturnSize(
     node->next_ = node->next_->next_;
 
     size_t size = foundNode->size_;
-    originalAllocator_->free_memory((char*)foundNode, size, __FILE__, __LINE__);
+    originalAllocator_->free_memory(
+        reinterpret_cast<char*>(foundNode), size, __FILE__, __LINE__
+    );
     return size;
 }
 
@@ -535,7 +544,9 @@ size_t AccountingTestMemoryAllocator::removeHeadAndReturnSize()
     head_ = head_->next_;
 
     size_t size = foundNode->size_;
-    originalAllocator_->free_memory((char*)foundNode, size, __FILE__, __LINE__);
+    originalAllocator_->free_memory(
+        reinterpret_cast<char*>(foundNode), size, __FILE__, __LINE__
+    );
     return size;
 }
 

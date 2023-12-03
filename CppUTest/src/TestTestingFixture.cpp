@@ -188,7 +188,7 @@ void TestTestingFixture::checkTestFailsWithProperTestLocation(
         FAIL_LOCATION(
             StringFromFormat(
                 "Expected one test failure, but got %d amount of test failures",
-                (int)getFailureCount()
+                static_cast<int>(getFailureCount())
             )
                 .asCharString(),
             file, line

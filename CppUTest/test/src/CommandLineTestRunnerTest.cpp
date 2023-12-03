@@ -405,9 +405,9 @@ struct FakeOutput
 
     void installFakes()
     {
-        PlatformSpecificFOpen = (FOpenFunc)fopen_fake;
-        PlatformSpecificFPuts = (FPutsFunc)fputs_fake;
-        PlatformSpecificFClose = (FCloseFunc)fclose_fake;
+        PlatformSpecificFOpen = static_cast<FOpenFunc>(fopen_fake);
+        PlatformSpecificFPuts = static_cast<FPutsFunc>(fputs_fake);
+        PlatformSpecificFClose = static_cast<FCloseFunc>(fclose_fake);
     }
 
     void restoreOriginals()
@@ -419,7 +419,7 @@ struct FakeOutput
 
     static PlatformSpecificFile fopen_fake(const char*, const char*)
     {
-        return (PlatformSpecificFile)nullptr;
+        return static_cast<PlatformSpecificFile>(nullptr);
     }
 
     static void fputs_fake(const char* str, PlatformSpecificFile f)

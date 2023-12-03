@@ -342,12 +342,12 @@ static PlatformSpecificFile mockFOpen(const char* filename, const char*)
 
 static void mockFPuts(const char* str, PlatformSpecificFile file)
 {
-    ((FileForJUnitOutputTests*)file)->write(str);
+    reinterpret_cast<FileForJUnitOutputTests*>(file)->write(str);
 }
 
 static void mockFClose(PlatformSpecificFile file)
 {
-    ((FileForJUnitOutputTests*)file)->close();
+    reinterpret_cast<FileForJUnitOutputTests*>(file)->close();
 }
 }
 

@@ -98,7 +98,7 @@ public:
 
 #define UT_PTR_SET(a, b)                                                       \
     do {                                                                       \
-        CppUTestStore((void**)&a);                                             \
+        CppUTestStore(reinterpret_cast<void**>(&a));                           \
         a = b;                                                                 \
     } while (0)
 

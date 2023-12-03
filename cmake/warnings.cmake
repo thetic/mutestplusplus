@@ -28,11 +28,13 @@ if(
     set(WARNING_CXX_FLAGS
         -Woverloaded-virtual
         -Wsuggest-override
+        -Wdouble-promotion
         -Wno-global-constructors
         -Wno-exit-time-destructors
         -Wno-weak-vtables
         -Wold-style-cast
         -Wno-c++98-compat-pedantic
+        -Wold-style-cast
     )
 
     set(CMAKE_REQUIRED_FLAGS "-Wno-error")

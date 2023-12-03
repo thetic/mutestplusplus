@@ -377,7 +377,8 @@ static MockActualCall_c gActualCall = {
     constPointerReturnValue_c,
     returnConstPointerValueOrDefault_c,
     functionPointerReturnValue_c,
-    returnFunctionPointerValueOrDefault_c};
+    returnFunctionPointerValueOrDefault_c
+};
 
 static MockSupport_c gMockSupport = {
     strictOrder_c,
@@ -431,7 +432,8 @@ static MockSupport_c gMockSupport = {
     crashOnFailure_c,
     installComparator_c,
     installCopier_c,
-    removeAllComparatorsAndCopiers_c};
+    removeAllComparatorsAndCopiers_c
+};
 
 MockExpectedCall_c* withBoolParameters_c(const char* name, int value)
 {
@@ -516,7 +518,7 @@ MockExpectedCall_c*
 withFunctionPointerParameters_c(const char* name, void (*value)())
 {
     expectedCall = &expectedCall->withParameter(
-        name, (cpputest_cpp_function_pointer)value
+        name, reinterpret_cast<cpputest_cpp_function_pointer>(value)
     );
     return &gExpectedCall;
 }
@@ -634,8 +636,9 @@ MockExpectedCall_c* andReturnConstPointerValue_c(const void* value)
 
 MockExpectedCall_c* andReturnFunctionPointerValue_c(void (*value)())
 {
-    expectedCall =
-        &expectedCall->andReturnValue((cpputest_cpp_function_pointer)value);
+    expectedCall = &expectedCall->andReturnValue(
+        reinterpret_cast<cpputest_cpp_function_pointer>(value)
+    );
     return &gExpectedCall;
 }
 
@@ -689,7 +692,7 @@ static MockValue_c getMockValueCFromNamedValue(const MockNamedValue& namedValue)
     else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "void (*)()") == 0) {
         returnValue.type = MOCKVALUETYPE_FUNCTIONPOINTER;
         returnValue.value.functionPointerValue =
-            (void (*)())namedValue.getFunctionPointerValue();
+            reinterpret_cast<void (*)()>(namedValue.getFunctionPointerValue());
     }
     else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "const unsigned char*") == 0) {
         returnValue.type = MOCKVALUETYPE_MEMORYBUFFER;
@@ -806,8 +809,9 @@ withActualConstPointerParameters_c(const char* name, const void* value)
 MockActualCall_c*
 withActualFunctionPointerParameters_c(const char* name, void (*value)())
 {
-    actualCall =
-        &actualCall->withParameter(name, (cpputest_cpp_function_pointer)value);
+    actualCall = &actualCall->withParameter(
+        name, reinterpret_cast<cpputest_cpp_function_pointer>(value)
+    );
     return &gActualCall;
 }
 
@@ -993,7 +997,8 @@ const void* returnConstPointerValueOrDefault_c(const void* defaultValue)
 
 void (*functionPointerReturnValue_c())()
 {
-    return (void (*)())actualCall->returnFunctionPointerValue();
+    return reinterpret_cast<void (*)()>(actualCall->returnFunctionPointerValue()
+    );
 }
 
 void (*returnFunctionPointerValueOrDefault_c(void (*defaultValue)()))()
@@ -1056,7 +1061,9 @@ void setConstPointerData_c(const char* name, const void* value)
 
 void setFunctionPointerData_c(const char* name, void (*value)())
 {
-    currentMockSupport->setData(name, (cpputest_cpp_function_pointer)value);
+    currentMockSupport->setData(
+        name, reinterpret_cast<cpputest_cpp_function_pointer>(value)
+    );
 }
 
 void setDataObject_c(const char* name, const char* type, void* value)

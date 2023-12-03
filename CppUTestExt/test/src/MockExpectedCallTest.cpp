@@ -51,15 +51,17 @@ public:
     virtual bool isEqual(const void* object1, const void* object2) override
     {
         const TypeForTestingExpectedFunctionCall* obj1 =
-            (const TypeForTestingExpectedFunctionCall*)object1;
+            reinterpret_cast<const TypeForTestingExpectedFunctionCall*>(object1
+            );
         const TypeForTestingExpectedFunctionCall* obj2 =
-            (const TypeForTestingExpectedFunctionCall*)object2;
+            reinterpret_cast<const TypeForTestingExpectedFunctionCall*>(object2
+            );
         return *(obj1->value) == *(obj2->value);
     }
     virtual SimpleString valueToString(const void* object) override
     {
         const TypeForTestingExpectedFunctionCall* obj =
-            (const TypeForTestingExpectedFunctionCall*)object;
+            reinterpret_cast<const TypeForTestingExpectedFunctionCall*>(object);
         return StringFrom(*(obj->value));
     }
 };
@@ -70,9 +72,9 @@ public:
     virtual void copy(void* dst_, const void* src_) override
     {
         TypeForTestingExpectedFunctionCall* dst =
-            (TypeForTestingExpectedFunctionCall*)dst_;
+            reinterpret_cast<TypeForTestingExpectedFunctionCall*>(dst_);
         const TypeForTestingExpectedFunctionCall* src =
-            (const TypeForTestingExpectedFunctionCall*)src_;
+            reinterpret_cast<const TypeForTestingExpectedFunctionCall*>(src_);
         *(dst->value) = *(src->value);
     }
 };
@@ -362,7 +364,7 @@ TEST(MockExpectedCall, callWithStringParameter)
 TEST(MockExpectedCall, callWithPointerParameter)
 {
     const SimpleString paramName = "paramName";
-    void* value = (void*)0x123;
+    void* value = reinterpret_cast<void*>(0x123);
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
         "void*", call->getInputParameterType(paramName).asCharString()
@@ -377,7 +379,7 @@ TEST(MockExpectedCall, callWithPointerParameter)
 TEST(MockExpectedCall, callWithConstPointerParameter)
 {
     const SimpleString paramName = "paramName";
-    const void* value = (const void*)0x345;
+    const void* value = reinterpret_cast<const void*>(0x345);
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
         "const void*", call->getInputParameterType(paramName).asCharString()
@@ -394,7 +396,7 @@ TEST(MockExpectedCall, callWithConstPointerParameter)
 TEST(MockExpectedCall, callWithFunctionPointerParameter)
 {
     const SimpleString paramName = "paramName";
-    void (*value)() = (void (*)())0xdead;
+    void (*value)() = reinterpret_cast<void (*)()>(0xdead);
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
         "void (*)()", call->getInputParameterType(paramName).asCharString()
@@ -429,7 +431,7 @@ TEST(MockExpectedCall, callWithMemoryBuffer)
 TEST(MockExpectedCall, callWithObjectParameter)
 {
     const SimpleString paramName = "paramName";
-    void* value = (void*)0x123;
+    void* value = reinterpret_cast<void*>(0x123);
     call->withParameterOfType("ClassName", paramName, value);
     POINTERS_EQUAL(
         value, call->getInputParameter(paramName).getConstObjectPointer()
@@ -926,16 +928,17 @@ TEST(MockExpectedCall, hasUnmodifiedOutputParameter)
 {
     call->withUnmodifiedOutputParameter("foo");
     MockNamedValue foo("foo");
-    foo.setValue((const void*)nullptr);
+    const void* val = nullptr;
+    foo.setValue(val);
     foo.setSize(0);
     CHECK(call->hasOutputParameter(foo));
 }
 
 TEST(MockExpectedCall, hasNoOutputParameter)
 {
-    call->withIntParameter("foo", (int)1);
+    call->withIntParameter("foo", 1);
     MockNamedValue foo("foo");
-    foo.setValue((int)1);
+    foo.setValue(1);
     CHECK_FALSE(call->hasOutputParameter(foo));
 }
 
@@ -981,41 +984,44 @@ TEST_GROUP(MockIgnoredExpectedCall)
 
 TEST(MockIgnoredExpectedCall, worksAsItShould)
 {
+    void* ptr = nullptr;
+    const void* constPtr = nullptr;
+    void (*fnPtr)() = nullptr;
+    const unsigned char* buffer = nullptr;
+
     ignored.withName("func");
     ignored.withCallOrder(1);
     ignored.withCallOrder(1, 1);
     ignored.onObject(nullptr);
     ignored.withBoolParameter("umm", true);
-    ignored.withIntParameter("bla", (int)1);
-    ignored.withUnsignedIntParameter("foo", (unsigned int)1);
-    ignored.withLongIntParameter("hey", (long int)1);
-    ignored.withUnsignedLongIntParameter("bah", (unsigned long int)1);
-    ignored.withLongLongIntParameter("yo", (long long int)1);
-    ignored.withUnsignedLongLongIntParameter("grr", (unsigned long long int)1);
-    ignored.withDoubleParameter("hah", (double)1.1f);
+    ignored.withIntParameter("bla", 1);
+    ignored.withUnsignedIntParameter("foo", 1U);
+    ignored.withLongIntParameter("hey", 1L);
+    ignored.withUnsignedLongIntParameter("bah", 1UL);
+    ignored.withLongLongIntParameter("yo", 1LL);
+    ignored.withUnsignedLongLongIntParameter("grr", 1ULL);
+    ignored.withDoubleParameter("hah", 1.1);
     ignored.withDoubleParameter("gah", 2.1, 0.3);
     ignored.withStringParameter("goo", "hello");
-    ignored.withPointerParameter("pie", (void*)nullptr);
-    ignored.withConstPointerParameter("woo", (const void*)nullptr);
-    ignored.withFunctionPointerParameter("fop", (void (*)())nullptr);
-    ignored.withMemoryBufferParameter("waa", (const unsigned char*)nullptr, 0);
-    ignored.withParameterOfType("mytype", "top", (const void*)nullptr);
-    ignored.withOutputParameterReturning("bar", (void*)nullptr, 1);
-    ignored.withOutputParameterOfTypeReturning(
-        "mytype", "bar", (const void*)nullptr
-    );
+    ignored.withPointerParameter("pie", ptr);
+    ignored.withConstPointerParameter("woo", constPtr);
+    ignored.withFunctionPointerParameter("fop", fnPtr);
+    ignored.withMemoryBufferParameter("waa", buffer, 0);
+    ignored.withParameterOfType("mytype", "top", constPtr);
+    ignored.withOutputParameterReturning("bar", ptr, 1);
+    ignored.withOutputParameterOfTypeReturning("mytype", "bar", constPtr);
     ignored.withUnmodifiedOutputParameter("unmod");
     ignored.ignoreOtherParameters();
     ignored.andReturnValue(true);
-    ignored.andReturnValue((double)1.0f);
-    ignored.andReturnValue((unsigned int)1);
-    ignored.andReturnValue((int)1);
-    ignored.andReturnValue((unsigned long int)1);
-    ignored.andReturnValue((long int)1);
-    ignored.andReturnValue((unsigned long long int)1);
-    ignored.andReturnValue((long long int)1);
+    ignored.andReturnValue(1.0);
+    ignored.andReturnValue(1U);
+    ignored.andReturnValue(1);
+    ignored.andReturnValue(1ULL);
+    ignored.andReturnValue(1L);
+    ignored.andReturnValue(1ULL);
+    ignored.andReturnValue(1LL);
     ignored.andReturnValue("boo");
-    ignored.andReturnValue((void*)nullptr);
-    ignored.andReturnValue((const void*)nullptr);
-    ignored.andReturnValue((void (*)())nullptr);
+    ignored.andReturnValue(ptr);
+    ignored.andReturnValue(constPtr);
+    ignored.andReturnValue(fnPtr);
 }

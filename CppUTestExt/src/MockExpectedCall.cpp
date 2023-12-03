@@ -524,7 +524,7 @@ bool MockCheckedExpectedCall::relatesToObject(const void* objectPtr) const
 MockCheckedExpectedCall::MockExpectedFunctionParameter*
 MockCheckedExpectedCall::item(MockNamedValueListNode* node)
 {
-    return (MockExpectedFunctionParameter*)node->item();
+    return reinterpret_cast<MockExpectedFunctionParameter*>(node->item());
 }
 
 MockCheckedExpectedCall::MockExpectedFunctionParameter::

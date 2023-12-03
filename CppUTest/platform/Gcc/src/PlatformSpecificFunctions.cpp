@@ -231,7 +231,10 @@ static long TimeInMillisImplementation()
     struct timeval tv;
     struct timezone tz;
     gettimeofday(&tv, &tz);
-    return (long)((tv.tv_sec * 1000) + (time_t)((double)tv.tv_usec * 0.001));
+    return static_cast<long>(
+        (tv.tv_sec * 1000) +
+        static_cast<time_t>(static_cast<double>(tv.tv_usec) * 0.001)
+    );
 #else
     return 0;
 #endif
@@ -283,12 +286,12 @@ PlatformSpecificFOpenImplementation(const char* filename, const char* flag)
 static void
 PlatformSpecificFPutsImplementation(const char* str, PlatformSpecificFile file)
 {
-    fputs(str, (FILE*)file);
+    fputs(str, reinterpret_cast<FILE*>(file));
 }
 
 static void PlatformSpecificFCloseImplementation(PlatformSpecificFile file)
 {
-    fclose((FILE*)file);
+    fclose(reinterpret_cast<FILE*>(file));
 }
 
 static void PlatformSpecificFlushImplementation()
@@ -345,7 +348,7 @@ static PlatformSpecificMutex PThreadMutexCreate(void)
     pthread_mutex_t* mutex = new pthread_mutex_t;
 
     pthread_mutex_init(mutex, nullptr);
-    return (PlatformSpecificMutex)mutex;
+    return reinterpret_cast<PlatformSpecificMutex>(mutex);
 #else
     return nullptr;
 #endif
@@ -354,7 +357,7 @@ static PlatformSpecificMutex PThreadMutexCreate(void)
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
 static void PThreadMutexLock(PlatformSpecificMutex mtx)
 {
-    pthread_mutex_lock((pthread_mutex_t*)mtx);
+    pthread_mutex_lock(reinterpret_cast<pthread_mutex_t*>(mtx));
 }
 #else
 static void PThreadMutexLock(PlatformSpecificMutex) {}
@@ -363,7 +366,7 @@ static void PThreadMutexLock(PlatformSpecificMutex) {}
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
 static void PThreadMutexUnlock(PlatformSpecificMutex mtx)
 {
-    pthread_mutex_unlock((pthread_mutex_t*)mtx);
+    pthread_mutex_unlock(reinterpret_cast<pthread_mutex_t*>(mtx));
 }
 #else
 static void PThreadMutexUnlock(PlatformSpecificMutex) {}
@@ -372,7 +375,7 @@ static void PThreadMutexUnlock(PlatformSpecificMutex) {}
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
 static void PThreadMutexDestroy(PlatformSpecificMutex mtx)
 {
-    pthread_mutex_t* mutex = (pthread_mutex_t*)mtx;
+    pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mtx);
     pthread_mutex_destroy(mutex);
     delete mutex;
 }

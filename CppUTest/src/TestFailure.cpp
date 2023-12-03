@@ -162,7 +162,7 @@ SimpleString TestFailure::createDifferenceAtPosString(
                                 paddingForPreventingOutOfBounds;
     SimpleString differentString = StringFromFormat(
         "difference starts at position %lu at: <",
-        (unsigned long)reportedPosition
+        static_cast<unsigned long>(reportedPosition)
     );
 
     result += "\n";
@@ -457,8 +457,8 @@ SignedBytesEqualFailure::SignedBytesEqualFailure(
 {
     message_ = createUserText(text);
 
-    SimpleString aDecimal = StringFrom((int)actual);
-    SimpleString eDecimal = StringFrom((int)expected);
+    SimpleString aDecimal = StringFrom(static_cast<int>(actual));
+    SimpleString eDecimal = StringFrom(static_cast<int>(expected));
 
     SimpleString::padStringsToSameLength(aDecimal, eDecimal, ' ');
 

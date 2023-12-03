@@ -55,8 +55,8 @@ void CHECK_EQUAL_C_INT_LOCATION(
 )
 {
     UtestShell::getCurrent()->assertLongsEqual(
-        (long)expected, (long)actual, text, fileName, lineNumber,
-        UtestShell::getCurrentTestTerminatorWithoutExceptions()
+        static_cast<long>(expected), static_cast<long>(actual), text, fileName,
+        lineNumber, UtestShell::getCurrentTestTerminatorWithoutExceptions()
     );
 }
 
@@ -69,8 +69,9 @@ void CHECK_EQUAL_C_UINT_LOCATION(
 )
 {
     UtestShell::getCurrent()->assertUnsignedLongsEqual(
-        (unsigned long)expected, (unsigned long)actual, text, fileName,
-        lineNumber, UtestShell::getCurrentTestTerminatorWithoutExceptions()
+        static_cast<unsigned long>(expected),
+        static_cast<unsigned long>(actual), text, fileName, lineNumber,
+        UtestShell::getCurrentTestTerminatorWithoutExceptions()
     );
 }
 
@@ -169,9 +170,10 @@ extern void CHECK_EQUAL_C_UBYTE_LOCATION(
 )
 {
     UtestShell::getCurrent()->assertEquals(
-        ((expected) != (actual)), StringFrom((int)expected).asCharString(),
-        StringFrom((int)actual).asCharString(), text, fileName, lineNumber,
-        UtestShell::getCurrentTestTerminatorWithoutExceptions()
+        ((expected) != (actual)),
+        StringFrom(static_cast<int>(expected)).asCharString(),
+        StringFrom(static_cast<int>(actual)).asCharString(), text, fileName,
+        lineNumber, UtestShell::getCurrentTestTerminatorWithoutExceptions()
     );
 }
 
@@ -184,9 +186,10 @@ void CHECK_EQUAL_C_SBYTE_LOCATION(
 )
 {
     UtestShell::getCurrent()->assertEquals(
-        ((expected) != (actual)), StringFrom((int)expected).asCharString(),
-        StringFrom((int)actual).asCharString(), text, fileName, lineNumber,
-        UtestShell::getCurrentTestTerminatorWithoutExceptions()
+        ((expected) != (actual)),
+        StringFrom(static_cast<int>(expected)).asCharString(),
+        StringFrom(static_cast<int>(actual)).asCharString(), text, fileName,
+        lineNumber, UtestShell::getCurrentTestTerminatorWithoutExceptions()
     );
 }
 

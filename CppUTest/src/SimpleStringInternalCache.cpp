@@ -65,9 +65,12 @@ SimpleStringInternalCacheNode*
 SimpleStringInternalCache::createInternalCacheNodes()
 {
     SimpleStringInternalCacheNode* node =
-        (SimpleStringInternalCacheNode*)(void*)allocator_->alloc_memory(
-            sizeof(SimpleStringInternalCacheNode) * amountOfInternalCacheNodes,
-            __FILE__, __LINE__
+        reinterpret_cast<SimpleStringInternalCacheNode*>(
+            reinterpret_cast<void*>(allocator_->alloc_memory(
+                sizeof(SimpleStringInternalCacheNode) *
+                    amountOfInternalCacheNodes,
+                __FILE__, __LINE__
+            ))
         );
 
     for (int i = 0; i < amountOfInternalCacheNodes; i++) {
@@ -107,7 +110,7 @@ void SimpleStringInternalCache::destroyInternalCacheNode(
 )
 {
     allocator_->free_memory(
-        (char*)node,
+        reinterpret_cast<char*>(node),
         sizeof(SimpleStringInternalCacheNode) * amountOfInternalCacheNodes,
         __FILE__, __LINE__
     );
@@ -118,10 +121,11 @@ SimpleStringInternalCache::createSimpleStringMemoryBlock(
     size_t size, SimpleStringMemoryBlock* next
 )
 {
-    SimpleStringMemoryBlock* block =
-        (SimpleStringMemoryBlock*)(void*)allocator_->alloc_memory(
+    SimpleStringMemoryBlock* block = reinterpret_cast<SimpleStringMemoryBlock*>(
+        reinterpret_cast<void*>(allocator_->alloc_memory(
             sizeof(SimpleStringMemoryBlock), __FILE__, __LINE__
-        );
+        ))
+    );
     block->memory_ = allocator_->alloc_memory(size, __FILE__, __LINE__);
     block->next_ = next;
     return block;
@@ -133,7 +137,8 @@ void SimpleStringInternalCache::destroySimpleStringMemoryBlock(
 {
     allocator_->free_memory(block->memory_, size, __FILE__, __LINE__);
     allocator_->free_memory(
-        (char*)block, sizeof(SimpleStringMemoryBlock), __FILE__, __LINE__
+        reinterpret_cast<char*>(block), sizeof(SimpleStringMemoryBlock),
+        __FILE__, __LINE__
     );
 }
 

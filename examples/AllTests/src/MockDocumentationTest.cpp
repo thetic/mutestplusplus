@@ -89,7 +89,7 @@ TEST(MockDocumentation, SimpleScenarioObject)
 
 static void parameters_function(int p1, const char* p2)
 {
-    void* object = (void*)1;
+    void* object = reinterpret_cast<void*>(1);
     mock()
         .actualCall("function")
         .onObject(object)
@@ -99,7 +99,7 @@ static void parameters_function(int p1, const char* p2)
 
 TEST(MockDocumentation, parameters)
 {
-    void* object = (void*)1;
+    void* object = reinterpret_cast<void*>(1);
     mock()
         .expectOneCall("function")
         .onObject(object)
@@ -123,7 +123,7 @@ public:
 
 TEST(MockDocumentation, ObjectParameters)
 {
-    void* object = (void*)1;
+    void* object = reinterpret_cast<void*>(1);
     MyTypeComparator comparator;
     mock().installComparator("myType", comparator);
     mock()
@@ -149,9 +149,9 @@ TEST(MockDocumentation, setData)
 
     ClassFromProductionCode* pobject;
     int value = mock().getData("importantValue").getIntValue();
-    pobject = (ClassFromProductionCode*)mock()
-                  .getData("importantObject")
-                  .getObjectPointer();
+    pobject = reinterpret_cast<ClassFromProductionCode*>(
+        mock().getData("importantObject").getObjectPointer()
+    );
 
     LONGS_EQUAL(10, value);
     POINTERS_EQUAL(pobject, &object);
@@ -194,7 +194,7 @@ static const char* toStringMethod(const void*)
 
 TEST(MockDocumentation, CInterface)
 {
-    void* object = (void*)0x1;
+    void* object = reinterpret_cast<void*>(0x1);
 
     mock_c()
         ->expectOneCall("foo")

@@ -194,7 +194,7 @@ bool MockNamedValue::getBoolValue() const
 unsigned int MockNamedValue::getUnsignedIntValue() const
 {
     if (type_ == "int" && value_.intValue_ >= 0)
-        return (unsigned int)value_.intValue_;
+        return static_cast<unsigned int>(value_.intValue_);
     else {
         STRCMP_EQUAL("unsigned int", type_.asCharString());
         return value_.unsignedIntValue_;
@@ -212,7 +212,7 @@ long int MockNamedValue::getLongIntValue() const
     if (type_ == "int")
         return value_.intValue_;
     else if (type_ == "unsigned int")
-        return (long int)value_.unsignedIntValue_;
+        return static_cast<long int>(value_.unsignedIntValue_);
     else {
         STRCMP_EQUAL("long int", type_.asCharString());
         return value_.longIntValue_;
@@ -224,9 +224,9 @@ unsigned long int MockNamedValue::getUnsignedLongIntValue() const
     if (type_ == "unsigned int")
         return value_.unsignedIntValue_;
     else if (type_ == "int" && value_.intValue_ >= 0)
-        return (unsigned long int)value_.intValue_;
+        return static_cast<unsigned long int>(value_.intValue_);
     else if (type_ == "long int" && value_.longIntValue_ >= 0)
-        return (unsigned long int)value_.longIntValue_;
+        return static_cast<unsigned long int>(value_.longIntValue_);
     else {
         STRCMP_EQUAL("unsigned long int", type_.asCharString());
         return value_.unsignedLongIntValue_;
@@ -238,11 +238,11 @@ long long MockNamedValue::getLongLongIntValue() const
     if (type_ == "int")
         return value_.intValue_;
     else if (type_ == "unsigned int")
-        return (long long int)value_.unsignedIntValue_;
+        return static_cast<long long int>(value_.unsignedIntValue_);
     else if (type_ == "long int")
         return value_.longIntValue_;
     else if (type_ == "unsigned long int")
-        return (long long int)value_.unsignedLongIntValue_;
+        return static_cast<long long int>(value_.unsignedLongIntValue_);
     else {
         STRCMP_EQUAL("long long int", type_.asCharString());
         return value_.longLongIntValue_;
@@ -254,13 +254,13 @@ unsigned long long MockNamedValue::getUnsignedLongLongIntValue() const
     if (type_ == "unsigned int")
         return value_.unsignedIntValue_;
     else if (type_ == "int" && value_.intValue_ >= 0)
-        return (unsigned long long int)value_.intValue_;
+        return static_cast<unsigned long long int>(value_.intValue_);
     else if (type_ == "long int" && value_.longIntValue_ >= 0)
-        return (unsigned long long int)value_.longIntValue_;
+        return static_cast<unsigned long long int>(value_.longIntValue_);
     else if (type_ == "unsigned long int")
         return value_.unsignedLongIntValue_;
     else if (type_ == "long long int" && value_.longLongIntValue_ >= 0)
-        return (unsigned long long int)value_.longLongIntValue_;
+        return static_cast<unsigned long long int>(value_.longLongIntValue_);
     else {
         STRCMP_EQUAL("unsigned long long int", type_.asCharString());
         return value_.unsignedLongLongIntValue_;
@@ -342,23 +342,27 @@ bool MockNamedValue::equals(const MockNamedValue& p) const
         return value_.intValue_ == p.value_.longIntValue_;
     else if ((type_ == "unsigned int") && (p.type_ == "int"))
         return (p.value_.intValue_ >= 0) &&
-               (value_.unsignedIntValue_ == (unsigned int)p.value_.intValue_);
+               (value_.unsignedIntValue_ ==
+                static_cast<unsigned int>(p.value_.intValue_));
     else if ((type_ == "int") && (p.type_ == "unsigned int"))
         return (value_.intValue_ >= 0) &&
-               ((unsigned int)value_.intValue_ == p.value_.unsignedIntValue_);
+               (static_cast<unsigned int>(value_.intValue_) ==
+                p.value_.unsignedIntValue_);
     else if ((type_ == "unsigned long int") && (p.type_ == "int"))
-        return (p.value_.intValue_ >= 0) && (value_.unsignedLongIntValue_ ==
-                                             (unsigned long)p.value_.intValue_);
+        return (p.value_.intValue_ >= 0) &&
+               (value_.unsignedLongIntValue_ ==
+                static_cast<unsigned long>(p.value_.intValue_));
     else if ((type_ == "int") && (p.type_ == "unsigned long int"))
-        return (value_.intValue_ >= 0) && ((unsigned long)value_.intValue_ ==
-                                           p.value_.unsignedLongIntValue_);
+        return (value_.intValue_ >= 0) &&
+               (static_cast<unsigned long>(value_.intValue_) ==
+                p.value_.unsignedLongIntValue_);
     else if ((type_ == "unsigned int") && (p.type_ == "long int"))
         return (p.value_.longIntValue_ >= 0) &&
                (value_.unsignedIntValue_ ==
-                (unsigned long)p.value_.longIntValue_);
+                static_cast<unsigned long>(p.value_.longIntValue_));
     else if ((type_ == "long int") && (p.type_ == "unsigned int"))
         return (value_.longIntValue_ >= 0) &&
-               ((unsigned long)value_.longIntValue_ ==
+               (static_cast<unsigned long>(value_.longIntValue_) ==
                 p.value_.unsignedIntValue_);
     else if ((type_ == "unsigned int") && (p.type_ == "unsigned long int"))
         return value_.unsignedIntValue_ == p.value_.unsignedLongIntValue_;
@@ -366,12 +370,12 @@ bool MockNamedValue::equals(const MockNamedValue& p) const
         return value_.unsignedLongIntValue_ == p.value_.unsignedIntValue_;
     else if ((type_ == "long int") && (p.type_ == "unsigned long int"))
         return (value_.longIntValue_ >= 0) &&
-               ((unsigned long)value_.longIntValue_ ==
+               (static_cast<unsigned long>(value_.longIntValue_) ==
                 p.value_.unsignedLongIntValue_);
     else if ((type_ == "unsigned long int") && (p.type_ == "long int"))
         return (p.value_.longIntValue_ >= 0) &&
                (value_.unsignedLongIntValue_ ==
-                (unsigned long)p.value_.longIntValue_);
+                static_cast<unsigned long>(p.value_.longIntValue_));
     else if ((type_ == "long long int") && (p.type_ == "int"))
         return value_.longLongIntValue_ == p.value_.intValue_;
     else if ((type_ == "int") && (p.type_ == "long long int"))
@@ -382,35 +386,35 @@ bool MockNamedValue::equals(const MockNamedValue& p) const
         return value_.longIntValue_ == p.value_.longLongIntValue_;
     else if ((type_ == "long long int") && (p.type_ == "unsigned int"))
         return (value_.longLongIntValue_ >= 0) &&
-               ((unsigned long long)value_.longLongIntValue_ ==
+               (static_cast<unsigned long long>(value_.longLongIntValue_) ==
                 p.value_.unsignedIntValue_);
     else if ((type_ == "unsigned int") && (p.type_ == "long long int"))
         return (p.value_.longLongIntValue_ >= 0) &&
                (value_.unsignedIntValue_ ==
-                (unsigned long long)p.value_.longLongIntValue_);
+                static_cast<unsigned long long>(p.value_.longLongIntValue_));
     else if ((type_ == "long long int") && (p.type_ == "unsigned long int"))
         return (value_.longLongIntValue_ >= 0) &&
-               ((unsigned long long)value_.longLongIntValue_ ==
+               (static_cast<unsigned long long>(value_.longLongIntValue_) ==
                 p.value_.unsignedLongIntValue_);
     else if ((type_ == "unsigned long int") && (p.type_ == "long long int"))
         return (p.value_.longLongIntValue_ >= 0) &&
                (value_.unsignedLongIntValue_ ==
-                (unsigned long long)p.value_.longLongIntValue_);
+                static_cast<unsigned long long>(p.value_.longLongIntValue_));
     else if ((type_ == "long long int") && (p.type_ == "unsigned long long int"))
         return (value_.longLongIntValue_ >= 0) &&
-               ((unsigned long long)value_.longLongIntValue_ ==
+               (static_cast<unsigned long long>(value_.longLongIntValue_) ==
                 p.value_.unsignedLongLongIntValue_);
     else if ((type_ == "unsigned long long int") && (p.type_ == "long long int"))
         return (p.value_.longLongIntValue_ >= 0) &&
                (value_.unsignedLongLongIntValue_ ==
-                (unsigned long long)p.value_.longLongIntValue_);
+                static_cast<unsigned long long>(p.value_.longLongIntValue_));
     else if ((type_ == "unsigned long long int") && (p.type_ == "int"))
         return (p.value_.intValue_ >= 0) &&
                (value_.unsignedLongLongIntValue_ ==
-                (unsigned long long)p.value_.intValue_);
+                static_cast<unsigned long long>(p.value_.intValue_));
     else if ((type_ == "int") && (p.type_ == "unsigned long long int"))
         return (value_.intValue_ >= 0) &&
-               ((unsigned long long)value_.intValue_ ==
+               (static_cast<unsigned long long>(value_.intValue_) ==
                 p.value_.unsignedLongLongIntValue_);
     else if ((type_ == "unsigned long long int") && (p.type_ == "unsigned int"))
         return value_.unsignedLongLongIntValue_ == p.value_.unsignedIntValue_;
@@ -419,10 +423,10 @@ bool MockNamedValue::equals(const MockNamedValue& p) const
     else if ((type_ == "unsigned long long int") && (p.type_ == "long int"))
         return (p.value_.longIntValue_ >= 0) &&
                (value_.unsignedLongLongIntValue_ ==
-                (unsigned long long)p.value_.longIntValue_);
+                static_cast<unsigned long long>(p.value_.longIntValue_));
     else if ((type_ == "long int") && (p.type_ == "unsigned long long int"))
         return (value_.longIntValue_ >= 0) &&
-               ((unsigned long long)value_.longIntValue_ ==
+               (static_cast<unsigned long long>(value_.longIntValue_) ==
                 p.value_.unsignedLongLongIntValue_);
     else if ((type_ == "unsigned long long int") && (p.type_ == "unsigned long int"))
         return value_.unsignedLongLongIntValue_ ==

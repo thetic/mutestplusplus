@@ -112,7 +112,9 @@ TEST(TestMemoryAllocatorTest, NewArrayNames)
 }
 
 #define MAX_SIZE_FOR_ALLOC                                                     \
-    ((size_t)-1 > (unsigned short)-1) ? (size_t)(-97) : (size_t)(-1)
+    (static_cast<size_t>(-1) > static_cast<unsigned short>(-1))                \
+        ? static_cast<size_t>(-97)                                             \
+        : static_cast<size_t>(-1)
 
 static void failTryingToAllocateTooMuchMemory(void)
 {
