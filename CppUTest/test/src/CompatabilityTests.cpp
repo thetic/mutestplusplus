@@ -1,5 +1,5 @@
 
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/TestHarness.hpp"
 
 #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
 

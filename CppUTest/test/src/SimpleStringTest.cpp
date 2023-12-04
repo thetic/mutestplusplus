@@ -25,11 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/SimpleString.h"
-#include "CppUTest/PlatformSpecificFunctions.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestMemoryAllocator.h"
-#include "CppUTest/TestTestingFixture.h"
+#include "CppUTest/SimpleString.hpp"
+#include "CppUTest/PlatformSpecificFunctions.hpp"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestMemoryAllocator.hpp"
+#include "CppUTest/TestTestingFixture.hpp"
 #include <limits.h>
 
 /*
@@ -558,11 +558,9 @@ TEST(SimpleString, Doubles)
     STRCMP_EQUAL("1.2", s.asCharString());
 }
 
-extern "C" {
 static int alwaysTrue(double)
 {
     return true;
-}
 }
 
 TEST(SimpleString, NaN)

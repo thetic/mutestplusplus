@@ -3,7 +3,7 @@ add_executable(CppUTestExtTests
     src/ExpectedFunctionsListTest.cpp
     src/ExpectedFunctionsListTest.cpp
     src/IEEE754PluginTest.cpp
-    src/IEEE754PluginTest_c.c
+    src/IEEE754PluginTest.c
     src/MockActualCallTest.cpp
     src/MockCallTest.cpp
     src/MockCheatSheetTest.cpp
@@ -33,9 +33,9 @@ add_executable(CppUTestExtTests
     src/MockStrictOrderTest.cpp
     src/MockSupportTest.cpp
     src/MockSupport_cTest.cpp
-    src/MockSupport_cTestCFile.c
+    src/MockSupportTest.c
     src/OrderedTestTest.cpp
-    src/OrderedTestTest_c.c
+    src/OrderedTestTest.c
 )
 
 target_include_directories(CppUTestExtTests

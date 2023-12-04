@@ -25,9 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTestExt/OrderedTest.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestRegistry.h"
+#include "CppUTestExt/OrderedTest.hpp"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestRegistry.hpp"
 
 OrderedTestShell* OrderedTestShell::_orderedTestsHead = nullptr;
 

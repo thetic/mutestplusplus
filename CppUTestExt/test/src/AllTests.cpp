@@ -25,10 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/CommandLineTestRunner.h"
-#include "CppUTest/SimpleStringInternalCache.h"
-#include "CppUTest/TestRegistry.h"
-#include "CppUTestExt/MockSupportPlugin.h"
+#include "CppUTest/CommandLineTestRunner.hpp"
+#include "CppUTest/SimpleStringInternalCache.hpp"
+#include "CppUTest/TestRegistry.hpp"
+#include "CppUTestExt/MockSupportPlugin.hpp"
 
 int main(int ac, const char* const* av)
 {

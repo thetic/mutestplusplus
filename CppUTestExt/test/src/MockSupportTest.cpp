@@ -25,12 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTestExt/MockSupport.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestTestingFixture.h"
-#include "CppUTestExt/MockExpectedCall.h"
-#include "CppUTestExt/MockFailure.h"
-#include "MockFailureReporterForTest.h"
+#include "CppUTestExt/MockSupport.hpp"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestTestingFixture.hpp"
+#include "CppUTestExt/MockExpectedCall.hpp"
+#include "CppUTestExt/MockFailure.hpp"
+#include "MockFailureReporterForTest.hpp"
 
 TEST_GROUP(MockSupportTest)
 {
@@ -249,7 +249,7 @@ static void unexpectedCallTestFunction_(void)
     mock().actualCall("unexpected");
 } // LCOV_EXCL_LINE
 
-#include "CppUTestExt/OrderedTest.h"
+#include "CppUTestExt/OrderedTest.hpp"
 
 TEST(MockSupportTestWithFixture, shouldCrashOnFailure)
 {

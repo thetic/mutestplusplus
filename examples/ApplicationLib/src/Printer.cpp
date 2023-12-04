@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Printer.h"
+#include "Printer.hpp"
 #include <stdio.h>
 
 Printer::Printer() {}

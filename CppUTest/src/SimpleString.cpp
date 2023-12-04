@@ -1,5 +1,3 @@
-#include "CppUTest/TestHarness.h"
-#include <limits.h>
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -27,10 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTest/SimpleString.hpp"
 #include "CppUTest/PlatformSpecificFunctions.h"
-#include "CppUTest/SimpleString.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/TestMemoryAllocator.hpp"
+#include <limits.h>
 
 TestMemoryAllocator* SimpleString::stringAllocator_ = nullptr;
 

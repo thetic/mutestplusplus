@@ -24,13 +24,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/TestHarness.hpp"
 
-#include "CppUTest/TestHarness_c.h"
-#include "CppUTest/TestTestingFixture.h"
-#include "CppUTestExt/MockSupport_c.h"
-#include "CppUTestExt/OrderedTest.h"
-#include "MockSupport_cTestCFile.h"
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/TestTestingFixture.hpp"
+#include "CppUTestExt/MockSupport.h"
+#include "CppUTestExt/OrderedTest.hpp"
+#include "MockSupportTest.h"
 
 extern "C" {
 static void dummy_function_for_mock_c_test() {}
@@ -114,8 +114,6 @@ TEST(MockSupport_c, expectAndActualParameters)
         );
 }
 
-extern "C" {
-
 static int typeNameIsEqual(const void* object1, const void* object2)
 {
     return object1 == object2;
@@ -129,7 +127,6 @@ static const char* typeNameValueToString(const void* PUNUSED(object))
 static void typeCopy(void* dst, const void* src)
 {
     *reinterpret_cast<int*>(dst) = *reinterpret_cast<const int*>(src);
-}
 }
 
 TEST(MockSupport_c, expectAndActualParametersOnObject)

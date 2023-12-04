@@ -25,7 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/PlatformSpecificFunctions.hpp"
+
+#include "CppUTest/TestHarness.hpp"
 #include <stdlib.h>
 #undef malloc
 #undef free
@@ -42,8 +44,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-
-#include "CppUTest/PlatformSpecificFunctions.h"
 
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
@@ -76,8 +76,6 @@ void (*PlatformSpecificRunTestInASeperateProcess)(UtestShell*, TestPlugin*, Test
     DummyRunTestInASeperateProcess;
 int (*PlatformSpecificFork)() = DummyPlatformSpecificFork;
 int (*PlatformSpecificWaitPid)(int, int*, int) = DummyPlatformSpecificWaitPid;
-
-extern "C" {
 
 static int
 PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
@@ -219,4 +217,3 @@ void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = DummyMutexLock;
 void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = DummyMutexUnlock;
 void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex) = DummyMutexDestroy;
 void (*PlatformSpecificAbort)(void) = abort;
-}

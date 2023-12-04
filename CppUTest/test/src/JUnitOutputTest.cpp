@@ -25,11 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/JUnitTestOutput.h"
-#include "CppUTest/PlatformSpecificFunctions.h"
-#include "CppUTest/SimpleString.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestResult.h"
+#include "CppUTest/JUnitTestOutput.hpp"
+#include "CppUTest/PlatformSpecificFunctions.hpp"
+#include "CppUTest/SimpleString.hpp"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestResult.hpp"
 
 class FileForJUnitOutputTests
 {
@@ -144,7 +144,6 @@ public:
     }
 };
 
-extern "C" {
 static long millisTime = 0;
 static const char* theTime = "";
 
@@ -156,7 +155,6 @@ static long MockGetPlatformSpecificTimeInMillis()
 static const char* MockGetPlatformSpecificTimeString()
 {
     return theTime;
-}
 }
 
 class JUnitTestOutputTestRunner
@@ -332,7 +330,6 @@ public:
     }
 };
 
-extern "C" {
 static FileSystemForJUnitTestOutputTests fileSystem;
 
 static PlatformSpecificFile mockFOpen(const char* filename, const char*)
@@ -348,7 +345,6 @@ static void mockFPuts(const char* str, PlatformSpecificFile file)
 static void mockFClose(PlatformSpecificFile file)
 {
     reinterpret_cast<FileForJUnitOutputTests*>(file)->close();
-}
 }
 
 TEST_GROUP(JUnitOutputTest)

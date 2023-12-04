@@ -25,9 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/TestHarness.hpp"
 #include "CppUTestExt/MockSupport.h"
-#include "CppUTestExt/MockSupport_c.h"
+#include "CppUTestExt/MockSupport.hpp"
 
 TEST_GROUP(FirstTestGroup)
 {

@@ -15,8 +15,8 @@ add_executable(CppUTestTests
     src/TestFailureNaNTest.cpp
     src/TestFailureTest.cpp
     src/TestFilterTest.cpp
-    src/TestHarness_cTest.cpp
-    src/TestHarness_cTestCFile.c
+    src/TestHarnessTest.cpp
+    src/TestHarnessTest.c
     src/TestInstallerTest.cpp
     src/TestMemoryAllocatorTest.cpp
     src/TestOutputTest.cpp

@@ -1,12 +1,13 @@
-#include "CppUTest/TestHarness.h"
-#include <stdlib.h>
+#include "CppUTest/PlatformSpecificFunctions.hpp"
 
-#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestHarness.hpp"
+
 #include <float.h>
 #include <math.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -204,8 +205,8 @@ static int IsInfImplementation(double d)
 }
 
 double (*PlatformSpecificFabs)(double d) = fabs;
-extern "C" int (*PlatformSpecificIsNan)(double) = _isnan;
-extern "C" int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
+int (*PlatformSpecificIsNan)(double) = _isnan;
+int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
 int (*PlatformSpecificAtExit)(void (*func)(void)) = atexit;
 
 static PlatformSpecificMutex VisualCppMutexCreate(void)

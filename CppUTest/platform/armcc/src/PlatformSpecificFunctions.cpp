@@ -25,7 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/PlatformSpecificFunctions.hpp"
+
+#include "CppUTest/TestHarness.hpp"
 #include <ctype.h>
 #include <math.h>
 #include <setjmp.h>
@@ -42,8 +44,6 @@
 #undef strndup
 
 #define far // eliminate "meaningless type qualifier" warning
-
-#include "CppUTest/PlatformSpecificFunctions.h"
 
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;

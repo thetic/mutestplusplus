@@ -25,7 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/PlatformSpecificFunctions.hpp"
+
+#include "CppUTest/TestHarness.hpp"
 #include <ctype.h>
 #include <math.h>
 #include <setjmp.h>
@@ -34,13 +36,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#undef malloc
-#undef calloc
-#undef realloc
-#undef free
-#undef strdup
-#undef strndup
-#include "CppUTest/PlatformSpecificFunctions.h"
 
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
@@ -74,8 +69,6 @@ void (*PlatformSpecificRunTestInASeperateProcess)(
 ) = DummyPlatformSpecificRunTestInASeperateProcess;
 int (*PlatformSpecificFork)(void) = DummyPlatformSpecificFork;
 int (*PlatformSpecificWaitPid)(int, int*, int) = DummyPlatformSpecificWaitPid;
-
-extern "C" {
 
 static int
 PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
@@ -213,4 +206,3 @@ void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex) = DummyMutexDestroy;
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
 void (*PlatformSpecificAbort)(void) = abort;
-}

@@ -25,12 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/CommandLineTestRunner.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestRegistry.h"
+#include "CppUTest/CommandLineTestRunner.hpp"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestRegistry.hpp"
 
 #if (defined(__STDC_IEC_559__) && __STDC_IEC_559__)
-    #include "CppUTestExt/IEEE754ExceptionsPlugin.h"
+    #include "CppUTestExt/IEEE754ExceptionsPlugin.hpp"
 
 /*
  * To see a demonstration of tests failing as a result of
