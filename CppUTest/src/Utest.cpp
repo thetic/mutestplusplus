@@ -25,14 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTest/Utest.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/TestFailure.h"
 #include "CppUTest/TestOutput.h"
+#include "CppUTest/TestPlugin.h"
 #include "CppUTest/TestRegistry.h"
-
-#if defined(__GNUC__) && __GNUC__ >= 11
-    #define NEEDS_DISABLE_NULL_WARNING
-#endif /* GCC >= 11 */
+#include "CppUTest/TestResult.h"
 
 bool doubles_equal(double d1, double d2, double threshold)
 {
@@ -60,7 +59,7 @@ public:
     {
         return defaultTestResult;
     }
-    virtual ~OutsideTestRunnerUTest() _destructor_override {}
+    virtual ~OutsideTestRunnerUTest() override {}
 
 private:
     OutsideTestRunnerUTest() :
@@ -95,17 +94,17 @@ extern "C" {
 
 static void helperDoTestSetup(void* data)
 {
-    ((Utest*)data)->setup();
+    reinterpret_cast<Utest*>(data)->setup();
 }
 
 static void helperDoTestBody(void* data)
 {
-    ((Utest*)data)->testBody();
+    reinterpret_cast<Utest*>(data)->testBody();
 }
 
 static void helperDoTestTeardown(void* data)
 {
-    ((Utest*)data)->teardown();
+    reinterpret_cast<Utest*>(data)->teardown();
 }
 
 struct HelperTestRunInfo
@@ -126,7 +125,7 @@ struct HelperTestRunInfo
 
 static void helperDoRunOneTestInCurrentProcess(void* data)
 {
-    HelperTestRunInfo* runInfo = (HelperTestRunInfo*)data;
+    HelperTestRunInfo* runInfo = reinterpret_cast<HelperTestRunInfo*>(data);
 
     UtestShell* shell = runInfo->shell_;
     TestPlugin* plugin = runInfo->plugin_;
@@ -137,7 +136,7 @@ static void helperDoRunOneTestInCurrentProcess(void* data)
 
 static void helperDoRunOneTestSeperateProcess(void* data)
 {
-    HelperTestRunInfo* runInfo = (HelperTestRunInfo*)data;
+    HelperTestRunInfo* runInfo = reinterpret_cast<HelperTestRunInfo*>(data);
 
     UtestShell* shell = runInfo->shell_;
     TestPlugin* plugin = runInfo->plugin_;
@@ -170,7 +169,7 @@ UtestShell::UtestShell() :
     name_("UndefinedTest"),
     file_("UndefinedFile"),
     lineNumber_(0),
-    next_(NULLPTR),
+    next_(nullptr),
     isRunAsSeperateProcess_(false),
     hasFailed_(false)
 {
@@ -186,7 +185,7 @@ UtestShell::UtestShell(
     name_(testName),
     file_(fileName),
     lineNumber_(lineNumber),
-    next_(NULLPTR),
+    next_(nullptr),
     isRunAsSeperateProcess_(false),
     hasFailed_(false)
 {
@@ -264,7 +263,7 @@ void UtestShell::runOneTestInCurrentProcess(
     UtestShell::setTestResult(&result);
     UtestShell::setCurrentTest(this);
 
-    Utest* testToRun = NULLPTR;
+    Utest* testToRun = nullptr;
 
 #if CPPUTEST_HAVE_EXCEPTIONS
     try {
@@ -398,10 +397,10 @@ size_t UtestShell::getLineNumber() const
 
 bool UtestShell::match(const char* target, const TestFilter* filters) const
 {
-    if (filters == NULLPTR)
+    if (filters == nullptr)
         return true;
 
-    for (; filters != NULLPTR; filters = filters->getNext())
+    for (; filters != nullptr; filters = filters->getNext())
         if (filters->match(target))
             return true;
 
@@ -480,9 +479,9 @@ void UtestShell::assertCstrEqual(
 )
 {
     getTestResult()->countCheck();
-    if (actual == NULLPTR && expected == NULLPTR)
+    if (actual == nullptr && expected == nullptr)
         return;
-    if (actual == NULLPTR || expected == NULLPTR)
+    if (actual == nullptr || expected == nullptr)
         failWith(
             StringEqualFailure(
                 this, fileName, lineNumber, expected, actual, text
@@ -509,9 +508,9 @@ void UtestShell::assertCstrNEqual(
 )
 {
     getTestResult()->countCheck();
-    if (actual == NULLPTR && expected == NULLPTR)
+    if (actual == nullptr && expected == nullptr)
         return;
-    if (actual == NULLPTR || expected == NULLPTR)
+    if (actual == nullptr || expected == nullptr)
         failWith(
             StringEqualFailure(
                 this, fileName, lineNumber, expected, actual, text
@@ -536,9 +535,9 @@ void UtestShell::assertCstrNoCaseEqual(
 )
 {
     getTestResult()->countCheck();
-    if (actual == NULLPTR && expected == NULLPTR)
+    if (actual == nullptr && expected == nullptr)
         return;
-    if (actual == NULLPTR || expected == NULLPTR)
+    if (actual == nullptr || expected == nullptr)
         failWith(StringEqualNoCaseFailure(
             this, fileName, lineNumber, expected, actual, text
         ));
@@ -557,9 +556,9 @@ void UtestShell::assertCstrContains(
 )
 {
     getTestResult()->countCheck();
-    if (actual == NULLPTR && expected == NULLPTR)
+    if (actual == nullptr && expected == nullptr)
         return;
-    if (actual == NULLPTR || expected == NULLPTR)
+    if (actual == nullptr || expected == nullptr)
         failWith(
             ContainsFailure(this, fileName, lineNumber, expected, actual, text)
         );
@@ -578,9 +577,9 @@ void UtestShell::assertCstrNoCaseContains(
 )
 {
     getTestResult()->countCheck();
-    if (actual == NULLPTR && expected == NULLPTR)
+    if (actual == nullptr && expected == nullptr)
         return;
-    if (actual == NULLPTR || expected == NULLPTR)
+    if (actual == nullptr || expected == nullptr)
         failWith(
             ContainsFailure(this, fileName, lineNumber, expected, actual, text)
         );
@@ -629,8 +628,8 @@ void UtestShell::assertUnsignedLongsEqual(
 }
 
 void UtestShell::assertLongLongsEqual(
-    cpputest_longlong expected,
-    cpputest_longlong actual,
+    long long expected,
+    long long actual,
     const char* text,
     const char* fileName,
     size_t lineNumber,
@@ -638,7 +637,6 @@ void UtestShell::assertLongLongsEqual(
 )
 {
     getTestResult()->countCheck();
-#if CPPUTEST_USE_LONG_LONG
     if (expected != actual)
         failWith(
             LongLongsEqualFailure(
@@ -646,21 +644,11 @@ void UtestShell::assertLongLongsEqual(
             ),
             testTerminator
         );
-#else
-    (void)expected;
-    (void)actual;
-    failWith(
-        FeatureUnsupportedFailure(
-            this, fileName, lineNumber, "CPPUTEST_USE_LONG_LONG", text
-        ),
-        testTerminator
-    );
-#endif
 }
 
 void UtestShell::assertUnsignedLongLongsEqual(
-    cpputest_ulonglong expected,
-    cpputest_ulonglong actual,
+    unsigned long long expected,
+    unsigned long long actual,
     const char* text,
     const char* fileName,
     size_t lineNumber,
@@ -668,7 +656,6 @@ void UtestShell::assertUnsignedLongLongsEqual(
 )
 {
     getTestResult()->countCheck();
-#if CPPUTEST_USE_LONG_LONG
     if (expected != actual)
         failWith(
             UnsignedLongLongsEqualFailure(
@@ -676,16 +663,6 @@ void UtestShell::assertUnsignedLongLongsEqual(
             ),
             testTerminator
         );
-#else
-    (void)expected;
-    (void)actual;
-    failWith(
-        FeatureUnsupportedFailure(
-            this, fileName, lineNumber, "CPPUTEST_USE_LONG_LONG", text
-        ),
-        testTerminator
-    );
-#endif
 }
 
 void UtestShell::assertSignedBytesEqual(
@@ -780,21 +757,23 @@ void UtestShell::assertBinaryEqual(
     getTestResult()->countCheck();
     if (length == 0)
         return;
-    if (actual == NULLPTR && expected == NULLPTR)
+    if (actual == nullptr && expected == nullptr)
         return;
-    if (actual == NULLPTR || expected == NULLPTR)
+    if (actual == nullptr || expected == nullptr)
         failWith(
             BinaryEqualFailure(
-                this, fileName, lineNumber, (const unsigned char*)expected,
-                (const unsigned char*)actual, length, text
+                this, fileName, lineNumber,
+                reinterpret_cast<const unsigned char*>(expected),
+                reinterpret_cast<const unsigned char*>(actual), length, text
             ),
             testTerminator
         );
     if (SimpleString::MemCmp(expected, actual, length) != 0)
         failWith(
             BinaryEqualFailure(
-                this, fileName, lineNumber, (const unsigned char*)expected,
-                (const unsigned char*)actual, length, text
+                this, fileName, lineNumber,
+                reinterpret_cast<const unsigned char*>(expected),
+                reinterpret_cast<const unsigned char*>(actual), length, text
             ),
             testTerminator
         );
@@ -885,8 +864,8 @@ void UtestShell::printVeryVerbose(const char* text)
     getTestResult()->printVeryVerbose(text);
 }
 
-TestResult* UtestShell::testResult_ = NULLPTR;
-UtestShell* UtestShell::currentTest_ = NULLPTR;
+TestResult* UtestShell::testResult_ = nullptr;
+UtestShell* UtestShell::currentTest_ = nullptr;
 
 void UtestShell::setTestResult(TestResult* result)
 {
@@ -900,14 +879,14 @@ void UtestShell::setCurrentTest(UtestShell* test)
 
 TestResult* UtestShell::getTestResult()
 {
-    if (testResult_ == NULLPTR)
+    if (testResult_ == nullptr)
         return &OutsideTestRunnerUTest::instance().getTestResult();
     return testResult_;
 }
 
 UtestShell* UtestShell::getCurrent()
 {
-    if (currentTest_ == NULLPTR)
+    if (currentTest_ == nullptr)
         return &OutsideTestRunnerUTest::instance();
     return currentTest_;
 }
@@ -974,7 +953,7 @@ void Utest::run()
     catch (CppUTestFailedException&) {
         PlatformSpecificRestoreJumpBuffer();
     }
-    #if CPPUTEST_USE_STD_CPP_LIB
+    #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
     catch (const std::exception& e) {
         current->addFailure(UnexpectedExceptionFailure(current, e));
         PlatformSpecificRestoreJumpBuffer();
@@ -999,7 +978,7 @@ void Utest::run()
     catch (CppUTestFailedException&) {
         PlatformSpecificRestoreJumpBuffer();
     }
-    #if CPPUTEST_USE_STD_CPP_LIB
+    #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
     catch (const std::exception& e) {
         current->addFailure(UnexpectedExceptionFailure(current, e));
         PlatformSpecificRestoreJumpBuffer();
@@ -1170,7 +1149,7 @@ void IgnoredUtestShell::setRunIgnored()
 //////////////////// UtestShellPointerArray
 
 UtestShellPointerArray::UtestShellPointerArray(UtestShell* firstTest) :
-    arrayOfTests_(NULLPTR),
+    arrayOfTests_(nullptr),
     count_(0)
 {
     count_ = (firstTest) ? firstTest->countTests() : 0;
@@ -1204,14 +1183,14 @@ void UtestShellPointerArray::shuffle(size_t seed)
     if (count_ == 0)
         return;
 
-    PlatformSpecificSrand((unsigned int)seed);
+    PlatformSpecificSrand(static_cast<unsigned int>(seed));
 
     for (size_t i = count_ - 1; i >= 1; --i) {
         if (count_ == 0)
             return;
 
         const size_t j =
-            ((size_t)PlatformSpecificRand()) %
+            (static_cast<size_t>(PlatformSpecificRand())) %
             (i + 1
             ); // distribution biased by modulo, but good enough for shuffling
         swap(i, j);
@@ -1234,7 +1213,7 @@ void UtestShellPointerArray::reverse()
 
 void UtestShellPointerArray::relinkTestsInOrder()
 {
-    UtestShell* tests = NULLPTR;
+    UtestShell* tests = nullptr;
     for (size_t i = 0; i < count_; i++)
         tests = arrayOfTests_[count_ - i - 1]->addTest(tests);
 }
@@ -1247,7 +1226,7 @@ UtestShell* UtestShellPointerArray::getFirstTest() const
 UtestShell* UtestShellPointerArray::get(size_t index) const
 {
     if (index >= count_)
-        return NULLPTR;
+        return nullptr;
     return arrayOfTests_[index];
 }
 

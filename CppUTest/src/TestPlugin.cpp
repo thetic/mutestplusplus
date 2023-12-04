@@ -98,7 +98,7 @@ TestPlugin* TestPlugin::getNext()
 }
 TestPlugin* TestPlugin::removePluginByName(const SimpleString& name)
 {
-    TestPlugin* removed = NULLPTR;
+    TestPlugin* removed = nullptr;
     if (next_ && next_->getName() == name) {
         removed = next_;
         next_ = next_->next_;
@@ -151,13 +151,13 @@ void SetPointerPlugin::
     postTestAction(UtestShell& /*test*/, TestResult& /*result*/)
 {
     for (int i = pointerTableIndex - 1; i >= 0; i--)
-        *((void**)setlist[i].orig) = setlist[i].orig_value;
+        *(reinterpret_cast<void**>(setlist[i].orig)) = setlist[i].orig_value;
     pointerTableIndex = 0;
 }
 
 //////// NullPlugin
 
-NullTestPlugin::NullTestPlugin() : TestPlugin(NULLPTR) {}
+NullTestPlugin::NullTestPlugin() : TestPlugin(nullptr) {}
 
 NullTestPlugin* NullTestPlugin::instance()
 {

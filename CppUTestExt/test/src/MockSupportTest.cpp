@@ -37,7 +37,7 @@ TEST_GROUP(MockSupportTest)
     MockExpectedCallsListForTest expectations;
     MockFailureReporterInstaller failureReporterInstaller;
 
-    void teardown() _override
+    void teardown() override
     {
         mock().checkExpectations();
         CHECK_NO_MOCK_FAILURE();
@@ -109,21 +109,21 @@ TEST(MockSupportTest, setDataDouble)
 
 TEST(MockSupportTest, setDataPointer)
 {
-    void* ptr = (void*)0x001;
+    void* ptr = reinterpret_cast<void*>(0x001);
     mock().setData("data", ptr);
     POINTERS_EQUAL(ptr, mock().getData("data").getPointerValue());
 }
 
 TEST(MockSupportTest, setConstDataPointer)
 {
-    const void* ptr = (const void*)0x001;
+    const void* ptr = reinterpret_cast<const void*>(0x001);
     mock().setData("data", ptr);
     POINTERS_EQUAL(ptr, mock().getData("data").getConstPointerValue());
 }
 
 TEST(MockSupportTest, setDataFunctionPointer)
 {
-    void (*ptr)() = (void (*)())0x001;
+    void (*ptr)() = reinterpret_cast<void (*)()>(0x001);
     mock().setData("data", ptr);
     FUNCTIONPOINTERS_EQUAL(
         ptr, mock().getData("data").getFunctionPointerValue()
@@ -132,7 +132,7 @@ TEST(MockSupportTest, setDataFunctionPointer)
 
 TEST(MockSupportTest, setDataObject)
 {
-    void* ptr = (void*)0x001;
+    void* ptr = reinterpret_cast<void*>(0x001);
     mock().setDataObject("data", "type", ptr);
     POINTERS_EQUAL(ptr, mock().getData("data").getObjectPointer());
     STRCMP_EQUAL("type", mock().getData("data").getType().asCharString());
@@ -140,7 +140,7 @@ TEST(MockSupportTest, setDataObject)
 
 TEST(MockSupportTest, setDataConstObject)
 {
-    void* ptr = (void*)0x011;
+    void* ptr = reinterpret_cast<void*>(0x011);
     mock().setDataConstObject("data", "type", ptr);
     POINTERS_EQUAL(ptr, mock().getData("data").getConstObjectPointer());
     STRCMP_EQUAL("type", mock().getData("data").getType().asCharString());
@@ -183,7 +183,7 @@ TEST_GROUP(MockSupportTestWithFixture)
 {
     TestTestingFixture fixture;
 
-    void teardown() _override
+    void teardown() override
     {
         mock().clear();
         MockFailureReporterForTest::clearReporter();

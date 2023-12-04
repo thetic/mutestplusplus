@@ -31,7 +31,7 @@
 
 TEST_GROUP(MockCallTest)
 {
-    void teardown() _override
+    void teardown() override
     {
         mock().checkExpectations();
         mock().clear();
@@ -54,7 +54,7 @@ TEST(MockCallTest, expectASingleCallThatHappens)
 {
     mock().expectOneCall("func");
     MockCheckedActualCall& actualCall =
-        (MockCheckedActualCall&)mock().actualCall("func");
+        reinterpret_cast<MockCheckedActualCall&>(mock().actualCall("func"));
     actualCall.checkExpectations();
     CHECK(!mock().expectedCallsLeft());
 }
@@ -71,7 +71,7 @@ TEST(MockCallTest, expectAMultiCallThatHappensTheExpectedTimes)
     mock().expectNCalls(2, "func");
     mock().actualCall("func");
     MockCheckedActualCall& actualCall =
-        (MockCheckedActualCall&)mock().actualCall("func");
+        reinterpret_cast<MockCheckedActualCall&>(mock().actualCall("func"));
     actualCall.checkExpectations();
     CHECK(!mock().expectedCallsLeft());
 }
@@ -80,7 +80,7 @@ TEST(MockCallTest, expectAMultiCallThatDoesntHappenTheExpectedTimes)
 {
     mock().expectNCalls(2, "func");
     MockCheckedActualCall& actualCall =
-        (MockCheckedActualCall&)mock().actualCall("func");
+        reinterpret_cast<MockCheckedActualCall&>(mock().actualCall("func"));
     actualCall.checkExpectations();
     CHECK(mock().expectedCallsLeft());
     mock().clear();
@@ -399,29 +399,29 @@ TEST(MockCallTest, disableEnable)
 
 TEST(MockCallTest, OnObject)
 {
-    void* objectPtr = (void*)0x001;
+    void* objectPtr = reinterpret_cast<void*>(0x001);
     mock().expectOneCall("boo").onObject(objectPtr);
     mock().actualCall("boo").onObject(objectPtr);
 }
 
 TEST(MockCallTest, OnObjectIgnored_MatchingAlreadyWhenObjectPassed)
 {
-    void* objectPtr = (void*)0x001;
+    void* objectPtr = reinterpret_cast<void*>(0x001);
     mock().expectOneCall("boo");
     mock().actualCall("boo").onObject(objectPtr);
 }
 
 TEST(MockCallTest, OnObjectIgnored_NotMatchingYetWhenObjectPassed)
 {
-    void* objectPtr = (void*)0x001;
+    void* objectPtr = reinterpret_cast<void*>(0x001);
     mock().expectOneCall("boo").withBoolParameter("p", true);
     mock().actualCall("boo").onObject(objectPtr).withBoolParameter("p", true);
 }
 
 TEST(MockCallTest, OnObjectIgnored_InitialMatchDiscarded)
 {
-    void* objectPtr1 = (void*)0x001;
-    void* objectPtr2 = (void*)0x002;
+    void* objectPtr1 = reinterpret_cast<void*>(0x001);
+    void* objectPtr2 = reinterpret_cast<void*>(0x002);
 
     mock().expectOneCall("boo");
     mock().expectOneCall("boo").withBoolParameter("p", true);
@@ -433,8 +433,8 @@ TEST(MockCallTest, OnObjectFails)
 {
     MockFailureReporterInstaller failureReporterInstaller;
 
-    void* objectPtr = (void*)0x001;
-    void* objectPtr2 = (void*)0x002;
+    void* objectPtr = reinterpret_cast<void*>(0x001);
+    void* objectPtr2 = reinterpret_cast<void*>(0x002);
     MockExpectedCallsListForTest expectations;
     expectations.addFunction("boo")->onObject(objectPtr);
 
@@ -451,7 +451,7 @@ TEST(MockCallTest, OnObjectExpectedButNotCalled)
 {
     MockFailureReporterInstaller failureReporterInstaller;
 
-    void* objectPtr = (void*)0x001;
+    void* objectPtr = reinterpret_cast<void*>(0x001);
     MockExpectedCallsListForTest expectations;
     expectations.addFunction("boo")->onObject(objectPtr);
     expectations.addFunction("boo")->onObject(objectPtr);

@@ -44,7 +44,7 @@ TEST_GROUP(TestResult)
 
     TestResult* res;
 
-    void setup() _override
+    void setup() override
     {
         mock = new StringBufferTestOutput();
         printer = mock;
@@ -53,7 +53,7 @@ TEST_GROUP(TestResult)
             GetPlatformSpecificTimeInMillis, MockGetPlatformSpecificTimeInMillis
         );
     }
-    void teardown() _override
+    void teardown() override
     {
         delete printer;
         delete res;

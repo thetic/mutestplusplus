@@ -29,9 +29,9 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestRegistry.h"
 
-OrderedTestShell* OrderedTestShell::_orderedTestsHead = NULLPTR;
+OrderedTestShell* OrderedTestShell::_orderedTestsHead = nullptr;
 
-OrderedTestShell::OrderedTestShell() : _nextOrderedTest(NULLPTR), _level(0) {}
+OrderedTestShell::OrderedTestShell() : _nextOrderedTest(nullptr), _level(0) {}
 
 OrderedTestShell::~OrderedTestShell() {}
 
@@ -57,7 +57,7 @@ OrderedTestShell* OrderedTestShell::getOrderedTestHead()
 
 bool OrderedTestShell::firstOrderedTest()
 {
-    return (getOrderedTestHead() == NULLPTR);
+    return (getOrderedTestHead() == nullptr);
 }
 
 OrderedTestShell* OrderedTestShell::addOrderedTest(OrderedTestShell* test)
@@ -72,7 +72,7 @@ void OrderedTestShell::addOrderedTestToHead(OrderedTestShell* test)
     TestRegistry* reg = TestRegistry::getCurrentRegistry();
     UtestShell* head = getOrderedTestHead();
 
-    if (NULLPTR == reg->getFirstTest() || head == reg->getFirstTest()) {
+    if (nullptr == reg->getFirstTest() || head == reg->getFirstTest()) {
         reg->addTest(test);
     } else {
         reg->getTestWithNext(head)->addTest(test);

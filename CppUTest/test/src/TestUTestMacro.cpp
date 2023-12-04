@@ -29,22 +29,10 @@
 #include "CppUTest/TestOutput.h"
 #include "CppUTest/TestTestingFixture.h"
 
+#include <limits.h>
+
 #define CHECK_TEST_FAILS_PROPER_WITH_TEXT(text)                                \
     fixture.checkTestFailsWithProperTestLocation(text, __FILE__, __LINE__)
-
-// Mainly this is for Visual C++, but we'll define it for any system that has
-// the same behavior of a 32-bit long on a 64-bit system
-#if defined(CPPUTEST_64BIT) && defined(CPPUTEST_64BIT_32BIT_LONGS)
-    // Forcing the value to be unsigned long long means that there's no
-    // sign-extension to perform
-    #define to_void_pointer(x) ((void*)x##ULL)
-    #define to_func_pointer(x) ((void (*)())x##ULL)
-#else
-    // Probably not needed, but let's guarantee that the value is an unsigned
-    // long
-    #define to_void_pointer(x) ((void*)x##UL)
-    #define to_func_pointer(x) ((void (*)())x##UL)
-#endif
 
 TEST_GROUP(UnitTestMacros)
 {
@@ -140,8 +128,6 @@ IGNORE_TEST(UnitTestMacros, UNSIGNED_LONGS_EQUAL_TEXTWorksInAnIgnoredTest)
         1, 0, "Failed because it failed"
     ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
-
-#if CPPUTEST_USE_LONG_LONG
 
 static void LONGLONGS_EQUALTestMethod_()
 {
@@ -248,8 +234,6 @@ IGNORE_TEST(UnitTestMacros, UNSIGNED_LONGLONGS_EQUAL_TEXTWorksInAnIgnoredTest)
         1, 0, "Failed because it failed"
     ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
-
-#endif /* CPPUTEST_USE_LONG_LONG */
 
 static void failingTestMethodWithCHECK_()
 {
@@ -826,10 +810,10 @@ static void failingTestMethodWithSIGNED_BYTES_EQUAL_()
 TEST(UnitTestMacros, FailureWithSIGNED_BYTES_EQUAL)
 {
     fixture.runTestWithMethod(failingTestMethodWithSIGNED_BYTES_EQUAL_);
-#if CPPUTEST_CHAR_BIT == 16
+#if CHAR_BIT == 16
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("expected <-1 (0xffff)>");
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("but was  <-2 (0xfffe)>");
-#elif CPPUTEST_CHAR_BIT == 8
+#elif CHAR_BIT == 8
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("expected <-1 (0xff)>");
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("but was  <-2 (0xfe)>");
 #endif
@@ -870,6 +854,11 @@ TEST(UnitTestMacros, CHARS_EQUAL_TEXTBehavesAsProperMacro)
         SIGNED_BYTES_EQUAL_TEXT(-3, -3, "Failed because it failed");
 }
 
+#ifdef _MSC_VER
+    #pragma warning(push)
+    #pragma warning(disable : 4312)
+#endif
+
 IGNORE_TEST(UnitTestMacros, SIGNED_BYTES_EQUAL_TEXTWorksInAnIgnoredTest)
 {
     SIGNED_BYTES_EQUAL_TEXT(
@@ -879,7 +868,9 @@ IGNORE_TEST(UnitTestMacros, SIGNED_BYTES_EQUAL_TEXTWorksInAnIgnoredTest)
 
 static void failingTestMethodWithPOINTERS_EQUAL_()
 {
-    POINTERS_EQUAL((void*)0xa5a5, (void*)0xf0f0);
+    POINTERS_EQUAL(
+        reinterpret_cast<void*>(0xa5a5), reinterpret_cast<void*>(0xf0f0)
+    );
     TestTestingFixture::lineExecutedAfterCheck(); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
@@ -893,22 +884,26 @@ TEST(UnitTestMacros, FailureWithPOINTERS_EQUAL)
 TEST(UnitTestMacros, POINTERS_EQUALBehavesAsProperMacro)
 {
     if (false)
-        POINTERS_EQUAL(NULLPTR, to_void_pointer(0xbeefbeef));
+        POINTERS_EQUAL(nullptr, reinterpret_cast<void*>(0xbeefbeef));
     else
         POINTERS_EQUAL(
-            to_void_pointer(0xdeadbeef), to_void_pointer(0xdeadbeef)
+            reinterpret_cast<void*>(0xdeadbeef),
+            reinterpret_cast<void*>(0xdeadbeef)
         );
 }
 
 IGNORE_TEST(UnitTestMacros, POINTERS_EQUALWorksInAnIgnoredTest)
 {
-    POINTERS_EQUAL((void*)0xbeef, (void*)0xdead); // LCOV_EXCL_LINE
+    POINTERS_EQUAL(
+        reinterpret_cast<void*>(0xbeef), reinterpret_cast<void*>(0xdead)
+    ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
 static void failingTestMethodWithPOINTERS_EQUAL_TEXT_()
 {
     POINTERS_EQUAL_TEXT(
-        (void*)0xa5a5, (void*)0xf0f0, "Failed because it failed"
+        reinterpret_cast<void*>(0xa5a5), reinterpret_cast<void*>(0xf0f0),
+        "Failed because it failed"
     );
     TestTestingFixture::lineExecutedAfterCheck(); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
@@ -925,25 +920,30 @@ TEST(UnitTestMacros, POINTERS_EQUAL_TEXTBehavesAsProperMacro)
 {
     if (false)
         POINTERS_EQUAL_TEXT(
-            NULLPTR, to_void_pointer(0xbeefbeef), "Failed because it failed"
+            nullptr, reinterpret_cast<void*>(0xbeefbeef),
+            "Failed because it failed"
         );
     else
         POINTERS_EQUAL_TEXT(
-            to_void_pointer(0xdeadbeef), to_void_pointer(0xdeadbeef),
-            "Failed because it failed"
+            reinterpret_cast<void*>(0xdeadbeef),
+            reinterpret_cast<void*>(0xdeadbeef), "Failed because it failed"
         );
 }
 
 IGNORE_TEST(UnitTestMacros, POINTERS_EQUAL_TEXTWorksInAnIgnoredTest)
 {
     POINTERS_EQUAL_TEXT(
-        (void*)0xbeef, (void*)0xdead, "Failed because it failed"
+        reinterpret_cast<void*>(0xbeef), reinterpret_cast<void*>(0xdead),
+        "Failed because it failed"
     ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
 static void failingTestMethodWithFUNCTIONPOINTERS_EQUAL_()
 {
-    FUNCTIONPOINTERS_EQUAL((void (*)())0xa5a5, (void (*)())0xf0f0);
+    FUNCTIONPOINTERS_EQUAL(
+        reinterpret_cast<void (*)()>(0xa5a5),
+        reinterpret_cast<void (*)()>(0xf0f0)
+    );
     TestTestingFixture::lineExecutedAfterCheck(); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
@@ -957,24 +957,29 @@ TEST(UnitTestMacros, FailureWithFUNCTIONPOINTERS_EQUAL)
 TEST(UnitTestMacros, FUNCTIONPOINTERS_EQUALBehavesAsProperMacro)
 {
     if (false)
-        FUNCTIONPOINTERS_EQUAL(NULLPTR, to_func_pointer(0xbeefbeef));
+        FUNCTIONPOINTERS_EQUAL(
+            nullptr, reinterpret_cast<void (*)()>(0xbeefbeef)
+        );
     else
         FUNCTIONPOINTERS_EQUAL(
-            to_func_pointer(0xdeadbeef), to_func_pointer(0xdeadbeef)
+            reinterpret_cast<void (*)()>(0xdeadbeef),
+            reinterpret_cast<void (*)()>(0xdeadbeef)
         );
 }
 
 IGNORE_TEST(UnitTestMacros, FUNCTIONPOINTERS_EQUALWorksInAnIgnoredTest)
 {
     FUNCTIONPOINTERS_EQUAL(
-        (void (*)())0xbeef, (void (*)())0xdead
+        reinterpret_cast<void (*)()>(0xbeef),
+        reinterpret_cast<void (*)()>(0xdead)
     ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
 static void failingTestMethodWithFUNCTIONPOINTERS_EQUAL_TEXT_()
 {
     FUNCTIONPOINTERS_EQUAL_TEXT(
-        (void (*)())0xa5a5, (void (*)())0xf0f0, "Failed because it failed"
+        reinterpret_cast<void (*)()>(0xa5a5),
+        reinterpret_cast<void (*)()>(0xf0f0), "Failed because it failed"
     );
     TestTestingFixture::lineExecutedAfterCheck(); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
@@ -992,21 +997,27 @@ TEST(UnitTestMacros, FUNCTIONPOINTERS_EQUAL_TEXTBehavesAsProperMacro)
 {
     if (false)
         FUNCTIONPOINTERS_EQUAL_TEXT(
-            NULLPTR, to_func_pointer(0xbeefbeef), "Failed because it failed"
+            nullptr, reinterpret_cast<void (*)()>(0xbeefbeef),
+            "Failed because it failed"
         );
     else
         FUNCTIONPOINTERS_EQUAL_TEXT(
-            to_func_pointer(0xdeadbeef), to_func_pointer(0xdeadbeef),
-            "Failed because it failed"
+            reinterpret_cast<void (*)()>(0xdeadbeef),
+            reinterpret_cast<void (*)()>(0xdeadbeef), "Failed because it failed"
         );
 }
 
 IGNORE_TEST(UnitTestMacros, FUNCTIONPOINTERS_EQUAL_TEXTWorksInAnIgnoredTest)
 {
     FUNCTIONPOINTERS_EQUAL_TEXT(
-        (void (*)())0xbeef, (void (*)())0xdead, "Failed because it failed"
+        reinterpret_cast<void (*)()>(0xbeef),
+        reinterpret_cast<void (*)()>(0xdead), "Failed because it failed"
     ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
+
+#ifdef _MSC_VER
+    #pragma warning(pop)
+#endif
 
 static void failingTestMethodWithDOUBLES_EQUAL_()
 {
@@ -1129,14 +1140,16 @@ static int functionThatReturnsAValue()
     STRCMP_EQUAL_TEXT("THIS", "THIS", "Shouldn't fail");
     DOUBLES_EQUAL(1.0, 1.0, .01);
     DOUBLES_EQUAL_TEXT(1.0, 1.0, .01, "Shouldn't fail");
-    POINTERS_EQUAL(NULLPTR, NULLPTR);
-    POINTERS_EQUAL_TEXT(NULLPTR, NULLPTR, "Shouldn't fail");
+    POINTERS_EQUAL(nullptr, nullptr);
+    POINTERS_EQUAL_TEXT(nullptr, nullptr, "Shouldn't fail");
     MEMCMP_EQUAL("THIS", "THIS", 5);
     MEMCMP_EQUAL_TEXT("THIS", "THIS", 5, "Shouldn't fail");
-    BITS_EQUAL(0x01, (unsigned char)0x01, 0xFF);
-    BITS_EQUAL(0x0001, (unsigned short)0x0001, 0xFFFF);
-    BITS_EQUAL(0x00000001, (unsigned long)0x00000001, 0xFFFFFFFF);
-    BITS_EQUAL_TEXT(0x01, (unsigned char)0x01, 0xFF, "Shouldn't fail");
+    BITS_EQUAL(0x01, static_cast<unsigned char>(0x01), 0xFF);
+    BITS_EQUAL(0x0001, static_cast<unsigned short>(0x0001), 0xFFFF);
+    BITS_EQUAL(0x00000001, 0x00000001UL, 0xFFFFFFFF);
+    BITS_EQUAL_TEXT(
+        0x01, static_cast<unsigned char>(0x01), 0xFF, "Shouldn't fail"
+    );
     return 0;
 }
 
@@ -1179,7 +1192,7 @@ static void MEMCMP_EQUALFailingTestMethodWithNullExpected_()
 {
     unsigned char actualData[] = {0x00, 0x01, 0x02, 0x03};
 
-    MEMCMP_EQUAL(NULLPTR, actualData, sizeof(actualData));
+    MEMCMP_EQUAL(nullptr, actualData, sizeof(actualData));
     TestTestingFixture::lineExecutedAfterCheck(); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
@@ -1194,7 +1207,7 @@ static void MEMCMP_EQUALFailingTestMethodWithNullActual_()
 {
     unsigned char expectedData[] = {0x00, 0x01, 0x02, 0x03};
 
-    MEMCMP_EQUAL(expectedData, NULLPTR, sizeof(expectedData));
+    MEMCMP_EQUAL(expectedData, nullptr, sizeof(expectedData));
     TestTestingFixture::lineExecutedAfterCheck(); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
@@ -1207,20 +1220,20 @@ TEST(UnitTestMacros, MEMCMP_EQUALFailureWithNullActual)
 
 TEST(UnitTestMacros, MEMCMP_EQUALNullExpectedNullActual)
 {
-    MEMCMP_EQUAL(NULLPTR, NULLPTR, 0);
-    MEMCMP_EQUAL(NULLPTR, NULLPTR, 1024);
+    MEMCMP_EQUAL(nullptr, nullptr, 0);
+    MEMCMP_EQUAL(nullptr, nullptr, 1024);
 }
 
 TEST(UnitTestMacros, MEMCMP_EQUALNullPointerIgnoredInExpectationWhenSize0)
 {
     unsigned char actualData[] = {0x00, 0x01, 0x03, 0x03};
-    MEMCMP_EQUAL(NULLPTR, actualData, 0);
+    MEMCMP_EQUAL(nullptr, actualData, 0);
 }
 
 TEST(UnitTestMacros, MEMCMP_EQUALNullPointerIgnoredInActualWhenSize0)
 {
     unsigned char expectedData[] = {0x00, 0x01, 0x02, 0x03};
-    MEMCMP_EQUAL(expectedData, NULLPTR, 0);
+    MEMCMP_EQUAL(expectedData, nullptr, 0);
 }
 
 static void failingTestMethodWithMEMCMP_EQUAL_TEXT_()
@@ -1323,7 +1336,6 @@ IGNORE_TEST(UnitTestMacros, BITS_EQUAL_TEXTWorksInAnIgnoredTest)
     ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
 
-#if defined(__cplusplus) && __cplusplus >= 201103L
 enum class ScopedIntEnum
 {
     A,
@@ -1472,8 +1484,6 @@ IGNORE_TEST(
         long, ScopedLongEnum::B, ScopedLongEnum::A, "Failed because it failed"
     ); // LCOV_EXCL_LINE
 } // LCOV_EXCL_LINE
-
-#endif
 
 enum UnscopedEnum
 {

@@ -38,7 +38,15 @@
 #ifndef D_SimpleString_h
 #define D_SimpleString_h
 
-#include "StandardCLibrary.h"
+#include <stdarg.h>
+#include <stddef.h>
+
+#include "CppUTest/CppUTestConfig.h"
+
+#ifndef CPPUTEST_STD_CPP_LIB_DISABLED
+    #include <cstddef>
+    #include <string>
+#endif
 
 class SimpleStringCollection;
 class TestMemoryAllocator;
@@ -59,7 +67,7 @@ public:
     SimpleString& operator+=(const SimpleString&);
     SimpleString& operator+=(const char*);
 
-    static const size_t npos = (size_t)-1;
+    static const size_t npos = static_cast<size_t>(-1);
 
     char at(size_t pos) const;
     size_t find(char ch) const;
@@ -190,21 +198,34 @@ SimpleString StringFrom(int value);
 SimpleString StringFrom(unsigned int value);
 SimpleString StringFrom(long value);
 SimpleString StringFrom(unsigned long value);
-SimpleString StringFrom(cpputest_longlong value);
-SimpleString StringFrom(cpputest_ulonglong value);
+SimpleString StringFrom(long long value);
+SimpleString StringFrom(unsigned long long value);
 SimpleString HexStringFrom(unsigned int value);
 SimpleString HexStringFrom(int value);
 SimpleString HexStringFrom(signed char value);
 SimpleString HexStringFrom(long value);
 SimpleString HexStringFrom(unsigned long value);
-SimpleString HexStringFrom(cpputest_longlong value);
-SimpleString HexStringFrom(cpputest_ulonglong value);
+SimpleString HexStringFrom(long long value);
+SimpleString HexStringFrom(unsigned long long value);
 SimpleString HexStringFrom(const void* value);
 SimpleString HexStringFrom(void (*value)());
 SimpleString StringFrom(double value, int precision = 6);
 SimpleString StringFrom(const SimpleString& other);
 SimpleString StringFromFormat(const char* format, ...)
-    _check_format_(CPPUTEST_CHECK_FORMAT_TYPE, 1, 2);
+#ifdef __has_attribute
+    #if __has_attribute(format)
+    __attribute__((format(
+        #if defined(__MINGW32__)
+        __MINGW_PRINTF_FORMAT,
+        #else
+        printf,
+        #endif
+        1,
+        2
+    )))
+    #endif
+#endif
+    ;
 SimpleString VStringFromFormat(const char* format, va_list args);
 SimpleString StringFromBinary(const unsigned char* value, size_t size);
 SimpleString StringFromBinaryOrNull(const unsigned char* value, size_t size);
@@ -218,8 +239,8 @@ SimpleString BracketsFormattedHexStringFrom(int value);
 SimpleString BracketsFormattedHexStringFrom(unsigned int value);
 SimpleString BracketsFormattedHexStringFrom(long value);
 SimpleString BracketsFormattedHexStringFrom(unsigned long value);
-SimpleString BracketsFormattedHexStringFrom(cpputest_longlong value);
-SimpleString BracketsFormattedHexStringFrom(cpputest_ulonglong value);
+SimpleString BracketsFormattedHexStringFrom(long long value);
+SimpleString BracketsFormattedHexStringFrom(unsigned long long value);
 SimpleString BracketsFormattedHexStringFrom(signed char value);
 SimpleString BracketsFormattedHexString(SimpleString hexString);
 SimpleString PrintableStringFromOrNull(const char* expected);
@@ -228,11 +249,11 @@ SimpleString PrintableStringFromOrNull(const char* expected);
  * ARM compiler has only partial support for C++11.
  * Specifically nullptr_t is not officially supported
  */
-#if __cplusplus > 199711L && !defined __arm__ && CPPUTEST_USE_STD_CPP_LIB
+#if !defined(__ARMCC_VERSION) && !defined(CPPUTEST_STD_CPP_LIB_DISABLED)
 SimpleString StringFrom(const std::nullptr_t value);
 #endif
 
-#if CPPUTEST_USE_STD_CPP_LIB
+#ifndef CPPUTEST_STD_CPP_LIB_DISABLED
 
 SimpleString StringFrom(const std::string& other);
 

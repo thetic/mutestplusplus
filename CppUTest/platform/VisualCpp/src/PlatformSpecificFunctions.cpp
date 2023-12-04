@@ -1,11 +1,5 @@
 #include "CppUTest/TestHarness.h"
 #include <stdlib.h>
-#undef malloc
-#undef free
-#undef calloc
-#undef realloc
-#undef strdup
-#undef strndup
 
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include <float.h>
@@ -23,12 +17,12 @@
 
 #ifdef CPPUTEST_HAVE_SECURE_STDLIB
     #define FOPEN(fp, filename, flag) fopen_s((fp), (filename), (flag))
-    #define _VSNPRINTF(str, size, trunc, format, args)                         \
+    #define VSNPRINTF(str, size, trunc, format, args)                          \
         _vsnprintf_s((str), (size), (trunc), (format), (args))
     #define LOCALTIME(_tm, timer) localtime_s((_tm), (timer))
 #else
     #define FOPEN(fp, filename, flag) *(fp) = fopen((filename), (flag))
-    #define _VSNPRINTF(str, size, trunc, format, args)                         \
+    #define VSNPRINTF(str, size, trunc, format, args)                          \
         _vsnprintf((str), (size), (format), (args))
     #define LOCALTIME(_tm, timer) memcpy(_tm, localtime(timer), sizeof(tm))
 #endif
@@ -47,7 +41,7 @@ static int VisualCppSetJmp(void (*function)(void* data), void* data)
     return 0;
 }
 
-_no_return_ static void VisualCppLongJmp()
+[[noreturn]] static void VisualCppLongJmp()
 {
     jmp_buf_index--;
     longjmp(test_exit_jmp_buf[jmp_buf_index], 1);
@@ -90,16 +84,16 @@ static long VisualCppTimeInMillis()
     if (s_use_qpc) {
         LARGE_INTEGER now;
         QueryPerformanceCounter(&now);
-        return (long)((now.QuadPart * 1000) / s_frequency.QuadPart);
+        return static_cast<long>((now.QuadPart * 1000) / s_frequency.QuadPart);
     } else {
 #ifdef TIMERR_NOERROR
-        return (long)timeGetTime();
+        return static_cast<long>(timeGetTime());
 #else
     #if !defined(_WIN32_WINNT) || !defined(_WIN32_WINNT_VISTA) ||              \
         (_WIN32_WINNT < _WIN32_WINNT_VISTA)
-        return (long)GetTickCount();
+        return static_cast<long>(GetTickCount());
     #else
-        return (long)GetTickCount64();
+        return static_cast<long>(GetTickCount64());
     #endif
 #endif
     }
@@ -111,7 +105,7 @@ long (*GetPlatformSpecificTimeInMillis)() = VisualCppTimeInMillis;
 
 static const char* VisualCppTimeString()
 {
-    time_t the_time = time(NULLPTR);
+    time_t the_time = time(nullptr);
     struct tm the_local_time;
     static char dateTime[80];
     LOCALTIME(&the_local_time, &the_time);
@@ -126,17 +120,17 @@ const char* (*GetPlatformSpecificTimeString)() = VisualCppTimeString;
 static int
 VisualCppVSNprintf(char* str, size_t size, const char* format, va_list args)
 {
-    char* buf = NULLPTR;
+    char* buf = nullptr;
     size_t sizeGuess = size;
 
-    int result = _VSNPRINTF(str, size, _TRUNCATE, format, args);
+    int result = VSNPRINTF(str, size, _TRUNCATE, format, args);
     str[size - 1] = 0;
     while (result == -1) {
         if (buf)
             free(buf);
         sizeGuess += 10;
-        buf = (char*)malloc(sizeGuess);
-        result = _VSNPRINTF(buf, sizeGuess, _TRUNCATE, format, args);
+        buf = reinterpret_cast<char*>(malloc(sizeGuess));
+        result = VSNPRINTF(buf, sizeGuess, _TRUNCATE, format, args);
     }
 
     if (buf)
@@ -158,12 +152,12 @@ VisualCppFOpen(const char* filename, const char* flag)
 
 static void VisualCppFPuts(const char* str, PlatformSpecificFile file)
 {
-    fputs(str, (FILE*)file);
+    fputs(str, reinterpret_cast<FILE*>(file));
 }
 
 static void VisualCppFClose(PlatformSpecificFile file)
 {
-    fclose((FILE*)file);
+    fclose(reinterpret_cast<FILE*>(file));
 }
 
 PlatformSpecificFile PlatformSpecificStdOut = stdout;
@@ -218,22 +212,23 @@ static PlatformSpecificMutex VisualCppMutexCreate(void)
 {
     CRITICAL_SECTION* critical_section = new CRITICAL_SECTION;
     InitializeCriticalSection(critical_section);
-    return (PlatformSpecificMutex)critical_section;
+    return reinterpret_cast<PlatformSpecificMutex>(critical_section);
 }
 
 static void VisualCppMutexLock(PlatformSpecificMutex mutex)
 {
-    EnterCriticalSection((CRITICAL_SECTION*)mutex);
+    EnterCriticalSection(reinterpret_cast<CRITICAL_SECTION*>(mutex));
 }
 
 static void VisualCppMutexUnlock(PlatformSpecificMutex mutex)
 {
-    LeaveCriticalSection((CRITICAL_SECTION*)mutex);
+    LeaveCriticalSection(reinterpret_cast<CRITICAL_SECTION*>(mutex));
 }
 
 static void VisualCppMutexDestroy(PlatformSpecificMutex mutex)
 {
-    CRITICAL_SECTION* critical_section = (CRITICAL_SECTION*)mutex;
+    CRITICAL_SECTION* critical_section =
+        reinterpret_cast<CRITICAL_SECTION*>(mutex);
     DeleteCriticalSection(critical_section);
     delete critical_section;
 }

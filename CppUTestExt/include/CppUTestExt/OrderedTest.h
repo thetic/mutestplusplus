@@ -34,7 +34,7 @@ class OrderedTestShell : public UtestShell
 {
 public:
     OrderedTestShell();
-    virtual ~OrderedTestShell() _destructor_override;
+    virtual ~OrderedTestShell() override;
 
     virtual OrderedTestShell* addOrderedTest(OrderedTestShell* test);
     virtual OrderedTestShell* getNextOrderedTest();
@@ -86,11 +86,11 @@ private:
             TEST_GROUP_##CppUTestGroup##testGroup()                            \
         {                                                                      \
         }                                                                      \
-        void testBody() _override;                                             \
+        void testBody() override;                                              \
     };                                                                         \
     class TEST_##testGroup##_##testName##_TestShell : public OrderedTestShell  \
     {                                                                          \
-        virtual Utest* createTest() _override                                  \
+        virtual Utest* createTest() override                                   \
         {                                                                      \
             return new TEST_##testGroup##_##testName##_Test;                   \
         }                                                                      \

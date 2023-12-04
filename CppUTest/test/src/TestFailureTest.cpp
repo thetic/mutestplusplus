@@ -27,6 +27,7 @@
 
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
+#include <limits.h>
 
 namespace
 {
@@ -38,13 +39,13 @@ TEST_GROUP(TestFailure)
 {
     UtestShell* test;
 
-    void setup() _override
+    void setup() override
     {
         test = new UtestShell(
             "groupname", "testname", failFileName, failLineNumber - 1
         );
     }
-    void teardown() _override
+    void teardown() override
     {
         delete test;
     }
@@ -91,14 +92,14 @@ TEST(TestFailure, EqualsFailure)
 TEST(TestFailure, EqualsFailureWithNullAsActual)
 {
     EqualsFailure f(
-        test, failFileName, failLineNumber, "expected", NULLPTR, ""
+        test, failFileName, failLineNumber, "expected", nullptr, ""
     );
     FAILURE_EQUAL("expected <expected>\n\tbut was  <(null)>", f);
 }
 
 TEST(TestFailure, EqualsFailureWithNullAsExpected)
 {
-    EqualsFailure f(test, failFileName, failLineNumber, NULLPTR, "actual", "");
+    EqualsFailure f(test, failFileName, failLineNumber, nullptr, "actual", "");
     FAILURE_EQUAL("expected <(null)>\n\tbut was  <actual>", f);
 }
 
@@ -171,46 +172,23 @@ TEST(TestFailure, LongsEqualFailure)
 
 TEST(TestFailure, LongLongsEqualFailure)
 {
-#if CPPUTEST_USE_LONG_LONG
     LongLongsEqualFailure f(test, failFileName, failLineNumber, 1, 2, "");
     FAILURE_EQUAL("expected <1 (0x1)>\n\tbut was  <2 (0x2)>", f);
-#else
-    cpputest_longlong dummy_longlong;
-    LongLongsEqualFailure f(
-        test, failFileName, failLineNumber, dummy_longlong, dummy_longlong, ""
-    );
-    FAILURE_EQUAL(
-        "expected <<longlong_unsupported> >\n\tbut was  "
-        "<<longlong_unsupported> >",
-        f
-    );
-#endif
 }
 
 TEST(TestFailure, UnsignedLongLongsEqualFailure)
 {
-#if CPPUTEST_USE_LONG_LONG
     UnsignedLongLongsEqualFailure f(
         test, failFileName, failLineNumber, 1, 2, ""
     );
     FAILURE_EQUAL("expected <1 (0x1)>\n\tbut was  <2 (0x2)>", f);
-#else
-    cpputest_ulonglong dummy_ulonglong;
-    UnsignedLongLongsEqualFailure f(
-        test, failFileName, failLineNumber, dummy_ulonglong, dummy_ulonglong, ""
-    );
-    FAILURE_EQUAL(
-        "expected <<ulonglong_unsupported> >\n\tbut was  "
-        "<<ulonglong_unsupported> >",
-        f
-    );
-#endif
 }
 
 TEST(TestFailure, SignedBytesEqualFailure)
 {
     SignedBytesEqualFailure f(
-        test, failFileName, failLineNumber, (signed char)-1, (signed char)2, ""
+        test, failFileName, failLineNumber, static_cast<signed char>(-1),
+        static_cast<signed char>(2), ""
     );
     FAILURE_EQUAL("expected <-1 (0xff)>\n\tbut was  < 2 (0x2)>", f);
 }
@@ -312,7 +290,7 @@ TEST(TestFailure, StringsEqualFailureAtTheBeginning)
 TEST(TestFailure, StringsEqualFailureWithNullAsActual)
 {
     StringEqualFailure f(
-        test, failFileName, failLineNumber, "abc", NULLPTR, ""
+        test, failFileName, failLineNumber, "abc", nullptr, ""
     );
     FAILURE_EQUAL(
         "expected <abc>\n"
@@ -324,7 +302,7 @@ TEST(TestFailure, StringsEqualFailureWithNullAsActual)
 TEST(TestFailure, StringsEqualFailureWithNullAsExpected)
 {
     StringEqualFailure f(
-        test, failFileName, failLineNumber, NULLPTR, "abd", ""
+        test, failFileName, failLineNumber, nullptr, "abd", ""
     );
     FAILURE_EQUAL(
         "expected <(null)>\n"
@@ -365,7 +343,7 @@ TEST(TestFailure, StringsEqualNoCaseFailure)
 TEST(TestFailure, StringsEqualNoCaseFailureWithActualAsNull)
 {
     StringEqualNoCaseFailure f(
-        test, failFileName, failLineNumber, "ABC", NULLPTR, ""
+        test, failFileName, failLineNumber, "ABC", nullptr, ""
     );
     FAILURE_EQUAL(
         "expected <ABC>\n"
@@ -377,7 +355,7 @@ TEST(TestFailure, StringsEqualNoCaseFailureWithActualAsNull)
 TEST(TestFailure, StringsEqualNoCaseFailureWithExpectedAsNull)
 {
     StringEqualNoCaseFailure f(
-        test, failFileName, failLineNumber, NULLPTR, "abd", ""
+        test, failFileName, failLineNumber, nullptr, "abd", ""
     );
     FAILURE_EQUAL(
         "expected <(null)>\n"
@@ -537,7 +515,7 @@ TEST(TestFailure, BinaryEqualActualNull)
     const unsigned char expectedData[] = {0x00, 0x00, 0x00, 0x00,
                                           0x00, 0x00, 0x00};
     BinaryEqualFailure f(
-        test, failFileName, failLineNumber, expectedData, NULLPTR,
+        test, failFileName, failLineNumber, expectedData, nullptr,
         sizeof(expectedData), ""
     );
     FAILURE_EQUAL("expected <00 00 00 00 00 00 00>\n\tbut was  <(null)>", f);
@@ -548,7 +526,7 @@ TEST(TestFailure, BinaryEqualExpectedNull)
     const unsigned char actualData[] = {0x00, 0x00, 0x00, 0x00,
                                         0x00, 0x00, 0x01};
     BinaryEqualFailure f(
-        test, failFileName, failLineNumber, NULLPTR, actualData,
+        test, failFileName, failLineNumber, nullptr, actualData,
         sizeof(actualData), ""
     );
     FAILURE_EQUAL("expected <(null)>\n\tbut was  <00 00 00 00 00 00 01>", f);
@@ -558,7 +536,7 @@ TEST(TestFailure, BitsEqualWithText)
 {
     BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x0001, 0x0003, 0x00FF,
-        2 * 8 / CPPUTEST_CHAR_BIT, "text"
+        2 * 8 / CHAR_BIT, "text"
     );
     FAILURE_EQUAL(
         "Message: text\n"
@@ -567,7 +545,7 @@ TEST(TestFailure, BitsEqualWithText)
     );
 }
 
-#if (CPPUTEST_CHAR_BIT == 16)
+#if (CHAR_BIT == 16)
 TEST(TestFailure, BitsEqualChar)
 {
     BitsEqualFailure f(
@@ -577,7 +555,7 @@ TEST(TestFailure, BitsEqualChar)
         "expected <xxxxxxxx 00000001>\n\tbut was  <xxxxxxxx 00000011>", f
     );
 }
-#elif (CPPUTEST_CHAR_BIT == 8)
+#elif (CHAR_BIT == 8)
 TEST(TestFailure, BitsEqualChar)
 {
     BitsEqualFailure f(
@@ -591,7 +569,7 @@ TEST(TestFailure, BitsEqual16Bit)
 {
     BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x0001, 0x0003, 0xFFFF,
-        2 * 8 / CPPUTEST_CHAR_BIT, ""
+        2 * 8 / CHAR_BIT, ""
     );
     FAILURE_EQUAL(
         "expected <00000000 00000001>\n\tbut was  <00000000 00000011>", f
@@ -602,7 +580,7 @@ TEST(TestFailure, BitsEqual32Bit)
 {
     BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x00000001, 0x00000003, 0xFFFFFFFF,
-        4 * 8 / CPPUTEST_CHAR_BIT, ""
+        4 * 8 / CHAR_BIT, ""
     );
     FAILURE_EQUAL(
         "expected <00000000 00000000 00000000 00000001>\n\tbut was  <00000000 "
@@ -631,7 +609,7 @@ TEST(TestFailure, UnexpectedExceptionFailure_UnknownException)
 }
 #endif
 
-#if CPPUTEST_HAVE_EXCEPTIONS && CPPUTEST_USE_STD_CPP_LIB
+#if CPPUTEST_HAVE_EXCEPTIONS && !defined(CPPUTEST_STD_CPP_LIB_DISABLED)
 TEST(TestFailure, UnexpectedExceptionFailure_StandardException)
 {
     std::runtime_error e("Some error");

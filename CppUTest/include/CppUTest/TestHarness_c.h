@@ -35,6 +35,7 @@
 #define D_TestHarness_c_h
 
 #include "CppUTestConfig.h"
+#include <stddef.h>
 
 #define CHECK_EQUAL_C_BOOL(expected, actual)                                   \
     CHECK_EQUAL_C_BOOL_LOCATION(expected, actual, NULL, __FILE__, __LINE__)
@@ -169,13 +170,13 @@
     TEST_GROUP(group_name)
 
 #define TEST_GROUP_C_SETUP_WRAPPER(group_name)                                 \
-    void setup() _override                                                     \
+    void setup() override                                                      \
     {                                                                          \
         group_##group_name##_setup_wrapper_c();                                \
     }
 
 #define TEST_GROUP_C_TEARDOWN_WRAPPER(group_name)                              \
-    void teardown() _override                                                  \
+    void teardown() override                                                   \
     {                                                                          \
         group_##group_name##_teardown_wrapper_c();                             \
     }
@@ -235,15 +236,15 @@ extern void CHECK_EQUAL_C_ULONG_LOCATION(
     size_t lineNumber
 );
 extern void CHECK_EQUAL_C_LONGLONG_LOCATION(
-    cpputest_longlong expected,
-    cpputest_longlong actual,
+    long long expected,
+    long long actual,
     const char* text,
     const char* fileName,
     size_t lineNumber
 );
 extern void CHECK_EQUAL_C_ULONGLONG_LOCATION(
-    cpputest_ulonglong expected,
-    cpputest_ulonglong actual,
+    unsigned long long expected,
+    unsigned long long actual,
     const char* text,
     const char* fileName,
     size_t lineNumber

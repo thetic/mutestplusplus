@@ -29,6 +29,7 @@
 #define D_TestMemoryAllocator_h
 
 #include "CppUTest/CppUTestConfig.h"
+#include <stddef.h>
 
 struct MemoryLeakNode;
 class TestMemoryAllocator;
@@ -142,19 +143,19 @@ public:
     AccountingTestMemoryAllocator(
         MemoryAccountant& accountant, TestMemoryAllocator* originalAllocator
     );
-    virtual ~AccountingTestMemoryAllocator() _destructor_override;
+    virtual ~AccountingTestMemoryAllocator() override;
 
     virtual char*
-    alloc_memory(size_t size, const char* file, size_t line) _override;
+    alloc_memory(size_t size, const char* file, size_t line) override;
     virtual void free_memory(
         char* memory, size_t size, const char* file, size_t line
-    ) _override;
+    ) override;
 
-    virtual TestMemoryAllocator* actualAllocator() _override;
+    virtual TestMemoryAllocator* actualAllocator() override;
     TestMemoryAllocator* originalAllocator();
 
-    virtual const char* alloc_name() const _override;
-    virtual const char* free_name() const _override;
+    virtual const char* alloc_name() const override;
+    virtual const char* free_name() const override;
 
 private:
     void addMemoryToMemoryTrackingToKeepTrackOfSize(char* memory, size_t size);

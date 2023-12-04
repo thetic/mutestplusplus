@@ -16,11 +16,9 @@ if(
         -Wswitch-enum
         -Wconversion
         -Wsign-conversion
-        -Wno-padded
-        -Wno-disabled-macro-expansion
-        -Wno-reserved-id-macro
-        -Wno-keyword-macro
-        -Wno-long-long
+        -Wreserved-id-macro
+        -Wkeyword-macro
+        -Wundef
         -Wno-unsafe-buffer-usage
     )
 
@@ -30,21 +28,15 @@ if(
 
     set(WARNING_CXX_FLAGS
         -Woverloaded-virtual
+        -Wsuggest-override
+        -Wdouble-promotion
         -Wno-global-constructors
         -Wno-exit-time-destructors
         -Wno-weak-vtables
-        -Wno-old-style-cast
+        -Wold-style-cast
+        -Wno-c++98-compat-pedantic
+        -Wold-style-cast
     )
-
-    if(DEFINED CMAKE_CXX_STANDARD AND NOT CMAKE_CXX_STANDARD EQUAL 98)
-        list(APPEND WARNING_CXX_FLAGS
-            -Wno-c++98-compat
-            -Wno-c++98-compat-pedantic
-            -Wno-c++14-compat
-            -Wno-inconsistent-missing-destructor-override
-            -Wsuggest-override
-        )
-    endif()
 
     set(CMAKE_REQUIRED_FLAGS "-Wno-error")
 endif()

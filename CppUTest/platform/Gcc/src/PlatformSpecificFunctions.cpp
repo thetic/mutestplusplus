@@ -27,12 +27,6 @@
 
 #include "CppUTest/TestHarness.h"
 #include <stdlib.h>
-#undef malloc
-#undef free
-#undef calloc
-#undef realloc
-#undef strdup
-#undef strndup
 
 #ifdef CPPUTEST_HAVE_GETTIMEOFDAY
     #include <sys/time.h>
@@ -195,18 +189,7 @@ PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
     return 0;
 }
 
-/*
- * MacOSX clang 3.0 doesn't seem to recognize longjmp and thus complains about
- * _no_return_. The later clang compilers complain when it isn't there. So only
- * way is to check the clang compiler here :(
- */
-#ifdef __clang__
-    #if !((__clang_major__ == 3) && (__clang_minor__ == 0))
-_no_return_
-    #endif
-#endif
-    static void
-    PlatformSpecificLongJmpImplementation()
+[[noreturn]] static void PlatformSpecificLongJmpImplementation()
 {
     jmp_buf_index--;
     longjmp(test_exit_jmp_buf[jmp_buf_index], 1);
@@ -231,7 +214,10 @@ static long TimeInMillisImplementation()
     struct timeval tv;
     struct timezone tz;
     gettimeofday(&tv, &tz);
-    return (long)((tv.tv_sec * 1000) + (time_t)((double)tv.tv_usec * 0.001));
+    return static_cast<long>(
+        (tv.tv_sec * 1000) +
+        static_cast<time_t>(static_cast<double>(tv.tv_usec) * 0.001)
+    );
 #else
     return 0;
 #endif
@@ -239,7 +225,7 @@ static long TimeInMillisImplementation()
 
 static const char* TimeStringImplementation()
 {
-    time_t theTime = time(NULLPTR);
+    time_t theTime = time(nullptr);
     static char dateTime[80];
 #ifdef CPPUTEST_HAVE_SECURE_STDLIB
     static struct tm lastlocaltime;
@@ -283,12 +269,12 @@ PlatformSpecificFOpenImplementation(const char* filename, const char* flag)
 static void
 PlatformSpecificFPutsImplementation(const char* str, PlatformSpecificFile file)
 {
-    fputs(str, (FILE*)file);
+    fputs(str, reinterpret_cast<FILE*>(file));
 }
 
 static void PlatformSpecificFCloseImplementation(PlatformSpecificFile file)
 {
-    fclose((FILE*)file);
+    fclose(reinterpret_cast<FILE*>(file));
 }
 
 static void PlatformSpecificFlushImplementation()
@@ -344,17 +330,17 @@ static PlatformSpecificMutex PThreadMutexCreate(void)
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
     pthread_mutex_t* mutex = new pthread_mutex_t;
 
-    pthread_mutex_init(mutex, NULLPTR);
-    return (PlatformSpecificMutex)mutex;
+    pthread_mutex_init(mutex, nullptr);
+    return reinterpret_cast<PlatformSpecificMutex>(mutex);
 #else
-    return NULLPTR;
+    return nullptr;
 #endif
 }
 
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
 static void PThreadMutexLock(PlatformSpecificMutex mtx)
 {
-    pthread_mutex_lock((pthread_mutex_t*)mtx);
+    pthread_mutex_lock(reinterpret_cast<pthread_mutex_t*>(mtx));
 }
 #else
 static void PThreadMutexLock(PlatformSpecificMutex) {}
@@ -363,7 +349,7 @@ static void PThreadMutexLock(PlatformSpecificMutex) {}
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
 static void PThreadMutexUnlock(PlatformSpecificMutex mtx)
 {
-    pthread_mutex_unlock((pthread_mutex_t*)mtx);
+    pthread_mutex_unlock(reinterpret_cast<pthread_mutex_t*>(mtx));
 }
 #else
 static void PThreadMutexUnlock(PlatformSpecificMutex) {}
@@ -372,7 +358,7 @@ static void PThreadMutexUnlock(PlatformSpecificMutex) {}
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
 static void PThreadMutexDestroy(PlatformSpecificMutex mtx)
 {
-    pthread_mutex_t* mutex = (pthread_mutex_t*)mtx;
+    pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mtx);
     pthread_mutex_destroy(mutex);
     delete mutex;
 }

@@ -28,7 +28,7 @@
 #include "CppUTestExt/IEEE754ExceptionsPlugin.h"
 #include "CppUTest/TestHarness.h"
 
-#if CPPUTEST_HAVE_FENV
+#if (defined(__STDC_IEC_559__) && __STDC_IEC_559__)
 
 extern "C" {
     #include <fenv.h>

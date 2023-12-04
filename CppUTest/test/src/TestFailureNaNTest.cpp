@@ -29,9 +29,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
 
-#if CPPUTEST_USE_STD_C_LIB
-    #include <math.h>
-#endif
+#include <math.h>
 
 #if defined(NAN) && defined(INFINITY)
 
@@ -45,13 +43,13 @@ TEST_GROUP(TestFailureNanAndInf)
 {
     UtestShell* test;
 
-    void setup() _override
+    void setup() override
     {
         test = new UtestShell(
             "groupname", "testname", failFileName, failLineNumber - 1
         );
     }
-    void teardown() _override
+    void teardown() override
     {
         delete test;
     }
@@ -64,7 +62,8 @@ TEST_GROUP(TestFailureNanAndInf)
 TEST(TestFailureNanAndInf, DoublesEqualExpectedIsNaN)
 {
     DoublesEqualFailure f(
-        test, failFileName, failLineNumber, (double)NAN, 2.0, 3.0, ""
+        test, failFileName, failLineNumber, static_cast<double>(NAN), 2.0, 3.0,
+        ""
     );
     FAILURE_EQUAL(
         "expected <Nan - Not a number>\n"
@@ -77,7 +76,8 @@ TEST(TestFailureNanAndInf, DoublesEqualExpectedIsNaN)
 TEST(TestFailureNanAndInf, DoublesEqualActualIsNaN)
 {
     DoublesEqualFailure f(
-        test, failFileName, failLineNumber, 1.0, (double)NAN, 3.0, ""
+        test, failFileName, failLineNumber, 1.0, static_cast<double>(NAN), 3.0,
+        ""
     );
     FAILURE_EQUAL(
         "expected <1>\n"
@@ -90,7 +90,8 @@ TEST(TestFailureNanAndInf, DoublesEqualActualIsNaN)
 TEST(TestFailureNanAndInf, DoublesEqualThresholdIsNaN)
 {
     DoublesEqualFailure f(
-        test, failFileName, failLineNumber, 1.0, 2.0, (double)NAN, ""
+        test, failFileName, failLineNumber, 1.0, 2.0, static_cast<double>(NAN),
+        ""
     );
     FAILURE_EQUAL(
         "expected <1>\n"
@@ -103,7 +104,8 @@ TEST(TestFailureNanAndInf, DoublesEqualThresholdIsNaN)
 TEST(TestFailureNanAndInf, DoublesEqualExpectedIsInf)
 {
     DoublesEqualFailure f(
-        test, failFileName, failLineNumber, (double)INFINITY, 2.0, 3.0, ""
+        test, failFileName, failLineNumber, static_cast<double>(INFINITY), 2.0,
+        3.0, ""
     );
     FAILURE_EQUAL(
         "expected <Inf - Infinity>\n"
@@ -115,7 +117,8 @@ TEST(TestFailureNanAndInf, DoublesEqualExpectedIsInf)
 TEST(TestFailureNanAndInf, DoublesEqualActualIsInf)
 {
     DoublesEqualFailure f(
-        test, failFileName, failLineNumber, 1.0, (double)INFINITY, 3.0, ""
+        test, failFileName, failLineNumber, 1.0, static_cast<double>(INFINITY),
+        3.0, ""
     );
     FAILURE_EQUAL(
         "expected <1>\n"
@@ -127,8 +130,8 @@ TEST(TestFailureNanAndInf, DoublesEqualActualIsInf)
 TEST(TestFailureNanAndInf, DoublesEqualThresholdIsInf)
 {
     DoublesEqualFailure f(
-        test, failFileName, failLineNumber, 1.0, (double)NAN, (double)INFINITY,
-        ""
+        test, failFileName, failLineNumber, 1.0, static_cast<double>(NAN),
+        static_cast<double>(INFINITY), ""
     );
     FAILURE_EQUAL(
         "expected <1>\n"

@@ -26,12 +26,13 @@
  */
 
 #include "CppUTest/TestFailure.h"
+#include "CppUTest/CppUTestConfig.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/SimpleString.h"
-#include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
+#include "CppUTest/Utest.h"
 
-#if CPPUTEST_USE_STD_CPP_LIB
+#ifndef CPPUTEST_STD_CPP_LIB_DISABLED
     #include <typeinfo>
     #if defined(__GNUC__)
         #include <cxxabi.h>
@@ -162,7 +163,7 @@ SimpleString TestFailure::createDifferenceAtPosString(
                                 paddingForPreventingOutOfBounds;
     SimpleString differentString = StringFromFormat(
         "difference starts at position %lu at: <",
-        (unsigned long)reportedPosition
+        static_cast<unsigned long>(reportedPosition)
     );
 
     result += "\n";
@@ -401,8 +402,8 @@ LongLongsEqualFailure::LongLongsEqualFailure(
     UtestShell* test,
     const char* fileName,
     size_t lineNumber,
-    cpputest_longlong expected,
-    cpputest_longlong actual,
+    long long expected,
+    long long actual,
     const SimpleString& text
 ) :
     TestFailure(test, fileName, lineNumber)
@@ -425,8 +426,8 @@ UnsignedLongLongsEqualFailure::UnsignedLongLongsEqualFailure(
     UtestShell* test,
     const char* fileName,
     size_t lineNumber,
-    cpputest_ulonglong expected,
-    cpputest_ulonglong actual,
+    unsigned long long expected,
+    unsigned long long actual,
     const SimpleString& text
 ) :
     TestFailure(test, fileName, lineNumber)
@@ -457,8 +458,8 @@ SignedBytesEqualFailure::SignedBytesEqualFailure(
 {
     message_ = createUserText(text);
 
-    SimpleString aDecimal = StringFrom((int)actual);
-    SimpleString eDecimal = StringFrom((int)expected);
+    SimpleString aDecimal = StringFrom(static_cast<int>(actual));
+    SimpleString eDecimal = StringFrom(static_cast<int>(expected));
 
     SimpleString::padStringsToSameLength(aDecimal, eDecimal, ' ');
 
@@ -607,16 +608,16 @@ UnexpectedExceptionFailure::UnexpectedExceptionFailure(UtestShell* test) :
 {
 }
 
-    #if CPPUTEST_USE_STD_CPP_LIB
+    #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
         #if CPPUTEST_HAVE_RTTI
 static SimpleString getExceptionTypeName(const std::exception& e)
 {
     const char* name = typeid(e).name();
-            #if defined(__GNUC__) && (__cplusplus >= 201103L)
+            #if defined(__GNUC__)
     int status = -1;
 
     std::unique_ptr<char, void (*)(void*)> demangledName(
-        abi::__cxa_demangle(name, NULLPTR, NULLPTR, &status), std::free
+        abi::__cxa_demangle(name, nullptr, nullptr, &status), std::free
     );
 
     return (status == 0) ? demangledName.get() : name;
@@ -644,5 +645,5 @@ UnexpectedExceptionFailure::UnexpectedExceptionFailure(
 {
     (void)e;
 }
-    #endif // CPPUTEST_USE_STD_CPP_LIB
-#endif     // CPPUTEST_HAVE_EXCEPTIONS
+    #endif
+#endif

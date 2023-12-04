@@ -35,10 +35,10 @@ class MockSupportPlugin : public TestPlugin
 {
 public:
     MockSupportPlugin(const SimpleString& name = "MockSupportPLugin");
-    virtual ~MockSupportPlugin() _destructor_override;
+    virtual ~MockSupportPlugin() override;
 
-    virtual void preTestAction(UtestShell&, TestResult&) _override;
-    virtual void postTestAction(UtestShell&, TestResult&) _override;
+    virtual void preTestAction(UtestShell&, TestResult&) override;
+    virtual void postTestAction(UtestShell&, TestResult&) override;
 
     virtual void installComparator(
         const SimpleString& name, MockNamedValueComparator& comparator

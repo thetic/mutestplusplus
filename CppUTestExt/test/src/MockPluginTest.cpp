@@ -40,13 +40,13 @@ TEST_GROUP(MockPlugin)
 
     MockSupportPlugin plugin;
 
-    void setup() _override
+    void setup() override
     {
         test = new UtestShell("group", "name", "file", 1);
         result = new TestResult(output);
     }
 
-    void teardown() _override
+    void teardown() override
     {
         delete test;
         delete result;
@@ -80,12 +80,15 @@ TEST(MockPlugin, checkExpectationsWorksAlsoWithHierachicalObjects)
     MockFailureReporterInstaller failureReporterInstaller;
 
     MockExpectedCallsListForTest expectations;
-    expectations.addFunction("differentScope::foobar")->onObject((void*)1);
+    expectations.addFunction("differentScope::foobar")
+        ->onObject(reinterpret_cast<void*>(1));
     MockExpectedObjectDidntHappenFailure expectedFailure(
         test, "differentScope::foobar", expectations
     );
 
-    mock("differentScope").expectOneCall("foobar").onObject((void*)1);
+    mock("differentScope")
+        .expectOneCall("foobar")
+        .onObject(reinterpret_cast<void*>(1));
     mock("differentScope").actualCall("foobar");
 
     plugin.postTestAction(*test, *result);
@@ -100,11 +103,11 @@ TEST(MockPlugin, checkExpectationsWorksAlsoWithHierachicalObjects)
 class DummyComparator : public MockNamedValueComparator
 {
 public:
-    bool isEqual(const void* object1, const void* object2) _override
+    bool isEqual(const void* object1, const void* object2) override
     {
         return object1 == object2;
     }
-    SimpleString valueToString(const void*) _override
+    SimpleString valueToString(const void*) override
     {
         return "string";
     }
@@ -116,8 +119,8 @@ TEST(MockPlugin, installComparatorRecordsTheComparatorButNotInstallsItYet)
 
     DummyComparator comparator;
     plugin.installComparator("myType", comparator);
-    mock().expectOneCall("foo").withParameterOfType("myType", "name", NULLPTR);
-    mock().actualCall("foo").withParameterOfType("myType", "name", NULLPTR);
+    mock().expectOneCall("foo").withParameterOfType("myType", "name", nullptr);
+    mock().actualCall("foo").withParameterOfType("myType", "name", nullptr);
 
     MockNoWayToCompareCustomTypeFailure failure(test, "myType");
     CHECK_EXPECTED_MOCK_FAILURE(failure);
@@ -128,9 +131,9 @@ TEST(MockPlugin, installComparatorRecordsTheComparatorButNotInstallsItYet)
 class DummyCopier : public MockNamedValueCopier
 {
 public:
-    void copy(void* dst, const void* src) _override
+    void copy(void* dst, const void* src) override
     {
-        *(int*)dst = *(const int*)src;
+        *reinterpret_cast<int*>(dst) = *reinterpret_cast<const int*>(src);
     }
 };
 
@@ -141,10 +144,10 @@ TEST(MockPlugin, installCopierRecordsTheCopierButNotInstallsItYet)
     DummyCopier copier;
     plugin.installCopier("myType", copier);
     mock().expectOneCall("foo").withOutputParameterOfTypeReturning(
-        "myType", "name", NULLPTR
+        "myType", "name", nullptr
     );
     mock().actualCall("foo").withOutputParameterOfType(
-        "myType", "name", NULLPTR
+        "myType", "name", nullptr
     );
 
     MockNoWayToCopyCustomTypeFailure failure(test, "myType");

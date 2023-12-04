@@ -42,7 +42,7 @@ TEST_GROUP(MockFailureTest)
     MockCheckedExpectedCall* call4;
     MockCheckedExpectedCall* call5;
 
-    void setup() _override
+    void setup() override
     {
         list = new MockExpectedCallsList;
         call1 = new MockCheckedExpectedCall;
@@ -51,7 +51,7 @@ TEST_GROUP(MockFailureTest)
         call4 = new MockCheckedExpectedCall;
         call5 = new MockCheckedExpectedCall;
     }
-    void teardown() _override
+    void teardown() override
     {
         delete list;
         delete call1;
@@ -221,7 +221,7 @@ TEST(MockFailureTest, MockUnexpectedOutputParameterFailure)
     addThreeCallsToList();
 
     MockNamedValue actualParameter("bar");
-    actualParameter.setValue((void*)0x123);
+    actualParameter.setValue(reinterpret_cast<void*>(0x123));
 
     MockUnexpectedOutputParameterFailure failure(
         UtestShell::getCurrent(), "foo", actualParameter, *list
@@ -253,7 +253,7 @@ TEST(MockFailureTest, MockUnexpectedUnmodifiedOutputParameterFailure)
     addThreeCallsToList();
 
     MockNamedValue actualParameter("bar");
-    actualParameter.setValue((void*)0x123);
+    actualParameter.setValue(reinterpret_cast<void*>(0x123));
 
     MockUnexpectedOutputParameterFailure failure(
         UtestShell::getCurrent(), "foo", actualParameter, *list
@@ -364,15 +364,15 @@ TEST(MockFailureTest, MockNoWayToCompareCustomTypeFailure)
 
 TEST(MockFailureTest, MockUnexpectedObjectFailure)
 {
-    call1->withName("foo").onObject((void*)0x02);
-    call2->withName("foo").onObject((void*)0x03);
+    call1->withName("foo").onObject(reinterpret_cast<void*>(0x02));
+    call2->withName("foo").onObject(reinterpret_cast<void*>(0x03));
     call2->callWasMade(1);
     call2->wasPassedToObject();
     call3->withName("unrelated");
     addThreeCallsToList();
 
     MockUnexpectedObjectFailure failure(
-        UtestShell::getCurrent(), "foo", (void*)0x1, *list
+        UtestShell::getCurrent(), "foo", reinterpret_cast<void*>(0x1), *list
     );
     STRCMP_EQUAL(
         StringFromFormat(
@@ -385,7 +385,8 @@ TEST(MockFailureTest, MockUnexpectedObjectFailure)
             "\tEXPECTED calls that WERE fulfilled related to function: foo\n"
             "\t\t(object address: %p)::foo -> no parameters (expected 1 call, "
             "called 1 time)",
-            (void*)0x01, (void*)0x02, (void*)0x03
+            reinterpret_cast<void*>(0x01), reinterpret_cast<void*>(0x02),
+            reinterpret_cast<void*>(0x03)
         )
             .asCharString(),
         failure.getMessage().asCharString()
@@ -394,8 +395,8 @@ TEST(MockFailureTest, MockUnexpectedObjectFailure)
 
 TEST(MockFailureTest, MockExpectedObjectDidntHappenFailure)
 {
-    call1->withName("foo").onObject((void*)0x02);
-    call2->withName("foo").onObject((void*)0x03);
+    call1->withName("foo").onObject(reinterpret_cast<void*>(0x02));
+    call2->withName("foo").onObject(reinterpret_cast<void*>(0x03));
     call2->callWasMade(1);
     call2->wasPassedToObject();
     call3->withName("unrelated");
@@ -415,7 +416,7 @@ TEST(MockFailureTest, MockExpectedObjectDidntHappenFailure)
             "\tEXPECTED calls that WERE fulfilled related to function: foo\n"
             "\t\t(object address: %p)::foo -> no parameters (expected 1 call, "
             "called 1 time)",
-            (void*)0x2, (void*)0x3
+            reinterpret_cast<void*>(0x2), reinterpret_cast<void*>(0x3)
         )
             .asCharString(),
         failure.getMessage().asCharString()

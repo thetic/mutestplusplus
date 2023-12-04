@@ -29,6 +29,7 @@
 #define PLATFORMSPECIFICFUNCTIONS_H_
 
 #include "CppUTest/TestOutput.h"
+
 TestOutput::WorkingEnvironment PlatformSpecificGetWorkingEnvironment();
 
 class TestPlugin;

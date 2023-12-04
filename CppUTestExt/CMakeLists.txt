@@ -11,6 +11,12 @@ add_library(CppUTestExt STATIC
     src/MockSupport.cpp
 )
 
+target_compile_features(CppUTest
+    PUBLIC
+        cxx_std_11
+        c_std_99
+)
+
 target_link_libraries(CppUTestExt PUBLIC CppUTest)
 
 #[[Arrange for the include directory to be added to the include paths of any CMake target depending on CppUTestExt.]]

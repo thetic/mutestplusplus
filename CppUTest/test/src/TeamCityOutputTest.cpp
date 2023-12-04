@@ -7,14 +7,14 @@ class TeamCityOutputToBuffer : public TeamCityTestOutput
 public:
     explicit TeamCityOutputToBuffer() {}
 
-    virtual ~TeamCityOutputToBuffer() _destructor_override {}
+    virtual ~TeamCityOutputToBuffer() override {}
 
-    void printBuffer(const char* s) _override
+    void printBuffer(const char* s) override
     {
         output += s;
     }
 
-    void flush() _override
+    void flush() override
     {
         output = "";
     }
@@ -46,7 +46,7 @@ TEST_GROUP(TeamCityOutputTest)
     TestFailure *f, *f2, *f3;
     TestResult* result;
 
-    void setup() _override
+    void setup() override
     {
         mock = new TeamCityOutputToBuffer();
         tcout = mock;
@@ -61,7 +61,7 @@ TEST_GROUP(TeamCityOutputTest)
             GetPlatformSpecificTimeInMillis, MockGetPlatformSpecificTimeInMillis
         );
     }
-    void teardown() _override
+    void teardown() override
     {
         delete tcout;
         delete tst;

@@ -48,8 +48,8 @@ CommandLineArguments::CommandLineArguments(int ac, const char* const* av) :
     shufflingPreSeeded_(false),
     repeat_(1),
     shuffleSeed_(0),
-    groupFilters_(NULLPTR),
-    nameFilters_(NULLPTR),
+    groupFilters_(nullptr),
+    nameFilters_(nullptr),
     outputType_(OUTPUT_ECLIPSE)
 {
 }
@@ -328,9 +328,9 @@ void CommandLineArguments::setRepeatCount(int ac, const char* const* av, int& i)
 
     SimpleString repeatParameter(av[i]);
     if (repeatParameter.size() > 2)
-        repeat_ = (size_t)(SimpleString::AtoI(av[i] + 2));
+        repeat_ = static_cast<size_t>(SimpleString::AtoI(av[i] + 2));
     else if (i + 1 < ac) {
-        repeat_ = (size_t)(SimpleString::AtoI(av[i + 1]));
+        repeat_ = static_cast<size_t>(SimpleString::AtoI(av[i + 1]));
         if (repeat_ != 0)
             i++;
     }
@@ -342,7 +342,7 @@ void CommandLineArguments::setRepeatCount(int ac, const char* const* av, int& i)
 bool CommandLineArguments::setShuffle(int ac, const char* const* av, int& i)
 {
     shuffling_ = true;
-    shuffleSeed_ = (unsigned int)GetPlatformSpecificTimeInMillis();
+    shuffleSeed_ = static_cast<unsigned int>(GetPlatformSpecificTimeInMillis());
     if (shuffleSeed_ == 0)
         shuffleSeed_++;
 

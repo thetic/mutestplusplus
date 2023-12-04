@@ -98,7 +98,7 @@ class FileSystemForJUnitTestOutputTests
     FileForJUnitOutputTests* firstFile_;
 
 public:
-    FileSystemForJUnitTestOutputTests() : firstFile_(NULLPTR) {}
+    FileSystemForJUnitTestOutputTests() : firstFile_(nullptr) {}
     ~FileSystemForJUnitTestOutputTests()
     {
         clear();
@@ -122,7 +122,7 @@ public:
     int amountOfFiles()
     {
         int totalAmountOfFiles = 0;
-        for (FileForJUnitOutputTests* current = firstFile_; current != NULLPTR;
+        for (FileForJUnitOutputTests* current = firstFile_; current != nullptr;
              current = current->nextFile())
             totalAmountOfFiles++;
         return totalAmountOfFiles;
@@ -131,16 +131,16 @@ public:
     bool fileExists(const char* filename)
     {
         FileForJUnitOutputTests* searchedFile = file(filename);
-        return (searchedFile != NULLPTR);
+        return (searchedFile != nullptr);
     }
 
     FileForJUnitOutputTests* file(const char* filename)
     {
-        for (FileForJUnitOutputTests* current = firstFile_; current != NULLPTR;
+        for (FileForJUnitOutputTests* current = firstFile_; current != nullptr;
              current = current->nextFile())
             if (current->name() == filename)
                 return current;
-        return NULLPTR;
+        return nullptr;
     }
 };
 
@@ -173,12 +173,12 @@ class JUnitTestOutputTestRunner
 public:
     explicit JUnitTestOutputTestRunner(const TestResult& result) :
         result_(result),
-        currentGroupName_(NULLPTR),
-        currentTest_(NULLPTR),
+        currentGroupName_(nullptr),
+        currentTest_(nullptr),
         firstTestInGroup_(true),
         timeTheTestTakes_(0),
         numberOfChecksInTest_(0),
-        testFailure_(NULLPTR)
+        testFailure_(nullptr)
     {
         millisTime = 0;
         theTime = "1978-10-03T00:00:00";
@@ -209,7 +209,7 @@ public:
     {
         endOfPreviousTestGroup();
         delete currentTest_;
-        currentTest_ = NULLPTR;
+        currentTest_ = nullptr;
         return *this;
     }
 
@@ -221,7 +221,7 @@ public:
             firstTestInGroup_ = true;
         }
 
-        currentGroupName_ = NULLPTR;
+        currentGroupName_ = nullptr;
     }
 
     JUnitTestOutputTestRunner& withGroup(const char* groupName)
@@ -270,7 +270,7 @@ public:
 
     void runPreviousTest()
     {
-        if (currentTest_ == NULLPTR)
+        if (currentTest_ == nullptr)
             return;
 
         if (firstTestInGroup_) {
@@ -288,7 +288,7 @@ public:
         if (testFailure_) {
             result_.addFailure(*testFailure_);
             delete testFailure_;
-            testFailure_ = NULLPTR;
+            testFailure_ = nullptr;
         }
 
         result_.currentTestEnded(currentTest_);
@@ -342,12 +342,12 @@ static PlatformSpecificFile mockFOpen(const char* filename, const char*)
 
 static void mockFPuts(const char* str, PlatformSpecificFile file)
 {
-    ((FileForJUnitOutputTests*)file)->write(str);
+    reinterpret_cast<FileForJUnitOutputTests*>(file)->write(str);
 }
 
 static void mockFClose(PlatformSpecificFile file)
 {
-    ((FileForJUnitOutputTests*)file)->close();
+    reinterpret_cast<FileForJUnitOutputTests*>(file)->close();
 }
 }
 
@@ -358,7 +358,7 @@ TEST_GROUP(JUnitOutputTest)
     JUnitTestOutputTestRunner* testCaseRunner;
     FileForJUnitOutputTests* outputFile;
 
-    void setup() _override
+    void setup() override
     {
         UT_PTR_SET(PlatformSpecificFOpen, mockFOpen);
         UT_PTR_SET(PlatformSpecificFPuts, mockFPuts);
@@ -368,7 +368,7 @@ TEST_GROUP(JUnitOutputTest)
         testCaseRunner = new JUnitTestOutputTestRunner(*result);
     }
 
-    void teardown() _override
+    void teardown() override
     {
         delete testCaseRunner;
         delete result;
@@ -789,8 +789,8 @@ TEST(JUnitOutputTest, twoTestGroupsWriteToTwoDifferentFiles)
         .withTest("testName")
         .end();
 
-    CHECK(fileSystem.file("cpputest_firstTestGroup.xml") != NULLPTR);
-    CHECK(fileSystem.file("cpputest_secondTestGroup.xml") != NULLPTR);
+    CHECK(fileSystem.file("cpputest_firstTestGroup.xml") != nullptr);
+    CHECK(fileSystem.file("cpputest_secondTestGroup.xml") != nullptr);
 }
 
 TEST(JUnitOutputTest, testGroupWithWeirdName)

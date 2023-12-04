@@ -30,6 +30,25 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/TestTestingFixture.h"
+#include <limits.h>
+
+/*
+ * Detection of different 64 bit environments
+ */
+#if defined(__LP64__) || defined(_LP64) ||                                     \
+    (defined(__WORDSIZE) && (__WORDSIZE == 64)) || defined(__x86_64) ||        \
+    defined(_WIN64)
+    #define CPPUTEST_64BIT
+    #if defined(_WIN64)
+        #define CPPUTEST_64BIT_32BIT_LONGS
+    #endif
+#endif
+
+/* Handling of systems with a different int-width (e.g. 16 bit).
+ */
+#if (INT_MAX == 0x7fff)
+    #define CPPUTEST_16BIT_INTS
+#endif
 
 TEST_GROUP(SimpleString)
 {
@@ -37,7 +56,7 @@ TEST_GROUP(SimpleString)
 
 TEST(SimpleString, defaultAllocatorIsNewArrayAllocator)
 {
-    SimpleString::setStringAllocator(NULLPTR);
+    SimpleString::setStringAllocator(nullptr);
     POINTERS_EQUAL(
         defaultNewArrayAllocator(), SimpleString::getStringAllocator()
     );
@@ -47,10 +66,10 @@ class MyOwnStringAllocator : public TestMemoryAllocator
 {
 public:
     MyOwnStringAllocator() : memoryWasAllocated(false) {}
-    virtual ~MyOwnStringAllocator() _destructor_override {}
+    virtual ~MyOwnStringAllocator() override {}
 
     bool memoryWasAllocated;
-    char* alloc_memory(size_t size, const char* file, size_t line) _override
+    char* alloc_memory(size_t size, const char* file, size_t line) override
     {
         memoryWasAllocated = true;
         return TestMemoryAllocator::alloc_memory(size, file, line);
@@ -63,7 +82,7 @@ TEST(SimpleString, allocatorForSimpleStringCanBeReplaced)
     SimpleString::setStringAllocator(&myOwnAllocator);
     SimpleString simpleString;
     CHECK(myOwnAllocator.memoryWasAllocated);
-    SimpleString::setStringAllocator(NULLPTR);
+    SimpleString::setStringAllocator(nullptr);
 }
 
 TEST(SimpleString, CreateSequence)
@@ -418,7 +437,7 @@ TEST(SimpleString, copyInBufferNormal)
 {
     SimpleString str("Hello World");
     size_t bufferSize = str.size() + 1;
-    char* buffer = (char*)PlatformSpecificMalloc(bufferSize);
+    char* buffer = reinterpret_cast<char*>(PlatformSpecificMalloc(bufferSize));
     str.copyToBuffer(buffer, bufferSize);
     STRCMP_EQUAL(str.asCharString(), buffer);
     PlatformSpecificFree(buffer);
@@ -427,16 +446,16 @@ TEST(SimpleString, copyInBufferNormal)
 TEST(SimpleString, copyInBufferWithEmptyBuffer)
 {
     SimpleString str("Hello World");
-    char* buffer = NULLPTR;
+    char* buffer = nullptr;
     str.copyToBuffer(buffer, 0);
-    POINTERS_EQUAL(NULLPTR, buffer);
+    POINTERS_EQUAL(nullptr, buffer);
 }
 
 TEST(SimpleString, copyInBufferWithBiggerBufferThanNeeded)
 {
     SimpleString str("Hello");
     size_t bufferSize = 20;
-    char* buffer = (char*)PlatformSpecificMalloc(bufferSize);
+    char* buffer = reinterpret_cast<char*>(PlatformSpecificMalloc(bufferSize));
     str.copyToBuffer(buffer, bufferSize);
     STRCMP_EQUAL(str.asCharString(), buffer);
     PlatformSpecificFree(buffer);
@@ -446,7 +465,7 @@ TEST(SimpleString, copyInBufferWithSmallerBufferThanNeeded)
 {
     SimpleString str("Hello");
     size_t bufferSize = str.size();
-    char* buffer = (char*)PlatformSpecificMalloc(bufferSize);
+    char* buffer = reinterpret_cast<char*>(PlatformSpecificMalloc(bufferSize));
     str.copyToBuffer(buffer, bufferSize);
     STRNCMP_EQUAL(str.asCharString(), buffer, (bufferSize - 1));
     LONGS_EQUAL(0, buffer[bufferSize - 1]);
@@ -455,20 +474,18 @@ TEST(SimpleString, copyInBufferWithSmallerBufferThanNeeded)
 
 TEST(SimpleString, ContainsNull)
 {
-    SimpleString s(NULLPTR);
+    SimpleString s(nullptr);
     STRCMP_EQUAL("", s.asCharString());
 }
 
 TEST(SimpleString, NULLReportsNullString)
 {
-    STRCMP_EQUAL("(null)", StringFromOrNull((char*)NULLPTR).asCharString());
+    STRCMP_EQUAL("(null)", StringFromOrNull(nullptr).asCharString());
 }
 
 TEST(SimpleString, NULLReportsNullStringPrintable)
 {
-    STRCMP_EQUAL(
-        "(null)", PrintableStringFromOrNull((char*)NULLPTR).asCharString()
-    );
+    STRCMP_EQUAL("(null)", PrintableStringFromOrNull(nullptr).asCharString());
 }
 
 TEST(SimpleString, Booleans)
@@ -481,13 +498,13 @@ TEST(SimpleString, Booleans)
 
 TEST(SimpleString, Pointers)
 {
-    SimpleString s(StringFrom((void*)0x1234));
+    SimpleString s(StringFrom(reinterpret_cast<void*>(0x1234)));
     STRCMP_EQUAL("0x1234", s.asCharString());
 }
 
 TEST(SimpleString, FunctionPointers)
 {
-    SimpleString s(StringFrom((void (*)())0x1234));
+    SimpleString s(StringFrom(reinterpret_cast<void (*)()>(0x1234)));
     STRCMP_EQUAL("0x1234", s.asCharString());
 }
 
@@ -499,7 +516,9 @@ TEST(SimpleString, Characters)
 
 TEST(SimpleString, NegativeSignedBytes)
 {
-    STRCMP_EQUAL("-15", StringFrom((signed char)-15).asCharString());
+    STRCMP_EQUAL(
+        "-15", StringFrom(static_cast<signed char>(-15)).asCharString()
+    );
 }
 
 TEST(SimpleString, PositiveSignedBytes)
@@ -509,33 +528,29 @@ TEST(SimpleString, PositiveSignedBytes)
 
 TEST(SimpleString, LongInts)
 {
-    SimpleString s(StringFrom((long)1));
+    SimpleString s(StringFrom(1L));
     CHECK(s == "1");
 }
 
 TEST(SimpleString, UnsignedLongInts)
 {
-    SimpleString s(StringFrom((unsigned long)1));
-    SimpleString s2(StringFrom((unsigned long)1));
+    SimpleString s(StringFrom(1UL));
+    SimpleString s2(StringFrom(1UL));
     CHECK(s == s2);
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
 TEST(SimpleString, LongLongInts)
 {
-    SimpleString s(StringFrom((long long)1));
+    SimpleString s(StringFrom(1LL));
     CHECK(s == "1");
 }
 
 TEST(SimpleString, UnsignedLongLongInts)
 {
-    SimpleString s(StringFrom((unsigned long long)1));
-    SimpleString s2(StringFrom((unsigned long long)1));
+    SimpleString s(StringFrom(1ULL));
+    SimpleString s2(StringFrom(1ULL));
     CHECK(s == s2);
 }
-
-#endif /* CPPUTEST_USE_LONG_LONG */
 
 TEST(SimpleString, Doubles)
 {
@@ -573,14 +588,14 @@ TEST(SimpleString, SmallDoubles)
 TEST(SimpleString, Sizes)
 {
     size_t size = 10;
-    STRCMP_EQUAL("10", StringFrom((int)size).asCharString());
+    STRCMP_EQUAL("10", StringFrom(static_cast<int>(size)).asCharString());
 }
 
-#if __cplusplus > 199711L && !defined __arm__ && CPPUTEST_USE_STD_CPP_LIB
+#if !defined(__ARMCC_VERSION) && !defined(CPPUTEST_STD_CPP_LIB_DISABLED)
 
 TEST(SimpleString, nullptr_type)
 {
-    SimpleString s(StringFrom(NULLPTR));
+    SimpleString s(StringFrom(nullptr));
     STRCMP_EQUAL("(null)", s.asCharString());
 }
 
@@ -588,20 +603,20 @@ TEST(SimpleString, nullptr_type)
 
 TEST(SimpleString, HexStrings)
 {
-    STRCMP_EQUAL("f3", HexStringFrom((signed char)-13).asCharString());
+    STRCMP_EQUAL(
+        "f3", HexStringFrom(static_cast<signed char>(-13)).asCharString()
+    );
 
     SimpleString h1 = HexStringFrom(0xffffL);
     STRCMP_EQUAL("ffff", h1.asCharString());
 
-#if CPPUTEST_USE_LONG_LONG
     SimpleString h15 = HexStringFrom(0xffffLL);
     STRCMP_EQUAL("ffff", h15.asCharString());
-#endif
 
-    SimpleString h2 = HexStringFrom((void*)0xfffeL);
+    SimpleString h2 = HexStringFrom(reinterpret_cast<void*>(0xfffeL));
     STRCMP_EQUAL("fffe", h2.asCharString());
 
-    SimpleString h3 = HexStringFrom((void (*)())0xfffdL);
+    SimpleString h3 = HexStringFrom(reinterpret_cast<void (*)()>(0xfffdL));
     STRCMP_EQUAL("fffd", h3.asCharString());
 }
 
@@ -615,7 +630,7 @@ TEST(SimpleString, StringFromFormatpointer)
 {
     // this is not a great test. but %p is odd on mingw and even more odd on
     // Solaris.
-    SimpleString h1 = StringFromFormat("%p", (void*)1);
+    SimpleString h1 = StringFromFormat("%p", reinterpret_cast<void*>(1));
     if (h1.size() == 3)
         STRCMP_EQUAL("0x1", h1.asCharString());
     else if (h1.size() == 8)
@@ -735,9 +750,9 @@ TEST(SimpleString, CollectionWritingToEmptyString)
 
 TEST(SimpleString, 64BitAddressPrintsCorrectly)
 {
-    char* p = (char*)0x0012345678901234;
+    char* p = reinterpret_cast<char*>(0x0012345678901234);
     SimpleString expected("0x12345678901234");
-    SimpleString actual = StringFrom((void*)p);
+    SimpleString actual = StringFrom(reinterpret_cast<void*>(p));
     STRCMP_EQUAL(expected.asCharString(), actual.asCharString());
 }
 
@@ -799,7 +814,7 @@ TEST(SimpleString, BuildStringFromUnsignedInteger)
     CHECK_EQUAL(expected_string, result);
 }
 
-#if CPPUTEST_USE_STD_CPP_LIB
+#ifndef CPPUTEST_STD_CPP_LIB_DISABLED
 
 TEST(SimpleString, fromStdString)
 {
@@ -832,10 +847,10 @@ TEST(SimpleString, StrCmp)
     char blabla[] = "blabla";
     char bla[] = "bla";
     CHECK(SimpleString::StrCmp(empty, empty) == 0);
-    CHECK(SimpleString::StrCmp(bla, blabla) == -(int)'b');
+    CHECK(SimpleString::StrCmp(bla, blabla) == -static_cast<int>('b'));
     CHECK(SimpleString::StrCmp(blabla, bla) == 'b');
     CHECK(SimpleString::StrCmp(bla, empty) == 'b');
-    CHECK(SimpleString::StrCmp(empty, bla) == -(int)'b');
+    CHECK(SimpleString::StrCmp(empty, bla) == -static_cast<int>('b'));
     CHECK(SimpleString::StrCmp(bla, bla) == 0);
 }
 
@@ -853,7 +868,7 @@ TEST(SimpleString, StrNCpy_zero_termination)
 
 TEST(SimpleString, StrNCpy_null_proof)
 {
-    POINTERS_EQUAL(NULLPTR, SimpleString::StrNCpy(NULLPTR, "woman", 6));
+    POINTERS_EQUAL(nullptr, SimpleString::StrNCpy(nullptr, "woman", 6));
 }
 
 TEST(SimpleString, StrNCpy_stops_at_end_of_string)
@@ -930,9 +945,9 @@ TEST(SimpleString, StrStr)
     char foobarfoo[] = "foobarfoo";
     char barf[] = "barf";
     CHECK(SimpleString::StrStr(foo, empty) == foo);
-    CHECK(SimpleString::StrStr(empty, foo) == NULLPTR);
+    CHECK(SimpleString::StrStr(empty, foo) == nullptr);
     CHECK(SimpleString::StrStr(foobarfoo, barf) == foobarfoo + 3);
-    CHECK(SimpleString::StrStr(barf, foobarfoo) == NULLPTR);
+    CHECK(SimpleString::StrStr(barf, foobarfoo) == nullptr);
     CHECK(SimpleString::StrStr(foo, foo) == foo);
 }
 
@@ -983,7 +998,7 @@ TEST(SimpleString, Binary)
         StringFromBinaryOrNull(value, sizeof(value)).asCharString()
     );
     STRCMP_EQUAL("", StringFromBinary(value, 0).asCharString());
-    STRCMP_EQUAL("(null)", StringFromBinaryOrNull(NULLPTR, 0).asCharString());
+    STRCMP_EQUAL("(null)", StringFromBinaryOrNull(nullptr, 0).asCharString());
 }
 
 TEST(SimpleString, BinaryWithSize)
@@ -1004,7 +1019,7 @@ TEST(SimpleString, BinaryWithSize)
         StringFromBinaryWithSize(value, 0).asCharString()
     );
     STRCMP_EQUAL(
-        "(null)", StringFromBinaryWithSizeOrNull(NULLPTR, 0).asCharString()
+        "(null)", StringFromBinaryWithSizeOrNull(nullptr, 0).asCharString()
     );
 }
 
@@ -1027,7 +1042,7 @@ TEST(SimpleString, MemCmp)
     LONGS_EQUAL(0, SimpleString::MemCmp(smaller, smaller, sizeof(smaller)));
     CHECK(SimpleString::MemCmp(smaller, greater, sizeof(smaller)) < 0);
     CHECK(SimpleString::MemCmp(greater, smaller, sizeof(smaller)) > 0);
-    LONGS_EQUAL(0, SimpleString::MemCmp(NULLPTR, NULLPTR, 0));
+    LONGS_EQUAL(0, SimpleString::MemCmp(nullptr, nullptr, 0));
 }
 
 TEST(SimpleString, MemCmpFirstLastNotMatching)
@@ -1039,7 +1054,7 @@ TEST(SimpleString, MemCmpFirstLastNotMatching)
     CHECK(0 != SimpleString::MemCmp(base, lastNotMatching, sizeof(base)));
 }
 
-#if (CPPUTEST_CHAR_BIT == 16)
+#if (CHAR_BIT == 16)
 TEST(SimpleString, MaskedBitsChar)
 {
     STRCMP_EQUAL(
@@ -1061,7 +1076,7 @@ TEST(SimpleString, MaskedBitsChar)
         "xxxxxxxx 11xx11xx", StringFromMaskedBits(0xFF, 0xCC, 1).asCharString()
     );
 }
-#elif (CPPUTEST_CHAR_BIT == 8)
+#elif (CHAR_BIT == 8)
 TEST(SimpleString, MaskedBitsChar)
 {
     STRCMP_EQUAL(
@@ -1089,33 +1104,27 @@ TEST(SimpleString, MaskedBits16Bit)
 {
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxxx",
-        StringFromMaskedBits(0x0000, 0x0000, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0x0000, 0x0000, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "00000000 00000000",
-        StringFromMaskedBits(0x0000, 0xFFFF, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0x0000, 0xFFFF, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "11111111 11111111",
-        StringFromMaskedBits(0xFFFF, 0xFFFF, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0xFFFF, 0xFFFF, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "1xxxxxxx xxxxxxxx",
-        StringFromMaskedBits(0x8000, 0x8000, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0x8000, 0x8000, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxx1",
-        StringFromMaskedBits(0x0001, 0x0001, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0x0001, 0x0001, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "11xx11xx 11xx11xx",
-        StringFromMaskedBits(0xFFFF, 0xCCCC, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0xFFFF, 0xCCCC, 2 * 8 / CHAR_BIT).asCharString()
     );
 }
 
@@ -1123,32 +1132,32 @@ TEST(SimpleString, MaskedBits32Bit)
 {
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx",
-        StringFromMaskedBits(0x00000000, 0x00000000, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0x00000000, 0x00000000, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "00000000 00000000 00000000 00000000",
-        StringFromMaskedBits(0x00000000, 0xFFFFFFFF, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0x00000000, 0xFFFFFFFF, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "11111111 11111111 11111111 11111111",
-        StringFromMaskedBits(0xFFFFFFFF, 0xFFFFFFFF, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0xFFFFFFFF, 0xFFFFFFFF, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "1xxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx",
-        StringFromMaskedBits(0x80000000, 0x80000000, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0x80000000, 0x80000000, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxx1",
-        StringFromMaskedBits(0x00000001, 0x00000001, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0x00000001, 0x00000001, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "11xx11xx 11xx11xx 11xx11xx 11xx11xx",
-        StringFromMaskedBits(0xFFFFFFFF, 0xCCCCCCCC, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0xFFFFFFFF, 0xCCCCCCCC, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
 }
@@ -1232,32 +1241,16 @@ TEST(SimpleString, BracketsFormattedHexStringFromForLong)
 
     STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
 }
-#if CPPUTEST_USE_LONG_LONG
 
 TEST(SimpleString, BracketsFormattedHexStringFromForLongLong)
 {
-    cpputest_longlong value = 1;
+    long long value = 1;
 
     STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
 }
 TEST(SimpleString, BracketsFormattedHexStringFromForULongLong)
 {
-    cpputest_ulonglong value = 1;
+    unsigned long long value = 1;
 
     STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
 }
-#else
-TEST(SimpleString, BracketsFormattedHexStringFromForLongLong)
-{
-    cpputest_longlong value;
-
-    STRCMP_EQUAL("", BracketsFormattedHexStringFrom(value).asCharString());
-}
-TEST(SimpleString, BracketsFormattedHexStringFromForULongLong)
-{
-    cpputest_ulonglong value;
-
-    STRCMP_EQUAL("", BracketsFormattedHexStringFrom(value).asCharString());
-}
-
-#endif

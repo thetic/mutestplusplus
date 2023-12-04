@@ -30,9 +30,7 @@
 #include "CppUTest/TestOutput.h"
 #include "CppUTest/TestTestingFixture.h"
 
-#if CPPUTEST_USE_STD_C_LIB
-    #include <math.h>
-#endif
+#include <math.h>
 
 TEST_GROUP(UtestShell)
 {
@@ -71,20 +69,25 @@ TEST(UtestShell, compareDoubles)
 #ifdef NAN
 TEST(UtestShell, compareDoublesNaN)
 {
-    CHECK(!doubles_equal((double)NAN, 1.001, 0.01));
-    CHECK(!doubles_equal(1.0, (double)NAN, 0.01));
-    CHECK(!doubles_equal(1.0, 1.001, (double)NAN));
+    CHECK(!doubles_equal(static_cast<double>(NAN), 1.001, 0.01));
+    CHECK(!doubles_equal(1.0, static_cast<double>(NAN), 0.01));
+    CHECK(!doubles_equal(1.0, 1.001, static_cast<double>(NAN)));
 }
 #endif
 
 #ifdef INFINITY
 TEST(UtestShell, compareDoublesInf)
 {
-    CHECK(!doubles_equal((double)INFINITY, 1.0, 0.01));
-    CHECK(!doubles_equal(1.0, (double)INFINITY, 0.01));
-    CHECK(doubles_equal(1.0, -1.0, (double)INFINITY));
-    CHECK(doubles_equal((double)INFINITY, (double)INFINITY, 0.01));
-    CHECK(doubles_equal((double)INFINITY, (double)INFINITY, (double)INFINITY));
+    CHECK(!doubles_equal(static_cast<double>(INFINITY), 1.0, 0.01));
+    CHECK(!doubles_equal(1.0, static_cast<double>(INFINITY), 0.01));
+    CHECK(doubles_equal(1.0, -1.0, static_cast<double>(INFINITY)));
+    CHECK(doubles_equal(
+        static_cast<double>(INFINITY), static_cast<double>(INFINITY), 0.01
+    ));
+    CHECK(doubles_equal(
+        static_cast<double>(INFINITY), static_cast<double>(INFINITY),
+        static_cast<double>(INFINITY)
+    ));
 }
 #endif
 
@@ -100,11 +103,6 @@ TEST(UtestShell, PassedCheckEqualWillIncreaseTheAmountOfChecks)
     fixture.setTestFunction(passingCheckEqualTestMethod_);
     fixture.runAllTests();
     LONGS_EQUAL(1, fixture.getCheckCount());
-}
-
-IGNORE_TEST(UtestShell, IgnoreTestAccessingFixture)
-{
-    CHECK(&fixture != NULLPTR);
 }
 
 TEST(UtestShell, MacrosUsedInSetup)
@@ -284,7 +282,7 @@ TEST(UtestShell, UnknownExceptionIsRethrownIfEnabled)
     UtestShell::setRethrowExceptions(initialRethrowExceptions);
 }
 
-    #if CPPUTEST_USE_STD_CPP_LIB
+    #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
 static void thrownStandardExceptionMethod_()
 {
     if (shouldThrowException) {
@@ -338,8 +336,8 @@ TEST(UtestShell, StandardExceptionIsRethrownIfEnabled)
     LONGS_EQUAL(0, stopAfterFailure);
     UtestShell::setRethrowExceptions(initialRethrowExceptions);
 }
-    #endif // CPPUTEST_USE_STD_CPP_LIB
-#endif     // CPPUTEST_HAVE_EXCEPTIONS
+    #endif
+#endif
 
 TEST(UtestShell, veryVebose)
 {
@@ -434,7 +432,7 @@ TEST_GROUP(IgnoredUtestShell)
     IgnoredUtestShell ignoredTest;
     ExecFunctionTestShell normalUtestShell;
 
-    void setup() _override
+    void setup() override
     {
         fixture.addTest(&ignoredTest);
         fixture.addTest(&normalUtestShell);
@@ -521,12 +519,12 @@ TEST_BASE(MyOwnTest)
     MyOwnTest() : inTest(false) {}
     bool inTest;
 
-    void setup() _override
+    void setup() override
     {
         CHECK(!inTest);
         inTest = true;
     }
-    void teardown() _override
+    void teardown() override
     {
         CHECK(inTest);
         inTest = false;
@@ -561,7 +559,7 @@ public:
     AllocateAndDeallocateInConstructorAndDestructor()
     {
         memory_ = new char[100];
-        morememory_ = NULLPTR;
+        morememory_ = nullptr;
     }
     void allocateMoreMemory()
     {
@@ -606,7 +604,7 @@ TEST_GROUP(UtestShellPointerArrayTest)
     UtestShell* test1;
     UtestShell* test2;
 
-    void setup() _override
+    void setup() override
     {
         test0 = new IgnoredUtestShell();
         test1 = new IgnoredUtestShell();
@@ -616,7 +614,7 @@ TEST_GROUP(UtestShellPointerArrayTest)
         test1->addTest(test2);
     }
 
-    void teardown() _override
+    void teardown() override
     {
         delete test0;
         delete test1;
@@ -626,9 +624,9 @@ TEST_GROUP(UtestShellPointerArrayTest)
 
 TEST(UtestShellPointerArrayTest, empty)
 {
-    UtestShellPointerArray tests(NULLPTR);
+    UtestShellPointerArray tests(nullptr);
     tests.shuffle(0);
-    CHECK(NULLPTR == tests.getFirstTest());
+    CHECK(nullptr == tests.getFirstTest());
 }
 
 TEST(UtestShellPointerArrayTest, testsAreInOrder)

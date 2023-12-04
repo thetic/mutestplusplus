@@ -31,7 +31,7 @@
 #include "CppUTest/TestTestingFixture.h"
 #include "CppUTestExt/IEEE754ExceptionsPlugin.h"
 
-#if CPPUTEST_HAVE_FENV
+#if (defined(__STDC_IEC_559__) && __STDC_IEC_559__)
 
     #include "IEEE754PluginTest_c.h"
 
@@ -39,7 +39,7 @@ TEST_GROUP(FE_with_Plugin)
 {
     TestTestingFixture fixture;
     IEEE754ExceptionsPlugin ieee754Plugin;
-    void setup(void) _override
+    void setup(void) override
     {
         fixture.installPlugin(&ieee754Plugin);
     }
@@ -130,7 +130,7 @@ static IEEE754ExceptionsPlugin ip;
 
 TEST_GROUP(IEEE754ExceptionsPlugin2)
 {
-    void setup(void) _override
+    void setup(void) override
     {
         TestRegistry::getCurrentRegistry()->installPlugin(&ip);
     }

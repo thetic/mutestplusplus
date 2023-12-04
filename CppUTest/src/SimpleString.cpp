@@ -1,3 +1,5 @@
+#include "CppUTest/TestHarness.h"
+#include <limits.h>
 /*
  * Copyright (c) 2007, Michael Feathers, James Grenning and Bas Vodde
  * All rights reserved.
@@ -25,16 +27,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/SimpleString.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/SimpleString.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestMemoryAllocator.h"
 
-TestMemoryAllocator* SimpleString::stringAllocator_ = NULLPTR;
+TestMemoryAllocator* SimpleString::stringAllocator_ = nullptr;
 
 TestMemoryAllocator* SimpleString::getStringAllocator()
 {
-    if (stringAllocator_ == NULLPTR)
+    if (stringAllocator_ == nullptr)
         return defaultNewArrayAllocator();
     return stringAllocator_;
 }
@@ -102,12 +104,13 @@ int SimpleString::StrCmp(const char* s1, const char* s2)
         ++s1;
         ++s2;
     }
-    return *(const unsigned char*)s1 - *(const unsigned char*)s2;
+    return *reinterpret_cast<const unsigned char*>(s1) -
+           *reinterpret_cast<const unsigned char*>(s2);
 }
 
 size_t SimpleString::StrLen(const char* str)
 {
-    size_t n = (size_t)-1;
+    size_t n = static_cast<size_t>(-1);
     do
         n++;
     while (*str++);
@@ -121,14 +124,16 @@ int SimpleString::StrNCmp(const char* s1, const char* s2, size_t n)
         ++s1;
         ++s2;
     }
-    return n ? *(const unsigned char*)s1 - *(const unsigned char*)s2 : 0;
+    return n ? *reinterpret_cast<const unsigned char*>(s1) -
+                   *reinterpret_cast<const unsigned char*>(s2)
+             : 0;
 }
 
 char* SimpleString::StrNCpy(char* s1, const char* s2, size_t n)
 {
     char* result = s1;
 
-    if ((NULLPTR == s1) || (0 == n))
+    if ((nullptr == s1) || (0 == n))
         return result;
 
     *s1 = *s2;
@@ -145,18 +150,19 @@ const char* SimpleString::StrStr(const char* s1, const char* s2)
     for (; *s1; s1++)
         if (StrNCmp(s1, s2, StrLen(s2)) == 0)
             return s1;
-    return NULLPTR;
+    return nullptr;
 }
 
 char SimpleString::ToLower(char ch)
 {
-    return isUpper(ch) ? (char)((int)ch + ('a' - 'A')) : ch;
+    return isUpper(ch) ? static_cast<char>(static_cast<int>(ch) + ('a' - 'A'))
+                       : ch;
 }
 
 int SimpleString::MemCmp(const void* s1, const void* s2, size_t n)
 {
-    const unsigned char* p1 = (const unsigned char*)s1;
-    const unsigned char* p2 = (const unsigned char*)s2;
+    const unsigned char* p1 = reinterpret_cast<const unsigned char*>(s1);
+    const unsigned char* p2 = reinterpret_cast<const unsigned char*>(s2);
 
     while (n--)
         if (*p1 != *p2) {
@@ -172,7 +178,7 @@ void SimpleString::deallocateInternalBuffer()
 {
     if (buffer_) {
         deallocStringBuffer(buffer_, bufferSize_, __FILE__, __LINE__);
-        buffer_ = NULLPTR;
+        buffer_ = nullptr;
         bufferSize_ = 0;
     }
 }
@@ -229,17 +235,17 @@ const char* SimpleString::getBuffer() const
 }
 
 SimpleString::SimpleString(const char* otherBuffer) :
-    buffer_(NULLPTR),
+    buffer_(nullptr),
     bufferSize_(0)
 {
-    if (otherBuffer == NULLPTR)
+    if (otherBuffer == nullptr)
         setInternalBufferAsEmptyString();
     else
         copyBufferToNewInternalBuffer(otherBuffer);
 }
 
 SimpleString::SimpleString(const char* other, size_t repeatCount) :
-    buffer_(NULLPTR),
+    buffer_(nullptr),
     bufferSize_(0)
 {
     size_t otherStringLength = StrLen(other);
@@ -254,7 +260,7 @@ SimpleString::SimpleString(const char* other, size_t repeatCount) :
 }
 
 SimpleString::SimpleString(const SimpleString& other) :
-    buffer_(NULLPTR),
+    buffer_(nullptr),
     bufferSize_(0)
 {
     copyBufferToNewInternalBuffer(other.getBuffer());
@@ -269,7 +275,7 @@ SimpleString& SimpleString::operator=(const SimpleString& other)
 
 bool SimpleString::contains(const SimpleString& other) const
 {
-    return StrStr(getBuffer(), other.getBuffer()) != NULLPTR;
+    return StrStr(getBuffer(), other.getBuffer()) != nullptr;
 }
 
 bool SimpleString::containsNoCase(const SimpleString& other) const
@@ -306,7 +312,7 @@ size_t SimpleString::count(const SimpleString& substr) const
 {
     size_t num = 0;
     const char* str = getBuffer();
-    const char* strpart = NULLPTR;
+    const char* strpart = nullptr;
     if (*str) {
         strpart = StrStr(str, substr.getBuffer());
     }
@@ -393,8 +399,8 @@ SimpleString SimpleString::printable() const
         char c = buffer_[i];
         if (isControlWithShortEscapeSequence(c)) {
             StrNCpy(
-                &result.buffer_[j], shortEscapeCodes[(unsigned char)(c - '\a')],
-                2
+                &result.buffer_[j],
+                shortEscapeCodes[static_cast<unsigned char>(c - '\a')], 2
             );
             j += 2;
         } else if (isControl(c)) {
@@ -574,7 +580,7 @@ char* SimpleString::copyToNewBuffer(const char* bufferToCopy, size_t bufferSize)
 
 void SimpleString::copyToBuffer(char* bufferToCopy, size_t bufferSize) const
 {
-    if (bufferToCopy == NULLPTR || bufferSize == 0)
+    if (bufferToCopy == nullptr || bufferSize == 0)
         return;
 
     size_t sizeToCopy = (bufferSize - 1 < size()) ? (bufferSize - 1) : size();
@@ -663,7 +669,7 @@ SimpleString HexStringFrom(signed char value)
     SimpleString result = StringFromFormat("%x", value);
     if (value < 0) {
         size_t size = result.size();
-        result = result.subString(size - (CPPUTEST_CHAR_BIT / 4));
+        result = result.subString(size - (CHAR_BIT / 4));
     }
     return result;
 }
@@ -712,7 +718,7 @@ SimpleString BracketsFormattedHexString(SimpleString hexString)
  * ARM compiler has only partial support for C++11.
  * Specifically nullptr_t is not officially supported
  */
-#if __cplusplus > 199711L && !defined __arm__ && CPPUTEST_USE_STD_CPP_LIB
+#if !defined(__ARMCC_VERSION) && !defined(CPPUTEST_STD_CPP_LIB_DISABLED)
 SimpleString StringFrom(const std::nullptr_t value)
 {
     (void)value;
@@ -720,115 +726,45 @@ SimpleString StringFrom(const std::nullptr_t value)
 }
 #endif
 
-#if CPPUTEST_USE_LONG_LONG
-
-SimpleString StringFrom(cpputest_longlong value)
+SimpleString StringFrom(long long value)
 {
     return StringFromFormat("%lld", value);
 }
 
-SimpleString StringFrom(cpputest_ulonglong value)
+SimpleString StringFrom(unsigned long long value)
 {
     return StringFromFormat("%llu", value);
 }
 
-SimpleString HexStringFrom(cpputest_longlong value)
+SimpleString HexStringFrom(long long value)
 {
     return StringFromFormat("%llx", value);
 }
 
-SimpleString HexStringFrom(cpputest_ulonglong value)
+SimpleString HexStringFrom(unsigned long long value)
 {
     return StringFromFormat("%llx", value);
 }
 
 SimpleString HexStringFrom(const void* value)
 {
-    return HexStringFrom((cpputest_ulonglong)value);
+    return HexStringFrom(reinterpret_cast<unsigned long long>(value));
 }
 
 SimpleString HexStringFrom(void (*value)())
 {
-    return HexStringFrom((cpputest_ulonglong)value);
+    return HexStringFrom(reinterpret_cast<unsigned long long>(value));
 }
 
-SimpleString BracketsFormattedHexStringFrom(cpputest_longlong value)
+SimpleString BracketsFormattedHexStringFrom(long long value)
 {
     return BracketsFormattedHexString(HexStringFrom(value));
 }
 
-SimpleString BracketsFormattedHexStringFrom(cpputest_ulonglong value)
+SimpleString BracketsFormattedHexStringFrom(unsigned long long value)
 {
     return BracketsFormattedHexString(HexStringFrom(value));
 }
-
-#else /* CPPUTEST_USE_LONG_LONG */
-
-static long convertPointerToLongValue(const void* value)
-{
-    /*
-     * This way of converting also can convert a 64bit pointer in a 32bit
-     * integer by truncating. This isn't the right way to convert pointers
-     * values and need to change by implementing a proper portable way to
-     * convert pointers to strings.
-     */
-    long* long_value = (long*)&value;
-    return *long_value;
-}
-
-static long convertFunctionPointerToLongValue(void (*value)())
-{
-    /*
-     * This way of converting also can convert a 64bit pointer in a 32bit
-     * integer by truncating. This isn't the right way to convert pointers
-     * values and need to change by implementing a proper portable way to
-     * convert pointers to strings.
-     */
-    long* long_value = (long*)&value;
-    return *long_value;
-}
-
-SimpleString StringFrom(cpputest_longlong)
-{
-    return "<longlong_unsupported>";
-}
-
-SimpleString StringFrom(cpputest_ulonglong)
-{
-    return "<ulonglong_unsupported>";
-}
-
-SimpleString HexStringFrom(cpputest_longlong)
-{
-    return "<longlong_unsupported>";
-}
-
-SimpleString HexStringFrom(cpputest_ulonglong)
-{
-    return "<ulonglong_unsupported>";
-}
-
-SimpleString HexStringFrom(const void* value)
-{
-    return StringFromFormat("%lx", convertPointerToLongValue(value));
-}
-
-SimpleString HexStringFrom(void (*value)())
-{
-    return StringFromFormat("%lx", convertFunctionPointerToLongValue(value));
-}
-
-SimpleString BracketsFormattedHexStringFrom(cpputest_longlong)
-{
-    return "";
-}
-
-SimpleString BracketsFormattedHexStringFrom(cpputest_ulonglong)
-{
-    return "";
-}
-
-#endif /* CPPUTEST_USE_LONG_LONG */
 
 SimpleString StringFrom(double value, int precision)
 {
@@ -866,7 +802,7 @@ SimpleString StringFrom(unsigned int i)
     return StringFromFormat("%u", i);
 }
 
-#if CPPUTEST_USE_STD_CPP_LIB
+#ifndef CPPUTEST_STD_CPP_LIB_DISABLED
 
     #include <string>
 
@@ -893,9 +829,9 @@ SimpleString VStringFromFormat(const char* format, va_list args)
     char defaultBuffer[sizeOfdefaultBuffer];
     SimpleString resultString;
 
-    size_t size = (size_t)PlatformSpecificVSNprintf(
+    size_t size = static_cast<size_t>(PlatformSpecificVSNprintf(
         defaultBuffer, sizeOfdefaultBuffer, format, args
-    );
+    ));
     if (size < sizeOfdefaultBuffer) {
         resultString = SimpleString(defaultBuffer);
     } else {
@@ -932,8 +868,9 @@ SimpleString StringFromBinaryOrNull(const unsigned char* value, size_t size)
 
 SimpleString StringFromBinaryWithSize(const unsigned char* value, size_t size)
 {
-    SimpleString result =
-        StringFromFormat("Size = %u | HexContents = ", (unsigned)size);
+    SimpleString result = StringFromFormat(
+        "Size = %u | HexContents = ", static_cast<unsigned>(size)
+    );
     size_t displayedSize = ((size > 128) ? 128 : size);
     result += StringFromBinaryOrNull(value, displayedSize);
     if (size > displayedSize) {
@@ -954,9 +891,9 @@ StringFromMaskedBits(unsigned long value, unsigned long mask, size_t byteCount)
 {
     SimpleString result;
     size_t bitCount = (byteCount > sizeof(unsigned long))
-                          ? (sizeof(unsigned long) * CPPUTEST_CHAR_BIT)
-                          : (byteCount * CPPUTEST_CHAR_BIT);
-    const unsigned long msbMask = (((unsigned long)1) << (bitCount - 1));
+                          ? (sizeof(unsigned long) * CHAR_BIT)
+                          : (byteCount * CHAR_BIT);
+    const unsigned long msbMask = (1UL << (bitCount - 1));
 
     for (size_t i = 0; i < bitCount; i++) {
         if (mask & msbMask) {
@@ -996,7 +933,7 @@ SimpleString StringFromOrdinalNumber(unsigned int number)
 
 SimpleStringCollection::SimpleStringCollection()
 {
-    collection_ = NULLPTR;
+    collection_ = nullptr;
     size_ = 0;
 }
 

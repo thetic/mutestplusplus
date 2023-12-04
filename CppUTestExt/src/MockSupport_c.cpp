@@ -43,7 +43,7 @@ public:
     {
     }
 
-    virtual void exitCurrentTest() const _override
+    virtual void exitCurrentTest() const override
     {
         if (crashOnFailure_)
             UT_CRASH();
@@ -52,10 +52,7 @@ public:
         );
     } // LCOV_EXCL_LINE
     // LCOV_EXCL_START
-    virtual ~MockFailureReporterTestTerminatorForInCOnlyCode()
-        _destructor_override
-    {
-    }
+    virtual ~MockFailureReporterTestTerminatorForInCOnlyCode() override {}
     // LCOV_EXCL_STOP
 private:
     bool crashOnFailure_;
@@ -64,7 +61,7 @@ private:
 class MockFailureReporterForInCOnlyCode : public MockFailureReporter
 {
 public:
-    void failTest(const MockFailure& failure) _override
+    void failTest(const MockFailure& failure) override
     {
         if (!getTestToFail()->hasFailed())
             getTestToFail()->failWith(
@@ -74,9 +71,9 @@ public:
     } // LCOV_EXCL_LINE
 };
 
-static MockSupport* currentMockSupport = NULLPTR;
-static MockExpectedCall* expectedCall = NULLPTR;
-static MockActualCall* actualCall = NULLPTR;
+static MockSupport* currentMockSupport = nullptr;
+static MockExpectedCall* expectedCall = nullptr;
+static MockActualCall* actualCall = nullptr;
 static MockFailureReporterForInCOnlyCode failureReporterForC;
 
 class MockCFunctionComparatorNode : public MockNamedValueComparator
@@ -92,13 +89,13 @@ public:
         toString_(toString)
     {
     }
-    virtual ~MockCFunctionComparatorNode() _destructor_override {}
+    virtual ~MockCFunctionComparatorNode() override {}
 
-    virtual bool isEqual(const void* object1, const void* object2) _override
+    virtual bool isEqual(const void* object1, const void* object2) override
     {
         return equal_(object1, object2) != 0;
     }
-    virtual SimpleString valueToString(const void* object) _override
+    virtual SimpleString valueToString(const void* object) override
     {
         return SimpleString(toString_(object));
     }
@@ -108,7 +105,7 @@ public:
     MockTypeValueToStringFunction_c toString_;
 };
 
-static MockCFunctionComparatorNode* comparatorList_ = NULLPTR;
+static MockCFunctionComparatorNode* comparatorList_ = nullptr;
 
 class MockCFunctionCopierNode : public MockNamedValueCopier
 {
@@ -120,9 +117,9 @@ public:
         copier_(copier)
     {
     }
-    virtual ~MockCFunctionCopierNode() _destructor_override {}
+    virtual ~MockCFunctionCopierNode() override {}
 
-    virtual void copy(void* dst, const void* src) _override
+    virtual void copy(void* dst, const void* src) override
     {
         copier_(dst, src);
     }
@@ -131,7 +128,7 @@ public:
     MockTypeCopyFunction_c copier_;
 };
 
-static MockCFunctionCopierNode* copierList_ = NULLPTR;
+static MockCFunctionCopierNode* copierList_ = nullptr;
 
 extern "C" {
 
@@ -171,9 +168,9 @@ MockExpectedCall_c* withLongIntParameters_c(const char* name, long int value);
 MockExpectedCall_c*
 withUnsignedLongIntParameters_c(const char* name, unsigned long int value);
 MockExpectedCall_c*
-withLongLongIntParameters_c(const char* name, cpputest_longlong value);
+withLongLongIntParameters_c(const char* name, long long value);
 MockExpectedCall_c*
-withUnsignedLongLongIntParameters_c(const char* name, cpputest_ulonglong value);
+withUnsignedLongLongIntParameters_c(const char* name, unsigned long long value);
 MockExpectedCall_c* withDoubleParameters_c(const char* name, double value);
 MockExpectedCall_c* withDoubleParametersAndTolerance_c(
     const char* name, double value, double tolerance
@@ -202,8 +199,8 @@ MockExpectedCall_c* andReturnIntValue_c(int value);
 MockExpectedCall_c* andReturnUnsignedIntValue_c(unsigned int value);
 MockExpectedCall_c* andReturnLongIntValue_c(long int value);
 MockExpectedCall_c* andReturnUnsignedLongIntValue_c(unsigned long int value);
-MockExpectedCall_c* andReturnLongLongIntValue_c(cpputest_longlong value);
-MockExpectedCall_c* andReturnUnsignedLongLongIntValue_c(cpputest_ulonglong value
+MockExpectedCall_c* andReturnLongLongIntValue_c(long long value);
+MockExpectedCall_c* andReturnUnsignedLongLongIntValue_c(unsigned long long value
 );
 MockExpectedCall_c* andReturnDoubleValue_c(double value);
 MockExpectedCall_c* andReturnStringValue_c(const char* value);
@@ -221,9 +218,9 @@ MockActualCall_c* withActualUnsignedLongIntParameters_c(
     const char* name, unsigned long int value
 );
 MockActualCall_c*
-withActualLongLongIntParameters_c(const char* name, cpputest_longlong value);
+withActualLongLongIntParameters_c(const char* name, long long value);
 MockActualCall_c* withActualUnsignedLongLongIntParameters_c(
-    const char* name, cpputest_ulonglong value
+    const char* name, unsigned long long value
 );
 MockActualCall_c* withActualDoubleParameters_c(const char* name, double value);
 MockActualCall_c*
@@ -255,12 +252,11 @@ long int returnLongIntValueOrDefault_c(long int defaultValue);
 unsigned long int unsignedLongIntReturnValue_c();
 unsigned long int
 returnUnsignedLongIntValueOrDefault_c(unsigned long int defaultValue);
-cpputest_longlong longLongIntReturnValue_c();
-cpputest_longlong
-returnLongLongIntValueOrDefault_c(cpputest_longlong defaultValue);
-cpputest_ulonglong unsignedLongLongIntReturnValue_c();
-cpputest_ulonglong
-returnUnsignedLongLongIntValueOrDefault_c(cpputest_ulonglong defaultValue);
+long long longLongIntReturnValue_c();
+long long returnLongLongIntValueOrDefault_c(long long defaultValue);
+unsigned long long unsignedLongLongIntReturnValue_c();
+unsigned long long
+returnUnsignedLongLongIntValueOrDefault_c(unsigned long long defaultValue);
 const char* stringReturnValue_c();
 const char* returnStringValueOrDefault_c(const char* defaultValue);
 double doubleReturnValue_c();
@@ -381,7 +377,8 @@ static MockActualCall_c gActualCall = {
     constPointerReturnValue_c,
     returnConstPointerValueOrDefault_c,
     functionPointerReturnValue_c,
-    returnFunctionPointerValueOrDefault_c};
+    returnFunctionPointerValueOrDefault_c
+};
 
 static MockSupport_c gMockSupport = {
     strictOrder_c,
@@ -435,7 +432,8 @@ static MockSupport_c gMockSupport = {
     crashOnFailure_c,
     installComparator_c,
     installCopier_c,
-    removeAllComparatorsAndCopiers_c};
+    removeAllComparatorsAndCopiers_c
+};
 
 MockExpectedCall_c* withBoolParameters_c(const char* name, int value)
 {
@@ -469,38 +467,19 @@ withUnsignedLongIntParameters_c(const char* name, unsigned long int value)
     return &gExpectedCall;
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
 MockExpectedCall_c*
-withLongLongIntParameters_c(const char* name, cpputest_longlong value)
+withLongLongIntParameters_c(const char* name, long long value)
 {
     expectedCall = &expectedCall->withParameter(name, value);
     return &gExpectedCall;
 }
 
 MockExpectedCall_c*
-withUnsignedLongLongIntParameters_c(const char* name, cpputest_ulonglong value)
+withUnsignedLongLongIntParameters_c(const char* name, unsigned long long value)
 {
     expectedCall = &expectedCall->withParameter(name, value);
     return &gExpectedCall;
 }
-
-#else
-
-MockExpectedCall_c* withLongLongIntParameters_c(const char*, cpputest_longlong)
-{
-    FAIL("Long Long type is not supported");
-    return &gExpectedCall;
-}
-
-MockExpectedCall_c*
-withUnsignedLongLongIntParameters_c(const char*, cpputest_ulonglong)
-{
-    FAIL("Unsigned Long Long type is not supported");
-    return &gExpectedCall;
-}
-
-#endif
 
 MockExpectedCall_c* withDoubleParameters_c(const char* name, double value)
 {
@@ -539,7 +518,7 @@ MockExpectedCall_c*
 withFunctionPointerParameters_c(const char* name, void (*value)())
 {
     expectedCall = &expectedCall->withParameter(
-        name, (cpputest_cpp_function_pointer)value
+        name, reinterpret_cast<cpputest_cpp_function_pointer>(value)
     );
     return &gExpectedCall;
 }
@@ -618,36 +597,18 @@ MockExpectedCall_c* andReturnUnsignedLongIntValue_c(unsigned long int value)
     return &gExpectedCall;
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
-MockExpectedCall_c* andReturnLongLongIntValue_c(cpputest_longlong value)
+MockExpectedCall_c* andReturnLongLongIntValue_c(long long value)
 {
     expectedCall = &expectedCall->andReturnValue(value);
     return &gExpectedCall;
 }
 
-MockExpectedCall_c* andReturnUnsignedLongLongIntValue_c(cpputest_ulonglong value
+MockExpectedCall_c* andReturnUnsignedLongLongIntValue_c(unsigned long long value
 )
 {
     expectedCall = &expectedCall->andReturnValue(value);
     return &gExpectedCall;
 }
-
-#else
-
-MockExpectedCall_c* andReturnLongLongIntValue_c(cpputest_longlong)
-{
-    FAIL("Long Long type is not supported");
-    return &gExpectedCall;
-}
-
-MockExpectedCall_c* andReturnUnsignedLongLongIntValue_c(cpputest_ulonglong)
-{
-    FAIL("Unsigned Long Long type is not supported");
-    return &gExpectedCall;
-}
-
-#endif
 
 MockExpectedCall_c* andReturnDoubleValue_c(double value)
 {
@@ -675,8 +636,9 @@ MockExpectedCall_c* andReturnConstPointerValue_c(const void* value)
 
 MockExpectedCall_c* andReturnFunctionPointerValue_c(void (*value)())
 {
-    expectedCall =
-        &expectedCall->andReturnValue((cpputest_cpp_function_pointer)value);
+    expectedCall = &expectedCall->andReturnValue(
+        reinterpret_cast<cpputest_cpp_function_pointer>(value)
+    );
     return &gExpectedCall;
 }
 
@@ -704,7 +666,6 @@ static MockValue_c getMockValueCFromNamedValue(const MockNamedValue& namedValue)
         returnValue.value.unsignedLongIntValue =
             namedValue.getUnsignedLongIntValue();
     }
-#if CPPUTEST_USE_LONG_LONG
     else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "long long int") == 0) {
         returnValue.type = MOCKVALUETYPE_LONG_LONG_INTEGER;
         returnValue.value.longLongIntValue = namedValue.getLongLongIntValue();
@@ -713,9 +674,7 @@ static MockValue_c getMockValueCFromNamedValue(const MockNamedValue& namedValue)
         returnValue.type = MOCKVALUETYPE_UNSIGNED_LONG_LONG_INTEGER;
         returnValue.value.unsignedLongLongIntValue =
             namedValue.getUnsignedLongLongIntValue();
-    }
-#endif
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "double") == 0) {
+    } else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "double") == 0) {
         returnValue.type = MOCKVALUETYPE_DOUBLE;
         returnValue.value.doubleValue = namedValue.getDoubleValue();
     }
@@ -733,7 +692,7 @@ static MockValue_c getMockValueCFromNamedValue(const MockNamedValue& namedValue)
     else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "void (*)()") == 0) {
         returnValue.type = MOCKVALUETYPE_FUNCTIONPOINTER;
         returnValue.value.functionPointerValue =
-            (void (*)())namedValue.getFunctionPointerValue();
+            reinterpret_cast<void (*)()>(namedValue.getFunctionPointerValue());
     }
     else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "const unsigned char*") == 0) {
         returnValue.type = MOCKVALUETYPE_MEMORYBUFFER;
@@ -806,40 +765,20 @@ withActualUnsignedLongIntParameters_c(const char* name, unsigned long int value)
     return &gActualCall;
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
 MockActualCall_c*
-withActualLongLongIntParameters_c(const char* name, cpputest_longlong value)
+withActualLongLongIntParameters_c(const char* name, long long value)
 {
     actualCall = &actualCall->withParameter(name, value);
     return &gActualCall;
 }
 
 MockActualCall_c* withActualUnsignedLongLongIntParameters_c(
-    const char* name, cpputest_ulonglong value
+    const char* name, unsigned long long value
 )
 {
     actualCall = &actualCall->withParameter(name, value);
     return &gActualCall;
 }
-
-#else
-
-MockActualCall_c*
-withActualLongLongIntParameters_c(const char*, cpputest_longlong)
-{
-    FAIL("Long Long type is not supported");
-    return &gActualCall;
-}
-
-MockActualCall_c*
-withActualUnsignedLongLongIntParameters_c(const char*, cpputest_ulonglong)
-{
-    FAIL("Unsigned Long Long type is not supported");
-    return &gActualCall;
-}
-
-#endif
 
 MockActualCall_c* withActualDoubleParameters_c(const char* name, double value)
 {
@@ -870,8 +809,9 @@ withActualConstPointerParameters_c(const char* name, const void* value)
 MockActualCall_c*
 withActualFunctionPointerParameters_c(const char* name, void (*value)())
 {
-    actualCall =
-        &actualCall->withParameter(name, (cpputest_cpp_function_pointer)value);
+    actualCall = &actualCall->withParameter(
+        name, reinterpret_cast<cpputest_cpp_function_pointer>(value)
+    );
     return &gActualCall;
 }
 
@@ -976,15 +916,12 @@ returnUnsignedLongIntValueOrDefault_c(unsigned long int defaultValue)
     return unsignedLongIntReturnValue_c();
 }
 
-#if CPPUTEST_USE_LONG_LONG
-
-cpputest_longlong longLongIntReturnValue_c()
+long long longLongIntReturnValue_c()
 {
     return actualCall->returnLongLongIntValue();
 }
 
-cpputest_longlong
-returnLongLongIntValueOrDefault_c(cpputest_longlong defaultValue)
+long long returnLongLongIntValueOrDefault_c(long long defaultValue)
 {
     if (!hasReturnValue_c()) {
         return defaultValue;
@@ -992,51 +929,19 @@ returnLongLongIntValueOrDefault_c(cpputest_longlong defaultValue)
     return longLongIntReturnValue_c();
 }
 
-cpputest_ulonglong unsignedLongLongIntReturnValue_c()
+unsigned long long unsignedLongLongIntReturnValue_c()
 {
     return actualCall->returnUnsignedLongLongIntValue();
 }
 
-cpputest_ulonglong
-returnUnsignedLongLongIntValueOrDefault_c(cpputest_ulonglong defaultValue)
+unsigned long long
+returnUnsignedLongLongIntValueOrDefault_c(unsigned long long defaultValue)
 {
     if (!hasReturnValue_c()) {
         return defaultValue;
     }
     return unsignedLongLongIntReturnValue_c();
 }
-
-#else
-
-cpputest_longlong longLongIntReturnValue_c()
-{
-    FAIL("Long Long type is not supported");
-    cpputest_longlong ret = {};
-    return ret;
-}
-
-cpputest_longlong returnLongLongIntValueOrDefault_c(cpputest_longlong)
-{
-    FAIL("Long Long type is not supported");
-    cpputest_longlong ret = {};
-    return ret;
-}
-
-cpputest_ulonglong unsignedLongLongIntReturnValue_c()
-{
-    FAIL("Unsigned Long Long type is not supported");
-    cpputest_ulonglong ret = {};
-    return ret;
-}
-
-cpputest_ulonglong returnUnsignedLongLongIntValueOrDefault_c(cpputest_ulonglong)
-{
-    FAIL("Unsigned Long Long type is not supported");
-    cpputest_ulonglong ret = {};
-    return ret;
-}
-
-#endif
 
 const char* stringReturnValue_c()
 {
@@ -1092,7 +997,8 @@ const void* returnConstPointerValueOrDefault_c(const void* defaultValue)
 
 void (*functionPointerReturnValue_c())()
 {
-    return (void (*)())actualCall->returnFunctionPointerValue();
+    return reinterpret_cast<void (*)()>(actualCall->returnFunctionPointerValue()
+    );
 }
 
 void (*returnFunctionPointerValueOrDefault_c(void (*defaultValue)()))()
@@ -1155,7 +1061,9 @@ void setConstPointerData_c(const char* name, const void* value)
 
 void setFunctionPointerData_c(const char* name, void (*value)())
 {
-    currentMockSupport->setData(name, (cpputest_cpp_function_pointer)value);
+    currentMockSupport->setData(
+        name, reinterpret_cast<cpputest_cpp_function_pointer>(value)
+    );
 }
 
 void setDataObject_c(const char* name, const char* type, void* value)

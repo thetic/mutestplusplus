@@ -43,8 +43,8 @@ struct SimpleStringInternalCacheNode
 
 SimpleStringInternalCache::SimpleStringInternalCache() :
     allocator_(defaultMallocAllocator()),
-    cache_(NULLPTR),
-    nonCachedAllocations_(NULLPTR),
+    cache_(nullptr),
+    nonCachedAllocations_(nullptr),
     hasWarnedAboutDeallocations(false)
 {
     cache_ = createInternalCacheNodes();
@@ -65,14 +65,17 @@ SimpleStringInternalCacheNode*
 SimpleStringInternalCache::createInternalCacheNodes()
 {
     SimpleStringInternalCacheNode* node =
-        (SimpleStringInternalCacheNode*)(void*)allocator_->alloc_memory(
-            sizeof(SimpleStringInternalCacheNode) * amountOfInternalCacheNodes,
-            __FILE__, __LINE__
+        reinterpret_cast<SimpleStringInternalCacheNode*>(
+            reinterpret_cast<void*>(allocator_->alloc_memory(
+                sizeof(SimpleStringInternalCacheNode) *
+                    amountOfInternalCacheNodes,
+                __FILE__, __LINE__
+            ))
         );
 
     for (int i = 0; i < amountOfInternalCacheNodes; i++) {
-        node[i].freeMemoryHead_ = NULLPTR;
-        node[i].usedMemoryHead_ = NULLPTR;
+        node[i].freeMemoryHead_ = nullptr;
+        node[i].usedMemoryHead_ = nullptr;
     }
     node[0].size_ = 32;
     node[1].size_ = 64;
@@ -107,7 +110,7 @@ void SimpleStringInternalCache::destroyInternalCacheNode(
 )
 {
     allocator_->free_memory(
-        (char*)node,
+        reinterpret_cast<char*>(node),
         sizeof(SimpleStringInternalCacheNode) * amountOfInternalCacheNodes,
         __FILE__, __LINE__
     );
@@ -118,10 +121,11 @@ SimpleStringInternalCache::createSimpleStringMemoryBlock(
     size_t size, SimpleStringMemoryBlock* next
 )
 {
-    SimpleStringMemoryBlock* block =
-        (SimpleStringMemoryBlock*)(void*)allocator_->alloc_memory(
+    SimpleStringMemoryBlock* block = reinterpret_cast<SimpleStringMemoryBlock*>(
+        reinterpret_cast<void*>(allocator_->alloc_memory(
             sizeof(SimpleStringMemoryBlock), __FILE__, __LINE__
-        );
+        ))
+    );
     block->memory_ = allocator_->alloc_memory(size, __FILE__, __LINE__);
     block->next_ = next;
     return block;
@@ -133,7 +137,8 @@ void SimpleStringInternalCache::destroySimpleStringMemoryBlock(
 {
     allocator_->free_memory(block->memory_, size, __FILE__, __LINE__);
     allocator_->free_memory(
-        (char*)block, sizeof(SimpleStringMemoryBlock), __FILE__, __LINE__
+        reinterpret_cast<char*>(block), sizeof(SimpleStringMemoryBlock),
+        __FILE__, __LINE__
     );
 }
 
@@ -160,7 +165,7 @@ SimpleStringInternalCache::addToSimpleStringMemoryBlockList(
 
 bool SimpleStringInternalCache::hasFreeBlocksOfSize(size_t size)
 {
-    return getCacheNodeFromSize(size)->freeMemoryHead_ != NULLPTR;
+    return getCacheNodeFromSize(size)->freeMemoryHead_ != nullptr;
 }
 
 SimpleStringMemoryBlock* SimpleStringInternalCache::reserveCachedBlockFrom(
@@ -286,7 +291,7 @@ void SimpleStringInternalCache::clearCache()
         destroySimpleStringMemoryBlockList(
             cache_[i].freeMemoryHead_, cache_[i].size_
         );
-        cache_[i].freeMemoryHead_ = NULLPTR;
+        cache_[i].freeMemoryHead_ = nullptr;
     }
 }
 
@@ -299,12 +304,12 @@ void SimpleStringInternalCache::clearAllIncludingCurrentlyUsedMemory()
         destroySimpleStringMemoryBlockList(
             cache_[i].usedMemoryHead_, cache_[i].size_
         );
-        cache_[i].freeMemoryHead_ = NULLPTR;
-        cache_[i].usedMemoryHead_ = NULLPTR;
+        cache_[i].freeMemoryHead_ = nullptr;
+        cache_[i].usedMemoryHead_ = nullptr;
     }
 
     destroySimpleStringMemoryBlockList(nonCachedAllocations_, 0);
-    nonCachedAllocations_ = NULLPTR;
+    nonCachedAllocations_ = nullptr;
 }
 
 GlobalSimpleStringCache::GlobalSimpleStringCache()
@@ -338,7 +343,7 @@ SimpleStringCacheAllocator::SimpleStringCacheAllocator(
 
 SimpleStringCacheAllocator::~SimpleStringCacheAllocator()
 {
-    cache_.setAllocator(NULLPTR);
+    cache_.setAllocator(nullptr);
 }
 
 char* SimpleStringCacheAllocator::alloc_memory(size_t size, const char*, size_t)

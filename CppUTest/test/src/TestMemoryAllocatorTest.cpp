@@ -34,12 +34,12 @@ TEST_GROUP(TestMemoryAllocatorTest)
 {
     TestMemoryAllocator* allocator;
 
-    void setup() _override
+    void setup() override
     {
-        allocator = NULLPTR;
+        allocator = nullptr;
     }
 
-    void teardown() _override
+    void teardown() override
     {
         delete allocator;
     }
@@ -112,7 +112,9 @@ TEST(TestMemoryAllocatorTest, NewArrayNames)
 }
 
 #define MAX_SIZE_FOR_ALLOC                                                     \
-    ((size_t)-1 > (unsigned short)-1) ? (size_t)(-97) : (size_t)(-1)
+    (static_cast<size_t>(-1) > static_cast<unsigned short>(-1))                \
+        ? static_cast<size_t>(-97)                                             \
+        : static_cast<size_t>(-1)
 
 static void failTryingToAllocateTooMuchMemory(void)
 {
@@ -131,12 +133,12 @@ TEST(TestMemoryAllocatorTest, TryingToAllocateTooMuchFailsTest)
 class MemoryAccountantExecFunction : public ExecFunction
 {
 public:
-    virtual ~MemoryAccountantExecFunction() _destructor_override {}
+    virtual ~MemoryAccountantExecFunction() override {}
 
     void (*testFunction_)(MemoryAccountant*);
     MemoryAccountant* parameter_;
 
-    virtual void exec() _override
+    virtual void exec() override
     {
         testFunction_(parameter_);
     }
@@ -148,13 +150,13 @@ TEST_GROUP(TestMemoryAccountant)
     TestTestingFixture fixture;
     MemoryAccountantExecFunction testFunction;
 
-    void setup() _override
+    void setup() override
     {
         testFunction.parameter_ = &accountant;
         fixture.setTestFunction(&testFunction);
     }
 
-    void teardown() _override
+    void teardown() override
     {
         accountant.clear();
     }
@@ -361,14 +363,14 @@ TEST_GROUP(AccountingTestMemoryAllocator)
     MemoryAccountant accountant;
     AccountingTestMemoryAllocator* allocator;
 
-    void setup() _override
+    void setup() override
     {
         allocator = new AccountingTestMemoryAllocator(
             accountant, getCurrentMallocAllocator()
         );
     }
 
-    void teardown() _override
+    void teardown() override
     {
         accountant.clear();
         delete allocator;

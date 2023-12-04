@@ -57,16 +57,11 @@ void all_mock_support_c_calls(void)
         ->withUnsignedLongIntParameters(
             "unsigned long int", (unsigned long int)1
         )
-        ->
-#if CPPUTEST_USE_LONG_LONG
-        withLongLongIntParameters("long long int", (long long int)-1)
+        ->withLongLongIntParameters("long long int", (long long int)-1)
         ->withUnsignedLongLongIntParameters(
             "unsigned long long int", (unsigned long long int)1
         )
-        ->
-#endif
-
-        withDoubleParameters("double", 1.0)
+        ->withDoubleParameters("double", 1.0)
         ->withDoubleParametersAndTolerance("doubleWithTolerance", 1.0, 1.0)
         ->withStringParameters("string", "string")
         ->withPointerParameters("pointer", (void*)1)
@@ -84,15 +79,11 @@ void all_mock_support_c_calls(void)
         ->withUnsignedLongIntParameters(
             "unsigned long int", (unsigned long int)1
         )
-        ->
-#if CPPUTEST_USE_LONG_LONG
-        withLongLongIntParameters("long long int", (long long int)-1)
+        ->withLongLongIntParameters("long long int", (long long int)-1)
         ->withUnsignedLongLongIntParameters(
             "unsigned long long int", (unsigned long long int)1
         )
-        ->
-#endif
-        withDoubleParameters("double", 1.0)
+        ->withDoubleParameters("double", 1.0)
         ->withDoubleParameters("doubleWithTolerance", 0.0)
         ->withStringParameters("string", "string")
         ->withPointerParameters("pointer", (void*)1)
@@ -149,7 +140,6 @@ void all_mock_support_c_calls(void)
     mock_c()->actualCall("boo3")->unsignedLongIntReturnValue();
     mock_c()->unsignedLongIntReturnValue();
 
-#if CPPUTEST_USE_LONG_LONG
     mock_c()->expectOneCall("mgrgrgr1")->andReturnLongLongIntValue(1);
     mock_c()->actualCall("mgrgrgr1")->longLongIntReturnValue();
     mock_c()->longLongIntReturnValue();
@@ -157,7 +147,6 @@ void all_mock_support_c_calls(void)
     mock_c()->expectOneCall("mgrgrgr2")->andReturnUnsignedLongLongIntValue(1);
     mock_c()->actualCall("mgrgrgr2")->unsignedLongLongIntReturnValue();
     mock_c()->unsignedLongLongIntReturnValue();
-#endif
 
     mock_c()->expectOneCall("boo4")->andReturnDoubleValue(1.0);
     mock_c()->actualCall("boo4")->doubleReturnValue();
@@ -235,10 +224,8 @@ void all_mock_support_c_calls(void)
     mock_c()->returnUnsignedIntValueOrDefault(1);
     mock_c()->returnLongIntValueOrDefault(-1L);
     mock_c()->returnUnsignedLongIntValueOrDefault(1L);
-#if CPPUTEST_USE_LONG_LONG
     mock_c()->returnLongLongIntValueOrDefault(-1LL);
     mock_c()->returnUnsignedLongLongIntValueOrDefault(1ULL);
-#endif
     mock_c()->returnStringValueOrDefault("");
     mock_c()->returnDoubleValueOrDefault(0.01);
     mock_c()->returnPointerValueOrDefault(0);

@@ -27,12 +27,9 @@
 
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
-#include "CppUTest/StandardCLibrary.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/TestTestingFixture.h"
-
-#if CPPUTEST_USE_STD_C_LIB
 
 // This will cause a crash in VS2010 due to PlatformSpecificFree being
 // uninitialized
@@ -45,8 +42,8 @@ TEST_GROUP(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess)
     TestTestingFixture fixture;
 };
 
-    // There is a possibility that a compiler provides fork but not waitpid.
-    #if !defined(CPPUTEST_HAVE_FORK) || !defined(CPPUTEST_HAVE_WAITPID)
+// There is a possibility that a compiler provides fork but not waitpid.
+#if !defined(CPPUTEST_HAVE_FORK) || !defined(CPPUTEST_HAVE_WAITPID)
 
 TEST(
     UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess,
@@ -60,14 +57,14 @@ TEST(
     );
 }
 
-    #else
+#else
 
 static void failFunction_()
 {
     FAIL("This test fails");
 }
 
-_no_return_ static void exitNonZeroFunction_();
+[[noreturn]] static void exitNonZeroFunction_();
 static void exitNonZeroFunction_()
 {
     /* destructor of static objects will be called. If StringCache was there
@@ -79,14 +76,14 @@ static void exitNonZeroFunction_()
     exit(1);
 }
 
-        #include <errno.h>
+    #include <errno.h>
 
 static int waitpid_while_debugging_stub_number_called = 0;
 static int waitpid_while_debugging_stub_forced_failures = 0;
 
 extern "C" {
 
-static int (*original_waitpid)(int, int*, int) = NULLPTR;
+static int (*original_waitpid)(int, int*, int) = nullptr;
 
 static int fork_failed_stub(void)
 {
@@ -114,8 +111,8 @@ static int waitpid_failed_stub(int, int*, int)
 }
 }
 
-        #include <signal.h>
-        #include <unistd.h>
+    #include <signal.h>
+    #include <unistd.h>
 
 static void stoppedTestFunction_()
 {
@@ -152,7 +149,7 @@ TEST(
 static int accessViolationTestFunction_()
 {
     return *(volatile int*)
-        NULLPTR; // NOLINT(clang-analyzer-core.NullDereference)
+        nullptr; // NOLINT(clang-analyzer-core.NullDereference)
 }
 
 TEST(
@@ -253,11 +250,11 @@ TEST(
 )
 {
     fixture.setRunTestsInSeperateProcess();
-    fixture.runTestWithMethod(NULLPTR);
+    fixture.runTestWithMethod(nullptr);
     fixture.runTestWithMethod(stoppedTestFunction_);
-    fixture.runTestWithMethod(NULLPTR);
+    fixture.runTestWithMethod(nullptr);
     fixture.runTestWithMethod(exitNonZeroFunction_);
-    fixture.runTestWithMethod(NULLPTR);
+    fixture.runTestWithMethod(nullptr);
     fixture.assertPrintContains("Failed in separate process");
     fixture.assertPrintContains("Stopped in separate process");
     fixture.assertPrintContains(
@@ -266,5 +263,4 @@ TEST(
     );
 }
 
-    #endif
 #endif

@@ -37,8 +37,8 @@ public:
         const SimpleString& name = "IEEE754ExceptionsPlugin"
     );
 
-    virtual void preTestAction(UtestShell& test, TestResult& result) _override;
-    virtual void postTestAction(UtestShell& test, TestResult& result) _override;
+    virtual void preTestAction(UtestShell& test, TestResult& result) override;
+    virtual void postTestAction(UtestShell& test, TestResult& result) override;
 
     static void disableInexact(void);
     static void enableInexact(void);
