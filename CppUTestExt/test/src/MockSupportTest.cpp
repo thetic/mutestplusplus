@@ -32,6 +32,8 @@
 #include "CppUTestExt/MockFailure.hpp"
 #include "MockFailureReporterForTest.hpp"
 
+using cpputest::extensions::mock;
+
 TEST_GROUP(MockSupportTest)
 {
     MockExpectedCallsListForTest expectations;
@@ -192,8 +194,8 @@ TEST_GROUP(MockSupportTestWithFixture)
 
 static void CHECK_EXPECTED_MOCK_FAILURE_LOCATION_failedTestMethod_()
 {
-    MockExpectedCallsList list;
-    MockUnexpectedCallHappenedFailure expectedFailure(
+    MockExpectedCallsListForTest::MockExpectedCallsList list;
+    cpputest::extensions::MockUnexpectedCallHappenedFailure expectedFailure(
         UtestShell::getCurrent(), "unexpected", list
     );
     mock().actualCall("boo");

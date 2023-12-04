@@ -28,6 +28,8 @@
 #include "CppUTest/TestHarness.hpp"
 #include "MockFailureReporterForTest.hpp"
 
+using cpputest::extensions::mock;
+
 TEST_GROUP(MockComparatorCopierTest)
 {
     void teardown() override
@@ -52,7 +54,8 @@ public:
     long* value;
 };
 
-class MyTypeForTestingComparator : public MockNamedValueComparator
+class MyTypeForTestingComparator
+    : public cpputest::extensions::MockNamedValueComparator
 {
 public:
     virtual bool isEqual(const void* object1, const void* object2) override
@@ -71,7 +74,7 @@ public:
     }
 };
 
-class MyTypeForTestingCopier : public MockNamedValueCopier
+class MyTypeForTestingCopier : public cpputest::extensions::MockNamedValueCopier
 {
 public:
     virtual void copy(void* dst_, const void* src_) override
@@ -98,7 +101,7 @@ TEST(
         .actualCall("function")
         .withParameterOfType("MyTypeForTesting", "parameterName", &object);
 
-    MockNoWayToCompareCustomTypeFailure expectedFailure(
+    cpputest::extensions::MockNoWayToCompareCustomTypeFailure expectedFailure(
         mockFailureTest(), "MyTypeForTesting"
     );
     CHECK_EXPECTED_MOCK_FAILURE(expectedFailure);
@@ -123,7 +126,7 @@ TEST(
             "MyTypeForTesting", "parameterName", &object
         );
 
-    MockNoWayToCopyCustomTypeFailure expectedFailure(
+    cpputest::extensions::MockNoWayToCopyCustomTypeFailure expectedFailure(
         mockFailureTest(), "MyTypeForTesting"
     );
     CHECK_EXPECTED_MOCK_FAILURE(expectedFailure);
@@ -161,7 +164,9 @@ static SimpleString myTypeValueToString(const void* object)
 TEST(MockComparatorCopierTest, customObjectWithFunctionComparator)
 {
     MyTypeForTesting object(1);
-    MockFunctionComparator comparator(myTypeIsEqual, myTypeValueToString);
+    cpputest::extensions::MockFunctionComparator comparator(
+        myTypeIsEqual, myTypeValueToString
+    );
     mock().installComparator("MyTypeForTesting", comparator);
 
     mock()
@@ -184,13 +189,15 @@ TEST(
     MockFailureReporterInstaller failureReporterInstaller;
 
     MyTypeForTesting object(5);
-    MockFunctionComparator comparator(myTypeIsEqual, myTypeValueToString);
+    cpputest::extensions::MockFunctionComparator comparator(
+        myTypeIsEqual, myTypeValueToString
+    );
     mock().installComparator("MyTypeForTesting", comparator);
 
     MockExpectedCallsListForTest expectations;
     expectations.addFunction("function")
         ->withParameterOfType("MyTypeForTesting", "parameterName", &object);
-    MockExpectedCallsDidntHappenFailure failure(
+    cpputest::extensions::MockExpectedCallsDidntHappenFailure failure(
         UtestShell::getCurrent(), expectations
     );
 
@@ -239,7 +246,7 @@ TEST(MockComparatorCopierTest, noActualCallForCustomTypeOutputParameter)
     expectations.addFunction("foo")->withOutputParameterOfTypeReturning(
         "MyTypeForTesting", "output", &expectedObject
     );
-    MockExpectedCallsDidntHappenFailure expectedFailure(
+    cpputest::extensions::MockExpectedCallsDidntHappenFailure expectedFailure(
         mockFailureTest(), expectations
     );
 
@@ -263,9 +270,9 @@ TEST(MockComparatorCopierTest, unexpectedCustomTypeOutputParameter)
 
     MockExpectedCallsListForTest expectations;
     expectations.addFunction("foo");
-    MockNamedValue parameter("parameterName");
+    cpputest::extensions::MockNamedValue parameter("parameterName");
     parameter.setConstObjectPointer("MyTypeForTesting", &actualObject);
-    MockUnexpectedOutputParameterFailure expectedFailure(
+    cpputest::extensions::MockUnexpectedOutputParameterFailure expectedFailure(
         mockFailureTest(), "foo", parameter, expectations
     );
 
@@ -292,9 +299,8 @@ TEST(MockComparatorCopierTest, customTypeOutputParameterMissing)
     expectations.addFunction("foo")->withOutputParameterOfTypeReturning(
         "MyTypeForTesting", "output", &expectedObject
     );
-    MockExpectedParameterDidntHappenFailure expectedFailure(
-        mockFailureTest(), "foo", expectations, expectations
-    );
+    cpputest::extensions::MockExpectedParameterDidntHappenFailure
+        expectedFailure(mockFailureTest(), "foo", expectations, expectations);
 
     mock().expectOneCall("foo").withOutputParameterOfTypeReturning(
         "MyTypeForTesting", "output", &expectedObject
@@ -320,9 +326,9 @@ TEST(MockComparatorCopierTest, customTypeOutputParameterOfWrongType)
     expectations.addFunction("foo")->withOutputParameterOfTypeReturning(
         "MyTypeForTesting", "output", &expectedObject
     );
-    MockNamedValue parameter("output");
+    cpputest::extensions::MockNamedValue parameter("output");
     parameter.setConstObjectPointer("OtherTypeForTesting", &actualObject);
-    MockUnexpectedOutputParameterFailure expectedFailure(
+    cpputest::extensions::MockUnexpectedOutputParameterFailure expectedFailure(
         mockFailureTest(), "foo", parameter, expectations
     );
 
@@ -350,7 +356,7 @@ TEST(MockComparatorCopierTest, noCopierForCustomTypeOutputParameter)
     expectations.addFunction("foo")->withOutputParameterOfTypeReturning(
         "MyTypeForTesting", "output", &expectedObject
     );
-    MockNoWayToCopyCustomTypeFailure expectedFailure(
+    cpputest::extensions::MockNoWayToCopyCustomTypeFailure expectedFailure(
         mockFailureTest(), "MyTypeForTesting"
     );
 
@@ -652,7 +658,7 @@ TEST(MockComparatorCopierTest, customObjectWithFunctionCopier)
 {
     MyTypeForTesting expectedObject(9874452);
     MyTypeForTesting actualObject(2034);
-    MockFunctionCopier copier(myTypeCopy);
+    cpputest::extensions::MockFunctionCopier copier(myTypeCopy);
     mock().installCopier("MyTypeForTesting", copier);
 
     mock()
@@ -689,7 +695,7 @@ TEST(MockComparatorCopierTest, removingComparatorsWorksHierachically)
         .actualCall("function")
         .withParameterOfType("MyTypeForTesting", "parameterName", &object);
 
-    MockNoWayToCompareCustomTypeFailure expectedFailure(
+    cpputest::extensions::MockNoWayToCompareCustomTypeFailure expectedFailure(
         mockFailureTest(), "MyTypeForTesting"
     );
     CHECK_EXPECTED_MOCK_FAILURE(expectedFailure);
@@ -711,7 +717,7 @@ TEST(MockComparatorCopierTest, removingCopiersWorksHierachically)
         "MyTypeForTesting", "bar", &object
     );
 
-    MockNoWayToCopyCustomTypeFailure expectedFailure(
+    cpputest::extensions::MockNoWayToCopyCustomTypeFailure expectedFailure(
         mockFailureTest(), "MyTypeForTesting"
     );
     CHECK_EXPECTED_MOCK_FAILURE(expectedFailure);
@@ -748,7 +754,7 @@ TEST(MockComparatorCopierTest, installComparatorsWorksHierarchical)
 {
     MyTypeForTesting object(1);
     MyTypeForTestingComparator comparator;
-    MockNamedValueComparatorsAndCopiersRepository repos;
+    cpputest::extensions::MockNamedValueComparatorsAndCopiersRepository repos;
     repos.installComparator("MyTypeForTesting", comparator);
 
     mock("existing");
@@ -786,7 +792,8 @@ TEST(MockComparatorCopierTest, installCopiersWorksHierarchically)
     mock().removeAllComparatorsAndCopiers();
 }
 
-class StubComparator : public MockNamedValueComparator
+class StubComparator
+    : public MyTypeForTestingComparator::MockNamedValueComparator
 {
 public:
     virtual bool isEqual(const void*, const void*) override

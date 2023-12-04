@@ -32,7 +32,7 @@ TEST_GROUP(ComparatorsAndCopiersRepository)
 {
 };
 
-class MyComparator : public MockNamedValueComparator
+class MyComparator : public cpputest::extensions::MockNamedValueComparator
 {
 public:
     MyComparator() {}
@@ -48,7 +48,7 @@ public:
     }
 };
 
-class MyCopier : public MockNamedValueCopier
+class MyCopier : public cpputest::extensions::MockNamedValueCopier
 {
 public:
     MyCopier() {}
@@ -60,7 +60,8 @@ public:
 TEST(ComparatorsAndCopiersRepository, InstallCopierAndRetrieveIt)
 {
     MyCopier copier;
-    MockNamedValueComparatorsAndCopiersRepository repository;
+    cpputest::extensions::MockNamedValueComparatorsAndCopiersRepository
+        repository;
     repository.installCopier("MyType", copier);
     POINTERS_EQUAL(&copier, repository.getCopierForType("MyType"));
     repository.clear();
@@ -73,7 +74,8 @@ TEST(
 {
     MyComparator comparator;
     MyCopier copier;
-    MockNamedValueComparatorsAndCopiersRepository repository;
+    cpputest::extensions::MockNamedValueComparatorsAndCopiersRepository
+        repository;
     repository.installCopier("MyType", copier);
     repository.installComparator("MyType", comparator);
     POINTERS_EQUAL(&comparator, repository.getComparatorForType("MyType"));
@@ -87,8 +89,8 @@ TEST(
 {
     MyComparator comparator;
     MyCopier copier;
-    MockNamedValueComparatorsAndCopiersRepository source;
-    MockNamedValueComparatorsAndCopiersRepository target;
+    cpputest::extensions::MockNamedValueComparatorsAndCopiersRepository source;
+    cpputest::extensions::MockNamedValueComparatorsAndCopiersRepository target;
 
     source.installCopier("MyType", copier);
     source.installComparator("MyType", comparator);
@@ -104,10 +106,10 @@ TEST(
 
 TEST_GROUP(MockNamedValue)
 {
-    MockNamedValue* value;
+    cpputest::extensions::MockNamedValue* value;
     void setup() override
     {
-        value = new MockNamedValue("param");
+        value = new cpputest::extensions::MockNamedValue("param");
     }
 
     void teardown() override
@@ -120,7 +122,8 @@ TEST(MockNamedValue, DefaultToleranceUsedWhenNoToleranceGiven)
 {
     value->setValue(0.2);
     DOUBLES_EQUAL(
-        MockNamedValue::defaultDoubleTolerance, value->getDoubleTolerance(), 0.0
+        cpputest::extensions::MockNamedValue::defaultDoubleTolerance,
+        value->getDoubleTolerance(), 0.0
     );
 }
 
@@ -135,7 +138,7 @@ TEST(MockNamedValue, GivenToleranceUsed)
 TEST(MockNamedValue, DoublesEqualIfWithinTolerance)
 {
     value->setValue(5.0, 0.4);
-    MockNamedValue other("param2");
+    cpputest::extensions::MockNamedValue other("param2");
     other.setValue(5.3);
 
     CHECK_TRUE(value->equals(other));
@@ -144,7 +147,7 @@ TEST(MockNamedValue, DoublesEqualIfWithinTolerance)
 TEST(MockNamedValue, DoublesNotEqualIfOutsideTolerance)
 {
     value->setValue(5.0, 0.4);
-    MockNamedValue other("param2");
+    cpputest::extensions::MockNamedValue other("param2");
     other.setValue(5.5);
 
     CHECK_FALSE(value->equals(other));

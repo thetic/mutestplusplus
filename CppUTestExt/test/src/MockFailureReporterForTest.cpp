@@ -29,6 +29,10 @@
 #include "CppUTest/Utest.hpp"
 #include "CppUTest/UtestMacros.hpp"
 
+using cpputest::extensions::mock;
+using cpputest::extensions::MockCheckedExpectedCall;
+using cpputest::extensions::MockFailure;
+
 void MockFailureReporterForTest::failTest(const MockFailure& failure)
 {
     mockFailureString = failure.getMessage();

@@ -33,152 +33,170 @@
 #include "CppUTestExt/MockFailure.hpp"
 
 class UtestShell;
-class MockSupport;
-class MockExpectedCall;
 
-/* This allows access to "the global" mocking support for easier testing */
-MockSupport& mock(
-    const SimpleString& mockName = "",
-    MockFailureReporter* failureReporterForThisCall = nullptr
-);
-
-class MockSupport
+namespace cpputest
 {
-public:
-    MockSupport(const SimpleString& mockName = "");
-    virtual ~MockSupport();
+    namespace extensions
+    {
+        class MockSupport;
+        class MockExpectedCall;
 
-    virtual void strictOrder();
-    virtual MockExpectedCall& expectOneCall(const SimpleString& functionName);
-    virtual void expectNoCall(const SimpleString& functionName);
-    virtual MockExpectedCall&
-    expectNCalls(unsigned int amount, const SimpleString& functionName);
-    virtual MockActualCall& actualCall(const SimpleString& functionName);
-    virtual bool hasReturnValue();
-    virtual MockNamedValue returnValue();
-    virtual bool boolReturnValue();
-    virtual bool returnBoolValueOrDefault(bool defaultValue);
-    virtual int intReturnValue();
-    virtual int returnIntValueOrDefault(int defaultValue);
-    virtual unsigned int unsignedIntReturnValue();
-    virtual long int longIntReturnValue();
-    virtual long int returnLongIntValueOrDefault(long int defaultValue);
-    virtual unsigned long int unsignedLongIntReturnValue();
-    virtual unsigned long int
-    returnUnsignedLongIntValueOrDefault(unsigned long int defaultValue);
-    virtual long long longLongIntReturnValue();
-    virtual long long returnLongLongIntValueOrDefault(long long defaultValue);
-    virtual unsigned long long unsignedLongLongIntReturnValue();
-    virtual unsigned long long
-    returnUnsignedLongLongIntValueOrDefault(unsigned long long defaultValue);
-    virtual unsigned int
-    returnUnsignedIntValueOrDefault(unsigned int defaultValue);
-    virtual const char* stringReturnValue();
-    virtual const char* returnStringValueOrDefault(const char* defaultValue);
-    virtual double returnDoubleValueOrDefault(double defaultValue);
-    virtual double doubleReturnValue();
-    virtual void* pointerReturnValue();
-    virtual void* returnPointerValueOrDefault(void* defaultValue);
-    virtual const void*
-    returnConstPointerValueOrDefault(const void* defaultValue);
-    virtual const void* constPointerReturnValue();
-    virtual void (*returnFunctionPointerValueOrDefault(void (*defaultValue)()))(
-    );
-    virtual void (*functionPointerReturnValue())();
+        /* This allows access to "the global" mocking support for easier testing
+         */
+        MockSupport& mock(
+            const SimpleString& mockName = "",
+            MockFailureReporter* failureReporterForThisCall = nullptr
+        );
 
-    bool hasData(const SimpleString& name);
-    void setData(const SimpleString& name, bool value);
-    void setData(const SimpleString& name, int value);
-    void setData(const SimpleString& name, unsigned int value);
-    void setData(const SimpleString& name, const char* value);
-    void setData(const SimpleString& name, double value);
-    void setData(const SimpleString& name, void* value);
-    void setData(const SimpleString& name, const void* value);
-    void setData(const SimpleString& name, void (*value)());
-    void setDataObject(
-        const SimpleString& name, const SimpleString& type, void* value
-    );
-    void setDataConstObject(
-        const SimpleString& name, const SimpleString& type, const void* value
-    );
-    MockNamedValue getData(const SimpleString& name);
+        class MockSupport
+        {
+        public:
+            MockSupport(const SimpleString& mockName = "");
+            virtual ~MockSupport();
 
-    MockSupport* getMockSupportScope(const SimpleString& name);
+            virtual void strictOrder();
+            virtual MockExpectedCall&
+            expectOneCall(const SimpleString& functionName);
+            virtual void expectNoCall(const SimpleString& functionName);
+            virtual MockExpectedCall&
+            expectNCalls(unsigned int amount, const SimpleString& functionName);
+            virtual MockActualCall& actualCall(const SimpleString& functionName
+            );
+            virtual bool hasReturnValue();
+            virtual MockNamedValue returnValue();
+            virtual bool boolReturnValue();
+            virtual bool returnBoolValueOrDefault(bool defaultValue);
+            virtual int intReturnValue();
+            virtual int returnIntValueOrDefault(int defaultValue);
+            virtual unsigned int unsignedIntReturnValue();
+            virtual long int longIntReturnValue();
+            virtual long int returnLongIntValueOrDefault(long int defaultValue);
+            virtual unsigned long int unsignedLongIntReturnValue();
+            virtual unsigned long int
+            returnUnsignedLongIntValueOrDefault(unsigned long int defaultValue);
+            virtual long long longLongIntReturnValue();
+            virtual long long
+            returnLongLongIntValueOrDefault(long long defaultValue);
+            virtual unsigned long long unsignedLongLongIntReturnValue();
+            virtual unsigned long long returnUnsignedLongLongIntValueOrDefault(
+                unsigned long long defaultValue
+            );
+            virtual unsigned int
+            returnUnsignedIntValueOrDefault(unsigned int defaultValue);
+            virtual const char* stringReturnValue();
+            virtual const char*
+            returnStringValueOrDefault(const char* defaultValue);
+            virtual double returnDoubleValueOrDefault(double defaultValue);
+            virtual double doubleReturnValue();
+            virtual void* pointerReturnValue();
+            virtual void* returnPointerValueOrDefault(void* defaultValue);
+            virtual const void*
+            returnConstPointerValueOrDefault(const void* defaultValue);
+            virtual const void* constPointerReturnValue();
+            virtual void (*returnFunctionPointerValueOrDefault(void (*defaultValue)(
+            )))();
+            virtual void (*functionPointerReturnValue())();
 
-    const char* getTraceOutput();
-    /*
-     * The following functions are recursively through the lower MockSupports
-     * scopes This means, if you do mock().disable() it will disable *all*
-     * mocking scopes, including mock("myScope").
-     */
+            bool hasData(const SimpleString& name);
+            void setData(const SimpleString& name, bool value);
+            void setData(const SimpleString& name, int value);
+            void setData(const SimpleString& name, unsigned int value);
+            void setData(const SimpleString& name, const char* value);
+            void setData(const SimpleString& name, double value);
+            void setData(const SimpleString& name, void* value);
+            void setData(const SimpleString& name, const void* value);
+            void setData(const SimpleString& name, void (*value)());
+            void setDataObject(
+                const SimpleString& name, const SimpleString& type, void* value
+            );
+            void setDataConstObject(
+                const SimpleString& name,
+                const SimpleString& type,
+                const void* value
+            );
+            MockNamedValue getData(const SimpleString& name);
 
-    virtual void disable();
-    virtual void enable();
-    virtual void tracing(bool enabled);
-    virtual void ignoreOtherCalls();
+            MockSupport* getMockSupportScope(const SimpleString& name);
 
-    virtual void checkExpectations();
-    virtual bool expectedCallsLeft();
+            const char* getTraceOutput();
+            /*
+             * The following functions are recursively through the lower
+             * MockSupports scopes This means, if you do mock().disable() it
+             * will disable *all* mocking scopes, including mock("myScope").
+             */
 
-    virtual void clear();
-    virtual void crashOnFailure(bool shouldFail = true);
+            virtual void disable();
+            virtual void enable();
+            virtual void tracing(bool enabled);
+            virtual void ignoreOtherCalls();
 
-    /*
-     * Each mock() call will set the activeReporter to standard, unless a
-     * special reporter is passed for this call.
-     */
+            virtual void checkExpectations();
+            virtual bool expectedCallsLeft();
 
-    virtual void setMockFailureStandardReporter(MockFailureReporter* reporter);
-    virtual void setActiveReporter(MockFailureReporter* activeReporter);
-    virtual void setDefaultComparatorsAndCopiersRepository();
+            virtual void clear();
+            virtual void crashOnFailure(bool shouldFail = true);
 
-    virtual void installComparator(
-        const SimpleString& typeName, MockNamedValueComparator& comparator
-    );
-    virtual void
-    installCopier(const SimpleString& typeName, MockNamedValueCopier& copier);
-    virtual void installComparatorsAndCopiers(
-        const MockNamedValueComparatorsAndCopiersRepository& repository
-    );
-    virtual void removeAllComparatorsAndCopiers();
+            /*
+             * Each mock() call will set the activeReporter to standard, unless
+             * a special reporter is passed for this call.
+             */
 
-protected:
-    MockSupport* clone(const SimpleString& mockName);
-    virtual MockCheckedActualCall* createActualCall();
-    virtual void failTest(MockFailure& failure);
-    void countCheck();
+            virtual void
+            setMockFailureStandardReporter(MockFailureReporter* reporter);
+            virtual void setActiveReporter(MockFailureReporter* activeReporter);
+            virtual void setDefaultComparatorsAndCopiersRepository();
 
-private:
-    unsigned int actualCallOrder_;
-    unsigned int expectedCallOrder_;
-    bool strictOrdering_;
-    MockFailureReporter* activeReporter_;
-    MockFailureReporter* standardReporter_;
-    MockFailureReporter defaultReporter_;
-    MockExpectedCallsList expectations_;
-    bool ignoreOtherCalls_;
-    bool enabled_;
-    MockCheckedActualCall* lastActualFunctionCall_;
-    MockNamedValueComparatorsAndCopiersRepository
-        comparatorsAndCopiersRepository_;
-    MockNamedValueList data_;
-    const SimpleString mockName_;
+            virtual void installComparator(
+                const SimpleString& typeName,
+                MockNamedValueComparator& comparator
+            );
+            virtual void installCopier(
+                const SimpleString& typeName, MockNamedValueCopier& copier
+            );
+            virtual void installComparatorsAndCopiers(
+                const MockNamedValueComparatorsAndCopiersRepository& repository
+            );
+            virtual void removeAllComparatorsAndCopiers();
 
-    bool tracing_;
+        protected:
+            MockSupport* clone(const SimpleString& mockName);
+            virtual MockCheckedActualCall* createActualCall();
+            virtual void failTest(MockFailure& failure);
+            void countCheck();
 
-    void checkExpectationsOfLastActualCall();
-    bool wasLastActualCallFulfilled();
-    void failTestWithExpectedCallsNotFulfilled();
-    void failTestWithOutOfOrderCalls();
+        private:
+            unsigned int actualCallOrder_;
+            unsigned int expectedCallOrder_;
+            bool strictOrdering_;
+            MockFailureReporter* activeReporter_;
+            MockFailureReporter* standardReporter_;
+            MockFailureReporter defaultReporter_;
+            MockExpectedCallsList expectations_;
+            bool ignoreOtherCalls_;
+            bool enabled_;
+            MockCheckedActualCall* lastActualFunctionCall_;
+            MockNamedValueComparatorsAndCopiersRepository
+                comparatorsAndCopiersRepository_;
+            MockNamedValueList data_;
+            const SimpleString mockName_;
 
-    MockNamedValue* retrieveDataFromStore(const SimpleString& name);
+            bool tracing_;
 
-    MockSupport* getMockSupport(MockNamedValueListNode* node);
+            void checkExpectationsOfLastActualCall();
+            bool wasLastActualCallFulfilled();
+            void failTestWithExpectedCallsNotFulfilled();
+            void failTestWithOutOfOrderCalls();
 
-    bool callIsIgnored(const SimpleString& functionName);
-    bool hasCallsOutOfOrder();
+            MockNamedValue* retrieveDataFromStore(const SimpleString& name);
 
-    SimpleString appendScopeToName(const SimpleString& functionName);
-};
+            MockSupport* getMockSupport(MockNamedValueListNode* node);
+
+            bool callIsIgnored(const SimpleString& functionName);
+            bool hasCallsOutOfOrder();
+
+            SimpleString appendScopeToName(const SimpleString& functionName);
+        };
+    }
+}
 
 #endif

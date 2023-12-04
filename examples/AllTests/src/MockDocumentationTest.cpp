@@ -29,6 +29,8 @@
 #include "CppUTestExt/MockSupport.h"
 #include "CppUTestExt/MockSupport.hpp"
 
+using cpputest::extensions::mock;
+
 TEST_GROUP(FirstTestGroup)
 {
 };
@@ -108,7 +110,7 @@ TEST(MockDocumentation, parameters)
     parameters_function(2, "hah");
 }
 
-class MyTypeComparator : public MockNamedValueComparator
+class MyTypeComparator : public cpputest::extensions::MockNamedValueComparator
 {
 public:
     virtual bool isEqual(const void* object1, const void* object2) override

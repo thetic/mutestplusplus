@@ -49,7 +49,7 @@ TEST_GROUP(FE_Demo)
 {
     void setup() override
     {
-        IEEE754ExceptionsPlugin::disableInexact();
+        cpputest::extensions::IEEE754ExceptionsPlugin::disableInexact();
     }
 };
 
@@ -77,7 +77,7 @@ IGNORE_TEST(FE_Demo, should_fail_when__FE_OVERFLOW__is_set)
 
 IGNORE_TEST(FE_Demo, should_fail_when__FE_INEXACT____is_set)
 {
-    IEEE754ExceptionsPlugin::enableInexact();
+    cpputest::extensions::IEEE754ExceptionsPlugin::enableInexact();
     double f = 10.0;
     DOUBLES_EQUAL((f / 3.0), 3.333, 0.001);
 }

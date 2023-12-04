@@ -30,6 +30,13 @@
 #include "CppUTestExt/MockFailure.hpp"
 #include "MockFailureReporterForTest.hpp"
 
+using cpputest::extensions::MockCheckedExpectedCall;
+using cpputest::extensions::MockIgnoredExpectedCall;
+using cpputest::extensions::MockNamedValue;
+using cpputest::extensions::MockNamedValueComparator;
+using cpputest::extensions::MockNamedValueComparatorsAndCopiersRepository;
+using cpputest::extensions::MockNamedValueCopier;
+
 class TypeForTestingExpectedFunctionCall
 {
 public:

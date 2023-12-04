@@ -31,7 +31,7 @@
 #include "CppUTestExt/IEEE754ExceptionsPlugin.hpp"
 #include "CppUTestExt/MockSupportPlugin.hpp"
 
-class MyDummyComparator : public MockNamedValueComparator
+class MyDummyComparator : public cpputest::extensions::MockNamedValueComparator
 {
 public:
     virtual bool isEqual(const void* object1, const void* object2) override
@@ -48,8 +48,8 @@ public:
 int main(int ac, char** av)
 {
     MyDummyComparator dummyComparator;
-    MockSupportPlugin mockPlugin;
-    IEEE754ExceptionsPlugin ieee754Plugin;
+    cpputest::extensions::MockSupportPlugin mockPlugin;
+    cpputest::extensions::IEEE754ExceptionsPlugin ieee754Plugin;
 
     mockPlugin.installComparator("MyDummyType", dummyComparator);
     TestRegistry::getCurrentRegistry()->installPlugin(&mockPlugin);

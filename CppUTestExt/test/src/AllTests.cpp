@@ -36,7 +36,7 @@ int main(int ac, const char* const* av)
     GlobalSimpleStringCache simpleStringCache;
 
     {
-        MockSupportPlugin mockPlugin;
+        cpputest::extensions::MockSupportPlugin mockPlugin;
         TestRegistry::getCurrentRegistry()->installPlugin(&mockPlugin);
 
         result = CommandLineTestRunner::RunAllTests(ac, av);

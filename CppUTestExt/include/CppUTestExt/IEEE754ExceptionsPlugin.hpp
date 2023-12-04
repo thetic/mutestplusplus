@@ -30,28 +30,36 @@
 
 #include "CppUTest/TestPlugin.hpp"
 
-class IEEE754ExceptionsPlugin : public TestPlugin
+namespace cpputest
 {
-public:
-    IEEE754ExceptionsPlugin(
-        const SimpleString& name = "IEEE754ExceptionsPlugin"
-    );
+    namespace extensions
+    {
+        class IEEE754ExceptionsPlugin : public TestPlugin
+        {
+        public:
+            IEEE754ExceptionsPlugin(
+                const SimpleString& name = "IEEE754ExceptionsPlugin"
+            );
 
-    virtual void preTestAction(UtestShell& test, TestResult& result) override;
-    virtual void postTestAction(UtestShell& test, TestResult& result) override;
+            virtual void
+            preTestAction(UtestShell& test, TestResult& result) override;
+            virtual void
+            postTestAction(UtestShell& test, TestResult& result) override;
 
-    static void disableInexact(void);
-    static void enableInexact(void);
-    static bool checkIeee754OverflowExceptionFlag();
-    static bool checkIeee754UnderflowExceptionFlag();
-    static bool checkIeee754InexactExceptionFlag();
-    static bool checkIeee754DivByZeroExceptionFlag();
+            static void disableInexact(void);
+            static void enableInexact(void);
+            static bool checkIeee754OverflowExceptionFlag();
+            static bool checkIeee754UnderflowExceptionFlag();
+            static bool checkIeee754InexactExceptionFlag();
+            static bool checkIeee754DivByZeroExceptionFlag();
 
-private:
-    void ieee754Check(
-        UtestShell& test, TestResult& result, int flag, const char* text
-    );
-    static bool inexactDisabled_;
-};
+        private:
+            void ieee754Check(
+                UtestShell& test, TestResult& result, int flag, const char* text
+            );
+            static bool inexactDisabled_;
+        };
+    }
+}
 
 #endif

@@ -35,12 +35,14 @@
 #define CHECK_NO_MOCK_FAILURE()                                                \
     CHECK_NO_MOCK_FAILURE_LOCATION(__FILE__, __LINE__)
 
-class MockFailureReporterForTest : public MockFailureReporter
+class MockFailureReporterForTest
+    : public cpputest::extensions::MockFailureReporter
 {
 public:
     SimpleString mockFailureString;
 
-    virtual void failTest(const MockFailure& failure) override;
+    virtual void failTest(const cpputest::extensions::MockFailure& failure
+    ) override;
     static MockFailureReporterForTest* getReporter();
     static void clearReporter();
 
@@ -59,18 +61,22 @@ UtestShell* mockFailureTest();
 SimpleString mockFailureString();
 void CLEAR_MOCK_FAILURE();
 void CHECK_EXPECTED_MOCK_FAILURE_LOCATION(
-    const MockFailure& expectedFailure, const char* file, size_t line
+    const cpputest::extensions::MockFailure& expectedFailure,
+    const char* file,
+    size_t line
 );
 void CHECK_NO_MOCK_FAILURE_LOCATION(const char* file, size_t line);
 
-class MockExpectedCallsListForTest : public MockExpectedCallsList
+class MockExpectedCallsListForTest
+    : public cpputest::extensions::MockExpectedCallsList
 {
 public:
     ~MockExpectedCallsListForTest() override;
-    MockCheckedExpectedCall* addFunction(const SimpleString& name);
-    MockCheckedExpectedCall*
+    cpputest::extensions::MockCheckedExpectedCall*
+    addFunction(const SimpleString& name);
+    cpputest::extensions::MockCheckedExpectedCall*
     addFunction(unsigned int numCalls, const SimpleString& name);
-    MockCheckedExpectedCall*
+    cpputest::extensions::MockCheckedExpectedCall*
     addFunctionOrdered(const SimpleString& name, unsigned int order);
 };
 

@@ -31,9 +31,14 @@
 #include "CppUTestExt/MockExpectedCallsList.hpp"
 #include "MockFailureReporterForTest.hpp"
 
+using cpputest::extensions::MockCheckedExpectedCall;
+using cpputest::extensions::MockExpectedCallsList;
+using cpputest::extensions::MockFailure;
+using cpputest::extensions::MockNamedValue;
+
 TEST_GROUP(MockFailureTest)
 {
-    MockFailureReporter reporter;
+    cpputest::extensions::MockFailureReporter reporter;
 
     MockExpectedCallsList* list;
     MockCheckedExpectedCall* call1;
@@ -102,7 +107,7 @@ TEST_GROUP(MockFailureTest)
             }
         }
 
-        MockUnexpectedCallHappenedFailure failure(
+        cpputest::extensions::MockUnexpectedCallHappenedFailure failure(
             UtestShell::getCurrent(), "bar", callList
         );
 
@@ -129,7 +134,7 @@ TEST(MockFailureTest, noErrorFailureSomethingGoneWrong)
 
 TEST(MockFailureTest, unexpectedCallHappened)
 {
-    MockUnexpectedCallHappenedFailure failure(
+    cpputest::extensions::MockUnexpectedCallHappenedFailure failure(
         UtestShell::getCurrent(), "foobar", *list
     );
     STRCMP_EQUAL(
@@ -152,7 +157,7 @@ TEST(MockFailureTest, expectedCallDidNotHappen)
     call3->callWasMade(1);
     addThreeCallsToList();
 
-    MockExpectedCallsDidntHappenFailure failure(
+    cpputest::extensions::MockExpectedCallsDidntHappenFailure failure(
         UtestShell::getCurrent(), *list
     );
     STRCMP_EQUAL(
@@ -191,7 +196,7 @@ TEST(MockFailureTest, MockUnexpectedInputParameterFailure)
     MockNamedValue actualParameter("bar");
     actualParameter.setValue(2);
 
-    MockUnexpectedInputParameterFailure failure(
+    cpputest::extensions::MockUnexpectedInputParameterFailure failure(
         UtestShell::getCurrent(), "foo", actualParameter, *list
     );
     STRCMP_EQUAL(
@@ -223,7 +228,7 @@ TEST(MockFailureTest, MockUnexpectedOutputParameterFailure)
     MockNamedValue actualParameter("bar");
     actualParameter.setValue(reinterpret_cast<void*>(0x123));
 
-    MockUnexpectedOutputParameterFailure failure(
+    cpputest::extensions::MockUnexpectedOutputParameterFailure failure(
         UtestShell::getCurrent(), "foo", actualParameter, *list
     );
     STRCMP_EQUAL(
@@ -255,7 +260,7 @@ TEST(MockFailureTest, MockUnexpectedUnmodifiedOutputParameterFailure)
     MockNamedValue actualParameter("bar");
     actualParameter.setValue(reinterpret_cast<void*>(0x123));
 
-    MockUnexpectedOutputParameterFailure failure(
+    cpputest::extensions::MockUnexpectedOutputParameterFailure failure(
         UtestShell::getCurrent(), "foo", actualParameter, *list
     );
     STRCMP_EQUAL(
@@ -284,7 +289,7 @@ TEST(MockFailureTest, MockUnexpectedParameterValueFailure)
     MockNamedValue actualParameter("boo");
     actualParameter.setValue(20);
 
-    MockUnexpectedInputParameterFailure failure(
+    cpputest::extensions::MockUnexpectedInputParameterFailure failure(
         UtestShell::getCurrent(), "foo", actualParameter, *list
     );
     STRCMP_EQUAL(
@@ -324,7 +329,7 @@ TEST(MockFailureTest, MockExpectedParameterDidntHappenFailure)
     matchingCalls.addExpectedCall(call1);
     matchingCalls.addExpectedCall(call3);
 
-    MockExpectedParameterDidntHappenFailure failure(
+    cpputest::extensions::MockExpectedParameterDidntHappenFailure failure(
         UtestShell::getCurrent(), "foo", *list, matchingCalls
     );
     STRCMP_EQUAL(
@@ -352,7 +357,7 @@ TEST(MockFailureTest, MockExpectedParameterDidntHappenFailure)
 
 TEST(MockFailureTest, MockNoWayToCompareCustomTypeFailure)
 {
-    MockNoWayToCompareCustomTypeFailure failure(
+    cpputest::extensions::MockNoWayToCompareCustomTypeFailure failure(
         UtestShell::getCurrent(), "myType"
     );
     STRCMP_EQUAL(
@@ -371,7 +376,7 @@ TEST(MockFailureTest, MockUnexpectedObjectFailure)
     call3->withName("unrelated");
     addThreeCallsToList();
 
-    MockUnexpectedObjectFailure failure(
+    cpputest::extensions::MockUnexpectedObjectFailure failure(
         UtestShell::getCurrent(), "foo", reinterpret_cast<void*>(0x1), *list
     );
     STRCMP_EQUAL(
@@ -402,7 +407,7 @@ TEST(MockFailureTest, MockExpectedObjectDidntHappenFailure)
     call3->withName("unrelated");
     addThreeCallsToList();
 
-    MockExpectedObjectDidntHappenFailure failure(
+    cpputest::extensions::MockExpectedObjectDidntHappenFailure failure(
         UtestShell::getCurrent(), "foo", *list
     );
     STRCMP_EQUAL(

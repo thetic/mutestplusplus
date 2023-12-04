@@ -32,6 +32,9 @@
 #include "CppUTest/TestTestingFixture.hpp"
 #include "OrderedTestTest.h"
 
+using cpputest::extensions::OrderedTestInstaller;
+using cpputest::extensions::OrderedTestShell;
+
 TEST_GROUP(TestOrderedTest)
 {
     TestTestingFixture* fixture;
