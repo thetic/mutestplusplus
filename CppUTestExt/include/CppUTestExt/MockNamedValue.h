@@ -117,7 +117,7 @@ class MockNamedValue
 {
 public:
     MockNamedValue(const SimpleString& name);
-    DEFAULT_COPY_CONSTRUCTOR(MockNamedValue)
+    MockNamedValue(const MockNamedValue&) = default;
     virtual ~MockNamedValue();
 
     virtual void setValue(bool value);

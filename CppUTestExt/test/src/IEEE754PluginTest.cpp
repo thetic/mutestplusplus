@@ -31,7 +31,7 @@
 #include "CppUTest/TestTestingFixture.h"
 #include "CppUTestExt/IEEE754ExceptionsPlugin.h"
 
-#if CPPUTEST_HAVE_FENV
+#if (defined(__STDC_IEC_559__) && __STDC_IEC_559__) && CPPUTEST_USE_STD_C_LIB
 
     #include "IEEE754PluginTest_c.h"
 

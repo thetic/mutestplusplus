@@ -44,7 +44,7 @@ class TestResult
 {
 public:
     TestResult(TestOutput&);
-    DEFAULT_COPY_CONSTRUCTOR(TestResult)
+    TestResult(const TestResult&) = default;
     virtual ~TestResult();
 
     virtual void testsStarted();

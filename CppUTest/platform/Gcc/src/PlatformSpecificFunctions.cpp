@@ -27,12 +27,6 @@
 
 #include "CppUTest/TestHarness.h"
 #include <stdlib.h>
-#undef malloc
-#undef free
-#undef calloc
-#undef realloc
-#undef strdup
-#undef strndup
 
 #ifdef CPPUTEST_HAVE_GETTIMEOFDAY
     #include <sys/time.h>
@@ -195,18 +189,7 @@ PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
     return 0;
 }
 
-/*
- * MacOSX clang 3.0 doesn't seem to recognize longjmp and thus complains about
- * _no_return_. The later clang compilers complain when it isn't there. So only
- * way is to check the clang compiler here :(
- */
-#ifdef __clang__
-    #if !((__clang_major__ == 3) && (__clang_minor__ == 0))
-_no_return_
-    #endif
-#endif
-    static void
-    PlatformSpecificLongJmpImplementation()
+[[noreturn]] static void PlatformSpecificLongJmpImplementation()
 {
     jmp_buf_index--;
     longjmp(test_exit_jmp_buf[jmp_buf_index], 1);

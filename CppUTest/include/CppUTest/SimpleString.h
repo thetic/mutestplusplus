@@ -204,7 +204,20 @@ SimpleString HexStringFrom(void (*value)());
 SimpleString StringFrom(double value, int precision = 6);
 SimpleString StringFrom(const SimpleString& other);
 SimpleString StringFromFormat(const char* format, ...)
-    _check_format_(CPPUTEST_CHECK_FORMAT_TYPE, 1, 2);
+#ifdef __has_attribute
+    #if __has_attribute(format)
+    __attribute__((format(
+        #if defined(__MINGW32__)
+        __MINGW_PRINTF_FORMAT,
+        #else
+        printf,
+        #endif
+        1,
+        2
+    )))
+    #endif
+#endif
+    ;
 SimpleString VStringFromFormat(const char* format, va_list args);
 SimpleString StringFromBinary(const unsigned char* value, size_t size);
 SimpleString StringFromBinaryOrNull(const unsigned char* value, size_t size);

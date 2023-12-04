@@ -29,7 +29,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestRegistry.h"
 
-#if CPPUTEST_HAVE_FENV
+#if (defined(__STDC_IEC_559__) && __STDC_IEC_559__) && CPPUTEST_USE_STD_C_LIB
     #include "CppUTestExt/IEEE754ExceptionsPlugin.h"
 
 /*

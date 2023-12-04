@@ -1,11 +1,5 @@
 #include "CppUTest/TestHarness.h"
 #include <stdlib.h>
-#undef malloc
-#undef free
-#undef calloc
-#undef realloc
-#undef strdup
-#undef strndup
 
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include <float.h>
@@ -47,7 +41,7 @@ static int VisualCppSetJmp(void (*function)(void* data), void* data)
     return 0;
 }
 
-_no_return_ static void VisualCppLongJmp()
+[[noreturn]] static void VisualCppLongJmp()
 {
     jmp_buf_index--;
     longjmp(test_exit_jmp_buf[jmp_buf_index], 1);

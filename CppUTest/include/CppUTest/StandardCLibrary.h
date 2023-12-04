@@ -56,8 +56,8 @@
 
         #ifdef __KERNEL__
 
-            /* Unfinished and not working! Hacking hacking hacking. Why bother
-             * make the header files C++ safe! */
+        /* Unfinished and not working! Hacking hacking hacking. Why bother
+         * make the header files C++ safe! */
             #define false kernel_false
             #define true kernel_true
             #define bool kernel_bool

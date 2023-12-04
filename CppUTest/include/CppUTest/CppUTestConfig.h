@@ -77,58 +77,6 @@
 /* Should be the only #include here. Standard C library wrappers */
 #include "StandardCLibrary.h"
 
-/* Create a _no_return_ macro, which is used to flag a function as not
- * returning. Used for functions that always throws for instance.
- *
- * This is needed for compiling with clang, without breaking other compilers.
- */
-#ifndef __has_attribute
-    #define __has_attribute(x) 0
-#endif
-
-#if defined(__cplusplus)
-    #define _no_return_ [[noreturn]]
-#elif __has_attribute(noreturn)
-    #define _no_return_ __attribute__((noreturn))
-#else
-    #define _no_return_
-#endif
-
-#if defined(__MINGW32__)
-    #define CPPUTEST_CHECK_FORMAT_TYPE __MINGW_PRINTF_FORMAT
-#else
-    #define CPPUTEST_CHECK_FORMAT_TYPE printf
-#endif
-
-#if __has_attribute(format)
-    #define _check_format_(type, format_parameter, other_parameters)           \
-        __attribute__((format(type, format_parameter, other_parameters)))
-#else
-    #define _check_format_(                                                    \
-        type, format_parameter, other_parameters                               \
-    ) /* type, format_parameter, other_parameters */
-#endif
-
-#if defined(__cplusplus)
-    #define DEFAULT_COPY_CONSTRUCTOR(classname)                                \
-        classname(const classname&) = default;
-#else
-    #define DEFAULT_COPY_CONSTRUCTOR(classname)
-#endif
-
-/*
- * Handling of IEEE754 (IEC559) floating point exceptions via fenv.h
- * Predominantly works on non-Visual C++ compilers and Visual C++ 2008 and newer
- */
-#ifndef CPPUTEST_HAVE_FENV
-    #if (defined(__STDC_IEC_559__) && __STDC_IEC_559__) &&                     \
-        CPPUTEST_USE_STD_C_LIB
-        #define CPPUTEST_HAVE_FENV 1
-    #else
-        #define CPPUTEST_HAVE_FENV 0
-    #endif
-#endif
-
 #ifdef __cplusplus
     /*
      * Detection of run-time type information (RTTI) presence. Since it's a
@@ -161,66 +109,6 @@
             #define CPPUTEST_HAVE_EXCEPTIONS 1
         #endif
     #endif
-
-    #if CPPUTEST_HAVE_EXCEPTIONS
-        #if defined(__cplusplus)
-            #define UT_THROW(exception)
-            #define UT_NOTHROW noexcept
-        #else
-            #define UT_THROW(exception) throw(exception)
-            #define UT_NOTHROW throw()
-        #endif
-    #else
-        #define UT_THROW(exception)
-        #if defined(__clang__) || defined(__GNUC__)
-            #define UT_NOTHROW noexcept
-        #else
-            #define UT_NOTHROW
-        #endif
-    #endif
-
-    /*
-     * Visual C++ doesn't define __cplusplus as C++11 yet (201103), however it
-     * doesn't want the throw(exception) either, but it does want throw().
-     */
-    #ifdef _MSC_VER
-        #undef UT_THROW
-        #define UT_THROW(exception)
-    #endif
-
-    /*
-     * g++-4.7 with stdc++11 enabled On MacOSX! will have a different exception
-     * specifier for operator new (and thank you!) I assume they'll fix this in
-     * the future, but for now, we'll change that here. (This should perhaps
-     * also be done in the configure.ac)
-     */
-    #if defined(__GXX_EXPERIMENTAL_CXX0X__) && defined(__APPLE__) &&           \
-        defined(_GLIBCXX_THROW)
-        #undef UT_THROW
-        #define UT_THROW(exception) _GLIBCXX_THROW(exception)
-    #endif
-
-    #if CPPUTEST_USE_STD_CPP_LIB
-        #define CPPUTEST_BAD_ALLOC std::bad_alloc
-    #else
-class CppUTestBadAlloc
-{
-};
-        #define CPPUTEST_BAD_ALLOC CppUTestBadAlloc
-    #endif
-#endif
-
-/*
- * Detection of different 64 bit environments
- */
-
-#if defined(__LP64__) || defined(_LP64) ||                                     \
-    (defined(__WORDSIZE) && (__WORDSIZE == 64)) || defined(__x86_64) ||        \
-    defined(_WIN64)
-    #define CPPUTEST_64BIT
-    #if defined(_WIN64)
-        #define CPPUTEST_64BIT_32BIT_LONGS
-    #endif
 #endif
 
 /* Handling of systems with a different byte-width (e.g. 16 bit). Since
@@ -233,12 +121,6 @@ class CppUTestBadAlloc
     #else
         #error "Provide a definition for CPPUTEST_CHAR_BIT"
     #endif
-#endif
-
-/* Handling of systems with a different int-width (e.g. 16 bit).
- */
-#if CPPUTEST_USE_STD_C_LIB && (INT_MAX == 0x7fff)
-    #define CPPUTEST_16BIT_INTS
 #endif
 
 #endif

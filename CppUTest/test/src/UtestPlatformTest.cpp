@@ -67,7 +67,7 @@ static void failFunction_()
     FAIL("This test fails");
 }
 
-_no_return_ static void exitNonZeroFunction_();
+[[noreturn]] static void exitNonZeroFunction_();
 static void exitNonZeroFunction_()
 {
     /* destructor of static objects will be called. If StringCache was there

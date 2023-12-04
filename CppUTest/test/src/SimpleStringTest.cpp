@@ -31,6 +31,24 @@
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/TestTestingFixture.h"
 
+/*
+ * Detection of different 64 bit environments
+ */
+#if defined(__LP64__) || defined(_LP64) ||                                     \
+    (defined(__WORDSIZE) && (__WORDSIZE == 64)) || defined(__x86_64) ||        \
+    defined(_WIN64)
+    #define CPPUTEST_64BIT
+    #if defined(_WIN64)
+        #define CPPUTEST_64BIT_32BIT_LONGS
+    #endif
+#endif
+
+/* Handling of systems with a different int-width (e.g. 16 bit).
+ */
+#if CPPUTEST_USE_STD_C_LIB && (INT_MAX == 0x7fff)
+    #define CPPUTEST_16BIT_INTS
+#endif
+
 TEST_GROUP(SimpleString)
 {
 };
