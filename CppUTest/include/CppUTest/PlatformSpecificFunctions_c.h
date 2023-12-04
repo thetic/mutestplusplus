@@ -36,7 +36,8 @@
 #ifndef PLATFORMSPECIFICFUNCTIONS_C_H_
 #define PLATFORMSPECIFICFUNCTIONS_C_H_
 
-#include "CppUTest/StandardCLibrary.h"
+#include <stdarg.h>
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {

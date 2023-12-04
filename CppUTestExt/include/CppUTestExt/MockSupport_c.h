@@ -28,7 +28,7 @@
 #ifndef D_MockSupport_c_h
 #define D_MockSupport_c_h
 
-#include "CppUTest/StandardCLibrary.h"
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -30,6 +30,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/TestTestingFixture.h"
+#include <limits.h>
 
 /*
  * Detection of different 64 bit environments
@@ -45,7 +46,7 @@
 
 /* Handling of systems with a different int-width (e.g. 16 bit).
  */
-#if CPPUTEST_USE_STD_C_LIB && (INT_MAX == 0x7fff)
+#if (INT_MAX == 0x7fff)
     #define CPPUTEST_16BIT_INTS
 #endif
 
@@ -1053,7 +1054,7 @@ TEST(SimpleString, MemCmpFirstLastNotMatching)
     CHECK(0 != SimpleString::MemCmp(base, lastNotMatching, sizeof(base)));
 }
 
-#if (CPPUTEST_CHAR_BIT == 16)
+#if (CHAR_BIT == 16)
 TEST(SimpleString, MaskedBitsChar)
 {
     STRCMP_EQUAL(
@@ -1075,7 +1076,7 @@ TEST(SimpleString, MaskedBitsChar)
         "xxxxxxxx 11xx11xx", StringFromMaskedBits(0xFF, 0xCC, 1).asCharString()
     );
 }
-#elif (CPPUTEST_CHAR_BIT == 8)
+#elif (CHAR_BIT == 8)
 TEST(SimpleString, MaskedBitsChar)
 {
     STRCMP_EQUAL(
@@ -1103,33 +1104,27 @@ TEST(SimpleString, MaskedBits16Bit)
 {
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxxx",
-        StringFromMaskedBits(0x0000, 0x0000, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0x0000, 0x0000, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "00000000 00000000",
-        StringFromMaskedBits(0x0000, 0xFFFF, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0x0000, 0xFFFF, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "11111111 11111111",
-        StringFromMaskedBits(0xFFFF, 0xFFFF, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0xFFFF, 0xFFFF, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "1xxxxxxx xxxxxxxx",
-        StringFromMaskedBits(0x8000, 0x8000, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0x8000, 0x8000, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxx1",
-        StringFromMaskedBits(0x0001, 0x0001, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0x0001, 0x0001, 2 * 8 / CHAR_BIT).asCharString()
     );
     STRCMP_EQUAL(
         "11xx11xx 11xx11xx",
-        StringFromMaskedBits(0xFFFF, 0xCCCC, 2 * 8 / CPPUTEST_CHAR_BIT)
-            .asCharString()
+        StringFromMaskedBits(0xFFFF, 0xCCCC, 2 * 8 / CHAR_BIT).asCharString()
     );
 }
 
@@ -1137,32 +1132,32 @@ TEST(SimpleString, MaskedBits32Bit)
 {
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx",
-        StringFromMaskedBits(0x00000000, 0x00000000, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0x00000000, 0x00000000, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "00000000 00000000 00000000 00000000",
-        StringFromMaskedBits(0x00000000, 0xFFFFFFFF, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0x00000000, 0xFFFFFFFF, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "11111111 11111111 11111111 11111111",
-        StringFromMaskedBits(0xFFFFFFFF, 0xFFFFFFFF, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0xFFFFFFFF, 0xFFFFFFFF, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "1xxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx",
-        StringFromMaskedBits(0x80000000, 0x80000000, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0x80000000, 0x80000000, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxx1",
-        StringFromMaskedBits(0x00000001, 0x00000001, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0x00000001, 0x00000001, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
     STRCMP_EQUAL(
         "11xx11xx 11xx11xx 11xx11xx 11xx11xx",
-        StringFromMaskedBits(0xFFFFFFFF, 0xCCCCCCCC, 4 * 8 / CPPUTEST_CHAR_BIT)
+        StringFromMaskedBits(0xFFFFFFFF, 0xCCCCCCCC, 4 * 8 / CHAR_BIT)
             .asCharString()
     );
 }

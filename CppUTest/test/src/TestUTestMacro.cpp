@@ -29,6 +29,8 @@
 #include "CppUTest/TestOutput.h"
 #include "CppUTest/TestTestingFixture.h"
 
+#include <limits.h>
+
 #define CHECK_TEST_FAILS_PROPER_WITH_TEXT(text)                                \
     fixture.checkTestFailsWithProperTestLocation(text, __FILE__, __LINE__)
 
@@ -808,10 +810,10 @@ static void failingTestMethodWithSIGNED_BYTES_EQUAL_()
 TEST(UnitTestMacros, FailureWithSIGNED_BYTES_EQUAL)
 {
     fixture.runTestWithMethod(failingTestMethodWithSIGNED_BYTES_EQUAL_);
-#if CPPUTEST_CHAR_BIT == 16
+#if CHAR_BIT == 16
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("expected <-1 (0xffff)>");
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("but was  <-2 (0xfffe)>");
-#elif CPPUTEST_CHAR_BIT == 8
+#elif CHAR_BIT == 8
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("expected <-1 (0xff)>");
     CHECK_TEST_FAILS_PROPER_WITH_TEXT("but was  <-2 (0xfe)>");
 #endif

@@ -32,39 +32,6 @@
     #include "CppUTest/CppUTestGeneratedConfig.h"
 #endif
 
-/*
- * This file is added for some specific CppUTest configurations that earlier
- * were spread out into multiple files.
- *
- * The goal of this file is to stay really small and not to include other
- * things, but mainly to remove duplication from other files and resolve
- * dependencies in #includes.
- *
- */
-
-/*
- * Lib C dependencies that are currently still left:
- *
- * stdarg.h -> We use formatting functions and va_list requires to include
- * stdarg.h in SimpleString stdlib.h -> The TestHarness_c.h includes this to try
- * to avoid conflicts in its malloc #define. This dependency can easily be
- * removed by not enabling the MALLOC overrides.
- *
- * Lib C++ dependencies are all under the CPPUTEST_USE_STD_CPP_LIB.
- * The only dependency is to <new> which has the bad_alloc struct
- *
- */
-
-/* Do we use Standard C or not? When doing Kernel development, standard C usage
- * is out. */
-#ifndef CPPUTEST_USE_STD_C_LIB
-    #ifdef CPPUTEST_STD_C_LIB_DISABLED
-        #define CPPUTEST_USE_STD_C_LIB 0
-    #else
-        #define CPPUTEST_USE_STD_C_LIB 1
-    #endif
-#endif
-
 /* Do we use Standard C++ or not? */
 #ifndef CPPUTEST_USE_STD_CPP_LIB
     #ifdef CPPUTEST_STD_CPP_LIB_DISABLED
@@ -73,9 +40,6 @@
         #define CPPUTEST_USE_STD_CPP_LIB 1
     #endif
 #endif
-
-/* Should be the only #include here. Standard C library wrappers */
-#include "StandardCLibrary.h"
 
 #ifdef __cplusplus
     /*
@@ -108,18 +72,6 @@
         #else
             #define CPPUTEST_HAVE_EXCEPTIONS 1
         #endif
-    #endif
-#endif
-
-/* Handling of systems with a different byte-width (e.g. 16 bit). Since
- * CHAR_BIT is defined in limits.h (ANSI C), the user must provide a definition
- * when building without Std C library.
- */
-#ifndef CPPUTEST_CHAR_BIT
-    #if defined(CHAR_BIT)
-        #define CPPUTEST_CHAR_BIT CHAR_BIT
-    #else
-        #error "Provide a definition for CPPUTEST_CHAR_BIT"
     #endif
 #endif
 

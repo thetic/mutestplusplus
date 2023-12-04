@@ -29,9 +29,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
 
-#if CPPUTEST_USE_STD_C_LIB
-    #include <math.h>
-#endif
+#include <math.h>
 
 #if defined(NAN) && defined(INFINITY)
 

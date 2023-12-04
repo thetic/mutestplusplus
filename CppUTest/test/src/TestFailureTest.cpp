@@ -27,6 +27,7 @@
 
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
+#include <limits.h>
 
 namespace
 {
@@ -535,7 +536,7 @@ TEST(TestFailure, BitsEqualWithText)
 {
     BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x0001, 0x0003, 0x00FF,
-        2 * 8 / CPPUTEST_CHAR_BIT, "text"
+        2 * 8 / CHAR_BIT, "text"
     );
     FAILURE_EQUAL(
         "Message: text\n"
@@ -544,7 +545,7 @@ TEST(TestFailure, BitsEqualWithText)
     );
 }
 
-#if (CPPUTEST_CHAR_BIT == 16)
+#if (CHAR_BIT == 16)
 TEST(TestFailure, BitsEqualChar)
 {
     BitsEqualFailure f(
@@ -554,7 +555,7 @@ TEST(TestFailure, BitsEqualChar)
         "expected <xxxxxxxx 00000001>\n\tbut was  <xxxxxxxx 00000011>", f
     );
 }
-#elif (CPPUTEST_CHAR_BIT == 8)
+#elif (CHAR_BIT == 8)
 TEST(TestFailure, BitsEqualChar)
 {
     BitsEqualFailure f(
@@ -568,7 +569,7 @@ TEST(TestFailure, BitsEqual16Bit)
 {
     BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x0001, 0x0003, 0xFFFF,
-        2 * 8 / CPPUTEST_CHAR_BIT, ""
+        2 * 8 / CHAR_BIT, ""
     );
     FAILURE_EQUAL(
         "expected <00000000 00000001>\n\tbut was  <00000000 00000011>", f
@@ -579,7 +580,7 @@ TEST(TestFailure, BitsEqual32Bit)
 {
     BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x00000001, 0x00000003, 0xFFFFFFFF,
-        4 * 8 / CPPUTEST_CHAR_BIT, ""
+        4 * 8 / CHAR_BIT, ""
     );
     FAILURE_EQUAL(
         "expected <00000000 00000000 00000000 00000001>\n\tbut was  <00000000 "

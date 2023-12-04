@@ -31,7 +31,9 @@
 #ifndef D_UTest_h
 #define D_UTest_h
 
-#include "SimpleString.h"
+#include "CppUTest/SimpleString.h"
+
+#include <stddef.h>
 
 class TestResult;
 class TestPlugin;

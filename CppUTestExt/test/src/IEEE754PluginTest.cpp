@@ -31,7 +31,7 @@
 #include "CppUTest/TestTestingFixture.h"
 #include "CppUTestExt/IEEE754ExceptionsPlugin.h"
 
-#if (defined(__STDC_IEC_559__) && __STDC_IEC_559__) && CPPUTEST_USE_STD_C_LIB
+#if (defined(__STDC_IEC_559__) && __STDC_IEC_559__)
 
     #include "IEEE754PluginTest_c.h"
 

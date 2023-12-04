@@ -25,14 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTest/Utest.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/TestFailure.h"
 #include "CppUTest/TestOutput.h"
+#include "CppUTest/TestPlugin.h"
 #include "CppUTest/TestRegistry.h"
-
-#if defined(__GNUC__) && __GNUC__ >= 11
-    #define NEEDS_DISABLE_NULL_WARNING
-#endif /* GCC >= 11 */
+#include "CppUTest/TestResult.h"
 
 bool doubles_equal(double d1, double d2, double threshold)
 {

@@ -26,10 +26,11 @@
  */
 
 #include "CppUTest/TestFailure.h"
+#include "CppUTest/CppUTestConfig.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/SimpleString.h"
-#include "CppUTest/TestHarness.h"
 #include "CppUTest/TestOutput.h"
+#include "CppUTest/Utest.h"
 
 #if CPPUTEST_USE_STD_CPP_LIB
     #include <typeinfo>

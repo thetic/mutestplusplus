@@ -35,7 +35,8 @@
 #ifndef D_TestFailure_H
 #define D_TestFailure_H
 
-#include "SimpleString.h"
+#include "CppUTest/CppUTestConfig.h"
+#include "CppUTest/SimpleString.h"
 
 #if CPPUTEST_USE_STD_CPP_LIB
     #include <stdexcept>
