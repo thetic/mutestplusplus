@@ -25,11 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/CommandLineTestRunner.h"
-#include "CppUTest/PlatformSpecificFunctions.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestMemoryAllocator.h"
-#include "CppUTest/TestTestingFixture.h"
+#include "CppUTest/CommandLineTestRunner.hpp"
+#include "CppUTest/PlatformSpecificFunctions.hpp"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestMemoryAllocator.hpp"
+#include "CppUTest/TestTestingFixture.hpp"
 
 // This will cause a crash in VS2010 due to PlatformSpecificFree being
 // uninitialized
@@ -81,8 +81,6 @@ static void exitNonZeroFunction_()
 static int waitpid_while_debugging_stub_number_called = 0;
 static int waitpid_while_debugging_stub_forced_failures = 0;
 
-extern "C" {
-
 static int (*original_waitpid)(int, int*, int) = nullptr;
 
 static int fork_failed_stub(void)
@@ -108,7 +106,6 @@ static int waitpid_while_debugging_stub(int pid, int* status, int options)
 static int waitpid_failed_stub(int, int*, int)
 {
     return -1;
-}
 }
 
     #include <signal.h>

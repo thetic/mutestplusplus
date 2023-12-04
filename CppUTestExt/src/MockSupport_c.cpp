@@ -25,12 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTestExt/MockSupport_c.h"
-#include "CppUTest/CppUTestConfig.h"
-#include "CppUTest/PlatformSpecificFunctions_c.h"
-#include "CppUTest/Utest.h"
-#include "CppUTest/UtestMacros.h"
 #include "CppUTestExt/MockSupport.h"
+
+#include "CppUTest/CppUTestConfig.hpp"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/Utest.hpp"
+#include "CppUTest/UtestMacros.hpp"
+#include "CppUTestExt/MockSupport.hpp"
 
 typedef void (*cpputest_cpp_function_pointer)(
 ); /* Cl2000 requires cast to C++ function */
@@ -129,8 +130,6 @@ public:
 };
 
 static MockCFunctionCopierNode* copierList_ = nullptr;
-
-extern "C" {
 
 void strictOrder_c();
 MockExpectedCall_c* expectOneCall_c(const char* name);
@@ -1116,5 +1115,4 @@ MockSupport_c* mock_scope_c(const char* scope)
 {
     currentMockSupport = &mock(scope, &failureReporterForC);
     return &gMockSupport;
-}
 }

@@ -25,15 +25,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/CommandLineTestRunner.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestRegistry.h"
-#include "CppUTest/TestTestingFixture.h"
-#include "CppUTestExt/IEEE754ExceptionsPlugin.h"
+#include "CppUTest/CommandLineTestRunner.hpp"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestRegistry.hpp"
+#include "CppUTest/TestTestingFixture.hpp"
+#include "CppUTestExt/IEEE754ExceptionsPlugin.hpp"
 
 #if (defined(__STDC_IEC_559__) && __STDC_IEC_559__)
 
-    #include "IEEE754PluginTest_c.h"
+    #include "IEEE754PluginTest.h"
 
 TEST_GROUP(FE_with_Plugin)
 {

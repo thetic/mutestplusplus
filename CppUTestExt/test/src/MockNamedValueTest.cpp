@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTestExt/MockNamedValue.h"
-#include "CppUTest/TestHarness.h"
+#include "CppUTestExt/MockNamedValue.hpp"
+#include "CppUTest/TestHarness.hpp"
 
 TEST_GROUP(ComparatorsAndCopiersRepository)
 {

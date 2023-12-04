@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestPlugin.h"
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/TestPlugin.hpp"
+#include "CppUTest/TestHarness.hpp"
 
 TestPlugin::TestPlugin(const SimpleString& name) :
     next_(NullTestPlugin::instance()),

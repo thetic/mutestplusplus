@@ -25,13 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/Utest.h"
-#include "CppUTest/PlatformSpecificFunctions.h"
-#include "CppUTest/TestFailure.h"
-#include "CppUTest/TestOutput.h"
-#include "CppUTest/TestPlugin.h"
-#include "CppUTest/TestRegistry.h"
-#include "CppUTest/TestResult.h"
+#include "CppUTest/Utest.hpp"
+#include "CppUTest/PlatformSpecificFunctions.hpp"
+#include "CppUTest/TestFailure.hpp"
+#include "CppUTest/TestOutput.hpp"
+#include "CppUTest/TestPlugin.hpp"
+#include "CppUTest/TestRegistry.hpp"
+#include "CppUTest/TestResult.hpp"
 
 bool doubles_equal(double d1, double d2, double threshold)
 {
@@ -90,8 +90,6 @@ OutsideTestRunnerUTest& OutsideTestRunnerUTest::instance()
  *
  */
 
-extern "C" {
-
 static void helperDoTestSetup(void* data)
 {
     reinterpret_cast<Utest*>(data)->setup();
@@ -142,7 +140,6 @@ static void helperDoRunOneTestSeperateProcess(void* data)
     TestPlugin* plugin = runInfo->plugin_;
     TestResult* result = runInfo->result_;
     PlatformSpecificRunTestInASeperateProcess(shell, plugin, result);
-}
 }
 
 /******************************** */

@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
-#include "CppUTestExt/MockCheckedExpectedCall.h"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTestExt/MockCheckedExpectedCall.hpp"
 
 MockExpectedCall::MockExpectedCall() {}
 

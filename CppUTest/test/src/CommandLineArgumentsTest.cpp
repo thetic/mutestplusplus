@@ -25,9 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/CommandLineArguments.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTest/TestRegistry.h"
+#include "CppUTest/CommandLineArguments.hpp"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestRegistry.hpp"
 
 class OptionsPlugin : public TestPlugin
 {
@@ -441,7 +441,8 @@ TEST(CommandLineArguments, setTestToRunUsingVerboseOutputOfIgnoreTest)
 {
     int argc = 2;
     const char* argv[] = {
-        "tests.exe", "IGNORE_TEST(testgroup, testname) - stuff"};
+        "tests.exe", "IGNORE_TEST(testgroup, testname) - stuff"
+    };
     CHECK(newArgumentParser(argc, argv));
 
     TestFilter nameFilter("testname");

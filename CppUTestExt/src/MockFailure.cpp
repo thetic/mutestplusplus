@@ -25,11 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTestExt/MockFailure.h"
-#include "CppUTest/TestHarness.h"
-#include "CppUTestExt/MockExpectedCall.h"
-#include "CppUTestExt/MockExpectedCallsList.h"
-#include "CppUTestExt/MockNamedValue.h"
+#include "CppUTestExt/MockFailure.hpp"
+#include "CppUTest/TestHarness.hpp"
+#include "CppUTestExt/MockExpectedCall.hpp"
+#include "CppUTestExt/MockExpectedCallsList.hpp"
+#include "CppUTestExt/MockNamedValue.hpp"
 
 class MockFailureReporterTestTerminator : public TestTerminator
 {

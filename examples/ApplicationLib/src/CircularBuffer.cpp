@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CircularBuffer.h"
-#include "Printer.h"
+#include "CircularBuffer.hpp"
+#include "Printer.hpp"
 #include <stddef.h>
 
 CircularBuffer::CircularBuffer(int _capacity) :

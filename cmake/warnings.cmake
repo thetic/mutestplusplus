@@ -18,7 +18,6 @@ if(
         -Wsign-conversion
         -Wreserved-id-macro
         -Wkeyword-macro
-        -Wundef
         -Wno-unsafe-buffer-usage
     )
 

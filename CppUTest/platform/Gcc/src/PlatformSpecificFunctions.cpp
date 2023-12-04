@@ -25,7 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/PlatformSpecificFunctions.hpp"
+
+#include "CppUTest/TestHarness.hpp"
 #include <stdlib.h>
 
 #ifdef CPPUTEST_HAVE_GETTIMEOFDAY
@@ -49,8 +51,6 @@
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
     #include <pthread.h>
 #endif
-
-#include "CppUTest/PlatformSpecificFunctions.h"
 
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
@@ -174,8 +174,6 @@ void (*PlatformSpecificRunTestInASeperateProcess)(
 int (*PlatformSpecificFork)(void) = PlatformSpecificForkImplementation;
 int (*PlatformSpecificWaitPid)(int, int*, int) =
     PlatformSpecificWaitPidImplementation;
-
-extern "C" {
 
 static int
 PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
@@ -372,4 +370,3 @@ void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = PThreadMutexUnlock;
 void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex
 ) = PThreadMutexDestroy;
 void (*PlatformSpecificAbort)(void) = abort;
-}

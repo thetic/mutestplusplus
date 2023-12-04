@@ -1,6 +1,6 @@
-#include "CppUTest/PlatformSpecificFunctions.h"
-#include "CppUTest/TeamCityTestOutput.h"
-#include "CppUTest/TestHarness.h"
+#include "CppUTest/PlatformSpecificFunctions.hpp"
+#include "CppUTest/TeamCityTestOutput.hpp"
+#include "CppUTest/TestHarness.hpp"
 
 class TeamCityOutputToBuffer : public TeamCityTestOutput
 {
@@ -30,12 +30,9 @@ private:
 
 static long millisTime;
 
-extern "C" {
-
 static long MockGetPlatformSpecificTimeInMillis()
 {
     return millisTime;
-}
 }
 
 TEST_GROUP(TeamCityOutputTest)
