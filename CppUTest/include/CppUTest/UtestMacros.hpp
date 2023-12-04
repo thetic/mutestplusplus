@@ -29,6 +29,7 @@
 #define D_UTestMacros_h
 
 #include "CppUTest/CppUTestConfig.hpp"
+#include "CppUTest/Utest.hpp"
 
 /*! \brief Define a group of tests
  *

@@ -26,8 +26,9 @@
  */
 
 #include "CppUTest/PlatformSpecificFunctions.hpp"
+#include "CppUTest/TestFailure.hpp"
+#include "CppUTest/TestResult.hpp"
 
-#include "CppUTest/TestHarness.hpp"
 #include <stdlib.h>
 
 #ifdef CPPUTEST_HAVE_GETTIMEOFDAY
@@ -39,7 +40,6 @@
     #include <unistd.h>
 #endif
 
-#include <ctype.h>
 #include <math.h>
 #include <setjmp.h>
 #include <signal.h>

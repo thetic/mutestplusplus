@@ -27,7 +27,7 @@
 
 #include "CppUTest/CommandLineArguments.hpp"
 #include "CppUTest/PlatformSpecificFunctions.hpp"
-#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestPlugin.hpp"
 
 CommandLineArguments::CommandLineArguments(int ac, const char* const* av) :
     ac_(ac),

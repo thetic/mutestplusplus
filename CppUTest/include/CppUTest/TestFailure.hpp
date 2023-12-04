@@ -38,7 +38,7 @@
 #include "CppUTest/CppUTestConfig.hpp"
 #include "CppUTest/SimpleString.hpp"
 
-#ifndef CPPUTEST_STD_CPP_LIB_DISABLED
+#if CPPUTEST_HAVE_EXCEPTIONS && !defined(CPPUTEST_STD_CPP_LIB_DISABLED)
     #include <stdexcept>
 #endif
 

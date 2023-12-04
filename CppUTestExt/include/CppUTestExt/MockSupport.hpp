@@ -29,12 +29,12 @@
 #define D_MockSupport_h
 
 #include "CppUTestExt/MockCheckedActualCall.hpp"
-#include "CppUTestExt/MockCheckedExpectedCall.hpp"
 #include "CppUTestExt/MockExpectedCallsList.hpp"
 #include "CppUTestExt/MockFailure.hpp"
 
 class UtestShell;
 class MockSupport;
+class MockExpectedCall;
 
 /* This allows access to "the global" mocking support for easier testing */
 MockSupport& mock(

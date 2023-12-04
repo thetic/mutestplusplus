@@ -1,5 +1,7 @@
 #include "CppUTest/TeamCityTestOutput.hpp"
-#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestFailure.hpp"
+#include "CppUTest/TestResult.hpp"
+#include "CppUTest/Utest.hpp"
 
 TeamCityTestOutput::TeamCityTestOutput() : currtest_(nullptr), currGroup_() {}
 

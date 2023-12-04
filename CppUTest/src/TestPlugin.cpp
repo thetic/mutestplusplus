@@ -26,7 +26,8 @@
  */
 
 #include "CppUTest/TestPlugin.hpp"
-#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/Utest.hpp"
+#include "CppUTest/UtestMacros.hpp"
 
 TestPlugin::TestPlugin(const SimpleString& name) :
     next_(NullTestPlugin::instance()),

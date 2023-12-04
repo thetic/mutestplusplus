@@ -28,7 +28,7 @@
 #ifndef D_SimpleMutex_h
 #define D_SimpleMutex_h
 
-#include "CppUTest/PlatformSpecificFunctions.hpp"
+#include "CppUTest/PlatformSpecificFunctions.h"
 
 class SimpleMutex
 {

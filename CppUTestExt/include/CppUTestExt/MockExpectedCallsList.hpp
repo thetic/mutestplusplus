@@ -29,8 +29,8 @@
 #define D_MockExpectedCallsList_h
 
 #include "CppUTest/SimpleString.hpp"
+#include "CppUTestExt/MockCheckedExpectedCall.hpp"
 
-class MockCheckedExpectedCall;
 class MockNamedValue;
 
 class MockExpectedCallsList

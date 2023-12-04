@@ -25,10 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTestExt/MockExpectedCall.hpp"
 #include "CppUTestExt/MockSupport.h"
 
-#include "CppUTest/CppUTestConfig.hpp"
-#include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/Utest.hpp"
 #include "CppUTest/UtestMacros.hpp"
 #include "CppUTestExt/MockSupport.hpp"

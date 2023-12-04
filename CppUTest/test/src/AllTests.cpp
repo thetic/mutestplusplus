@@ -27,6 +27,7 @@
 
 #include "CppUTest/CommandLineTestRunner.hpp"
 #include "CppUTest/SimpleStringInternalCache.hpp"
+#include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestMemoryAllocator.hpp"
 
 int main(int ac, char** av)

@@ -26,8 +26,9 @@
  */
 
 #include "CppUTest/TestMemoryAllocator.hpp"
-#include "CppUTest/PlatformSpecificFunctions.hpp"
-#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/Utest.hpp"
+#include "CppUTest/UtestMacros.hpp"
 
 static char* checkedMalloc(size_t size)
 {

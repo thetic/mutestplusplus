@@ -30,7 +30,6 @@
 
 #include "CppUTest/SimpleString.hpp"
 #include "CppUTest/TestFilter.hpp"
-#include "CppUTest/TestOutput.hpp"
 
 class TestPlugin;
 

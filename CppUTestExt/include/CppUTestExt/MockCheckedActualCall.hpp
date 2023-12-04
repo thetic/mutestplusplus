@@ -31,6 +31,8 @@
 #include "CppUTestExt/MockActualCall.hpp"
 #include "CppUTestExt/MockExpectedCallsList.hpp"
 
+class UtestShell;
+
 class MockCheckedActualCall : public MockActualCall
 {
 public:

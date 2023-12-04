@@ -25,7 +25,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "CppUTest/SimpleMutex.hpp"
-#include "CppUTest/TestHarness.hpp"
 
 SimpleMutex::SimpleMutex(void)
 {

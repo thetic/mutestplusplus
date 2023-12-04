@@ -26,6 +26,8 @@
  */
 
 #include "MockFailureReporterForTest.hpp"
+#include "CppUTest/Utest.hpp"
+#include "CppUTest/UtestMacros.hpp"
 
 void MockFailureReporterForTest::failTest(const MockFailure& failure)
 {

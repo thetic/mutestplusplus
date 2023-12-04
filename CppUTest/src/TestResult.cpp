@@ -26,9 +26,8 @@
  */
 
 #include "CppUTest/TestResult.hpp"
-#include "CppUTest/PlatformSpecificFunctions.hpp"
+#include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/TestFailure.hpp"
-#include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestOutput.hpp"
 
 TestResult::TestResult(TestOutput& p) :

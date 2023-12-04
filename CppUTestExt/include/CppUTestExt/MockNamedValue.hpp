@@ -28,7 +28,6 @@
 #ifndef D_MockNamedValue_h
 #define D_MockNamedValue_h
 
-#include "CppUTest/CppUTestConfig.hpp"
 #include "CppUTest/SimpleString.hpp"
 
 /*

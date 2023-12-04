@@ -26,7 +26,8 @@
  */
 
 #include "CppUTest/SimpleStringInternalCache.hpp"
-#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/SimpleString.hpp"
+#include "CppUTest/Utest.hpp"
 
 struct SimpleStringMemoryBlock
 {

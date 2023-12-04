@@ -26,7 +26,10 @@
  */
 
 #include "CppUTestExt/IEEE754ExceptionsPlugin.hpp"
-#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestFailure.hpp"
+#include "CppUTest/TestResult.hpp"
+#include "CppUTest/Utest.hpp"
+#include "CppUTest/UtestMacros.hpp"
 
 #if (defined(__STDC_IEC_559__) && __STDC_IEC_559__)
 

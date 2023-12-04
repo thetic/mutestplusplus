@@ -25,12 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTest/UtestMacros.hpp"
 #include "CppUTestExt/MockCheckedActualCall.hpp"
 #include "CppUTestExt/MockCheckedExpectedCall.hpp"
 #include "CppUTestExt/MockFailure.hpp"
 
-#include "CppUTest/PlatformSpecificFunctions.hpp"
-#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/PlatformSpecificFunctions.h"
 
 MockActualCall::MockActualCall() {}
 

@@ -26,7 +26,8 @@
  */
 
 #include "CppUTest/TestTestingFixture.hpp"
-#include "CppUTest/TestHarness.hpp"
+#include "CppUTest/TestResult.hpp"
+#include "CppUTest/UtestMacros.hpp"
 
 bool TestTestingFixture::lineOfCodeExecutedAfterCheck = false;
 

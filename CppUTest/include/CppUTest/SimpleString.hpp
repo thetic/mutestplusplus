@@ -41,8 +41,6 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-#include "CppUTest/CppUTestConfig.hpp"
-
 #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
     #include <cstddef>
     #include <string>

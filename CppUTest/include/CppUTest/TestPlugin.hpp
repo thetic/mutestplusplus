@@ -29,9 +29,7 @@
 #define D_TestPlugin_h
 
 #include "CppUTest/SimpleString.hpp"
-
-class UtestShell;
-class TestResult;
+#include "CppUTest/TestResult.hpp"
 
 class TestPlugin
 {

@@ -26,7 +26,6 @@
  */
 
 #include "CppUTest/TestHarness.h"
-#include "CppUTest/PlatformSpecificFunctions.hpp"
 #include "CppUTest/TestHarness.hpp"
 
 void CHECK_EQUAL_C_BOOL_LOCATION(

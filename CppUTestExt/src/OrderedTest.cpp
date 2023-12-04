@@ -26,7 +26,6 @@
  */
 
 #include "CppUTestExt/OrderedTest.hpp"
-#include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestRegistry.hpp"
 
 OrderedTestShell* OrderedTestShell::_orderedTestsHead = nullptr;

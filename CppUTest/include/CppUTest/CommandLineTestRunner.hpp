@@ -29,8 +29,6 @@
 #define D_CommandLineTestRunner_H
 
 #include "CppUTest/CommandLineArguments.hpp"
-#include "CppUTest/TestFilter.hpp"
-#include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestOutput.hpp"
 
 class TestRegistry;
