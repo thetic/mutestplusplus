@@ -282,7 +282,7 @@ TEST(UtestShell, UnknownExceptionIsRethrownIfEnabled)
     UtestShell::setRethrowExceptions(initialRethrowExceptions);
 }
 
-    #if CPPUTEST_USE_STD_CPP_LIB
+    #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
 static void thrownStandardExceptionMethod_()
 {
     if (shouldThrowException) {
@@ -336,8 +336,8 @@ TEST(UtestShell, StandardExceptionIsRethrownIfEnabled)
     LONGS_EQUAL(0, stopAfterFailure);
     UtestShell::setRethrowExceptions(initialRethrowExceptions);
 }
-    #endif // CPPUTEST_USE_STD_CPP_LIB
-#endif     // CPPUTEST_HAVE_EXCEPTIONS
+    #endif
+#endif
 
 TEST(UtestShell, veryVebose)
 {

@@ -609,7 +609,7 @@ TEST(TestFailure, UnexpectedExceptionFailure_UnknownException)
 }
 #endif
 
-#if CPPUTEST_HAVE_EXCEPTIONS && CPPUTEST_USE_STD_CPP_LIB
+#if CPPUTEST_HAVE_EXCEPTIONS && !defined(CPPUTEST_STD_CPP_LIB_DISABLED)
 TEST(TestFailure, UnexpectedExceptionFailure_StandardException)
 {
     std::runtime_error e("Some error");

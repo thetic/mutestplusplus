@@ -953,7 +953,7 @@ void Utest::run()
     catch (CppUTestFailedException&) {
         PlatformSpecificRestoreJumpBuffer();
     }
-    #if CPPUTEST_USE_STD_CPP_LIB
+    #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
     catch (const std::exception& e) {
         current->addFailure(UnexpectedExceptionFailure(current, e));
         PlatformSpecificRestoreJumpBuffer();
@@ -978,7 +978,7 @@ void Utest::run()
     catch (CppUTestFailedException&) {
         PlatformSpecificRestoreJumpBuffer();
     }
-    #if CPPUTEST_USE_STD_CPP_LIB
+    #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
     catch (const std::exception& e) {
         current->addFailure(UnexpectedExceptionFailure(current, e));
         PlatformSpecificRestoreJumpBuffer();

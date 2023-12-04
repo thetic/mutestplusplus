@@ -28,19 +28,15 @@ if(CPPUTEST_PLATFORM)
     add_subdirectory(platform/${CPPUTEST_PLATFORM})
 endif()
 
-include(CheckCXXSymbolExists)
-check_cxx_symbol_exists(strdup "string.h" CPPUTEST_HAVE_STRDUP)
-
-configure_file(
-    CppUTestGeneratedConfig.h.cmake
-    CppUTest/CppUTestGeneratedConfig.h
+target_compile_definitions(CppUTest
+    PUBLIC
+        $<$<BOOL:${CPPUTEST_STD_CPP_LIB_DISABLED}>:CPPUTEST_STD_CPP_LIB_DISABLED>
 )
 
 #[[Arrange for the include directory to be added to the include paths of any CMake target depending on CppUTest.]]
 target_include_directories(CppUTest
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
@@ -52,11 +48,6 @@ endif()
 
 # Installation
 if(PROJECT_IS_TOP_LEVEL)
-    install(
-        FILES "${CMAKE_CURRENT_BINARY_DIR}/CppUTest/CppUTestGeneratedConfig.h"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/CppUTest"
-    )
-
     install(
         TARGETS CppUTest
         EXPORT CppUTestTargets

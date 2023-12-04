@@ -28,19 +28,6 @@
 #ifndef CPPUTESTCONFIG_H_
 #define CPPUTESTCONFIG_H_
 
-#ifndef CPPUTEST_USE_OWN_CONFIGURATION
-    #include "CppUTest/CppUTestGeneratedConfig.h"
-#endif
-
-/* Do we use Standard C++ or not? */
-#ifndef CPPUTEST_USE_STD_CPP_LIB
-    #ifdef CPPUTEST_STD_CPP_LIB_DISABLED
-        #define CPPUTEST_USE_STD_CPP_LIB 0
-    #else
-        #define CPPUTEST_USE_STD_CPP_LIB 1
-    #endif
-#endif
-
 #ifdef __cplusplus
     /*
      * Detection of run-time type information (RTTI) presence. Since it's a

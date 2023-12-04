@@ -1,7 +1,7 @@
 
 #include "CppUTest/TestHarness.h"
 
-#if CPPUTEST_USE_STD_CPP_LIB
+#ifndef CPPUTEST_STD_CPP_LIB_DISABLED
 
     #include <memory>
 

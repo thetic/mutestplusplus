@@ -38,7 +38,7 @@
 #include "CppUTest/CppUTestConfig.h"
 #include "CppUTest/SimpleString.h"
 
-#if CPPUTEST_USE_STD_CPP_LIB
+#ifndef CPPUTEST_STD_CPP_LIB_DISABLED
     #include <stdexcept>
 #endif
 
@@ -325,7 +325,7 @@ class UnexpectedExceptionFailure : public TestFailure
 {
 public:
     UnexpectedExceptionFailure(UtestShell* test);
-    #if CPPUTEST_USE_STD_CPP_LIB
+    #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
     UnexpectedExceptionFailure(UtestShell* test, const std::exception& e);
     #endif
 };

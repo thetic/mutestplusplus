@@ -32,7 +32,7 @@
 #include "CppUTest/TestOutput.h"
 #include "CppUTest/Utest.h"
 
-#if CPPUTEST_USE_STD_CPP_LIB
+#ifndef CPPUTEST_STD_CPP_LIB_DISABLED
     #include <typeinfo>
     #if defined(__GNUC__)
         #include <cxxabi.h>
@@ -608,7 +608,7 @@ UnexpectedExceptionFailure::UnexpectedExceptionFailure(UtestShell* test) :
 {
 }
 
-    #if CPPUTEST_USE_STD_CPP_LIB
+    #ifndef CPPUTEST_STD_CPP_LIB_DISABLED
         #if CPPUTEST_HAVE_RTTI
 static SimpleString getExceptionTypeName(const std::exception& e)
 {
@@ -645,5 +645,5 @@ UnexpectedExceptionFailure::UnexpectedExceptionFailure(
 {
     (void)e;
 }
-    #endif // CPPUTEST_USE_STD_CPP_LIB
-#endif     // CPPUTEST_HAVE_EXCEPTIONS
+    #endif
+#endif
