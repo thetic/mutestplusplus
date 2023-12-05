@@ -29,6 +29,14 @@
 #include "CppUTest/TestTestingFixture.hpp"
 #include "MockFailureReporterForTest.hpp"
 
+using cpputest::extensions::mock;
+using cpputest::extensions::MockCheckedActualCall;
+using cpputest::extensions::MockExpectedCallsDidntHappenFailure;
+using cpputest::extensions::MockExpectedObjectDidntHappenFailure;
+using cpputest::extensions::MockNamedValue;
+using cpputest::extensions::MockUnexpectedCallHappenedFailure;
+using cpputest::extensions::MockUnexpectedObjectFailure;
+
 TEST_GROUP(MockCallTest)
 {
     void teardown() override
@@ -536,7 +544,7 @@ static void mocksAreCountedAsChecksTestFunction_()
 
 TEST(MockCallTest, mockExpectationShouldIncreaseNumberOfChecks)
 {
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
     fixture.setTestFunction(mocksAreCountedAsChecksTestFunction_);
     fixture.runAllTests();
     LONGS_EQUAL(3, fixture.getCheckCount());

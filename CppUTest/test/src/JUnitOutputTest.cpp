@@ -31,6 +31,8 @@
 #include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestResult.hpp"
 
+using cpputest::SimpleString;
+
 class FileForJUnitOutputTests
 {
     SimpleString name_;
@@ -38,7 +40,7 @@ class FileForJUnitOutputTests
     SimpleString buffer_;
     FileForJUnitOutputTests* next_;
 
-    SimpleStringCollection linesOfFile_;
+    cpputest::SimpleStringCollection linesOfFile_;
 
 public:
     FileForJUnitOutputTests(
@@ -159,17 +161,17 @@ static const char* MockGetPlatformSpecificTimeString()
 
 class JUnitTestOutputTestRunner
 {
-    TestResult result_;
+    cpputest::TestResult result_;
 
     const char* currentGroupName_;
-    UtestShell* currentTest_;
+    cpputest::UtestShell* currentTest_;
     bool firstTestInGroup_;
     int timeTheTestTakes_;
     unsigned int numberOfChecksInTest_;
-    TestFailure* testFailure_;
+    cpputest::TestFailure* testFailure_;
 
 public:
-    explicit JUnitTestOutputTestRunner(const TestResult& result) :
+    explicit JUnitTestOutputTestRunner(const cpputest::TestResult& result) :
         result_(result),
         currentGroupName_(nullptr),
         currentTest_(nullptr),
@@ -236,7 +238,8 @@ public:
         runPreviousTest();
         delete currentTest_;
 
-        currentTest_ = new UtestShell(currentGroupName_, testName, "file", 1);
+        currentTest_ =
+            new cpputest::UtestShell(currentGroupName_, testName, "file", 1);
         return *this;
     }
 
@@ -245,8 +248,9 @@ public:
         runPreviousTest();
         delete currentTest_;
 
-        currentTest_ =
-            new IgnoredUtestShell(currentGroupName_, testName, "file", 1);
+        currentTest_ = new cpputest::IgnoredUtestShell(
+            currentGroupName_, testName, "file", 1
+        );
         return *this;
     }
 
@@ -312,7 +316,8 @@ public:
     JUnitTestOutputTestRunner&
     thatFails(const char* message, const char* file, size_t line)
     {
-        testFailure_ = new TestFailure(currentTest_, file, line, message);
+        testFailure_ =
+            new cpputest::TestFailure(currentTest_, file, line, message);
         return *this;
     }
 
@@ -349,8 +354,8 @@ static void mockFClose(PlatformSpecificFile file)
 
 TEST_GROUP(JUnitOutputTest)
 {
-    JUnitTestOutput* junitOutput;
-    TestResult* result;
+    cpputest::JUnitTestOutput* junitOutput;
+    cpputest::TestResult* result;
     JUnitTestOutputTestRunner* testCaseRunner;
     FileForJUnitOutputTests* outputFile;
 
@@ -359,8 +364,8 @@ TEST_GROUP(JUnitOutputTest)
         UT_PTR_SET(PlatformSpecificFOpen, mockFOpen);
         UT_PTR_SET(PlatformSpecificFPuts, mockFPuts);
         UT_PTR_SET(PlatformSpecificFClose, mockFClose);
-        junitOutput = new JUnitTestOutput();
-        result = new TestResult(*junitOutput);
+        junitOutput = new cpputest::JUnitTestOutput();
+        result = new cpputest::TestResult(*junitOutput);
         testCaseRunner = new JUnitTestOutputTestRunner(*result);
     }
 

@@ -32,6 +32,8 @@
 
 #include <math.h>
 
+using namespace cpputest;
+
 TEST_GROUP(UtestShell)
 {
     TestTestingFixture fixture;

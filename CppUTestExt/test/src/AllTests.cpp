@@ -33,13 +33,14 @@
 int main(int ac, const char* const* av)
 {
     int result = 0;
-    GlobalSimpleStringCache simpleStringCache;
+    cpputest::GlobalSimpleStringCache simpleStringCache;
 
     {
-        MockSupportPlugin mockPlugin;
-        TestRegistry::getCurrentRegistry()->installPlugin(&mockPlugin);
+        cpputest::extensions::MockSupportPlugin mockPlugin;
+        cpputest::TestRegistry::getCurrentRegistry()->installPlugin(&mockPlugin
+        );
 
-        result = CommandLineTestRunner::RunAllTests(ac, av);
+        result = cpputest::CommandLineTestRunner::RunAllTests(ac, av);
     }
 
     return result;

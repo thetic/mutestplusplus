@@ -28,6 +28,8 @@
 #include "CppUTest/TestFilter.hpp"
 #include "CppUTest/TestHarness.hpp"
 
+using cpputest::TestFilter;
+
 TEST_GROUP(TestFilter)
 {
 };
@@ -165,7 +167,7 @@ TEST(TestFilter, listOfFilters)
 TEST(TestFilter, constructors)
 {
     TestFilter filter1;
-    TestFilter filter2(SimpleString("a"));
+    TestFilter filter2(cpputest::SimpleString("a"));
     TestFilter filter3("a");
     CHECK(filter1.getNext() == nullptr);
     CHECK(filter2.getNext() == nullptr);

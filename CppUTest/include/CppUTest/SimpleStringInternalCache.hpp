@@ -30,101 +30,108 @@
 
 #include "CppUTest/TestMemoryAllocator.hpp"
 
-struct SimpleStringMemoryBlock;
-struct SimpleStringInternalCacheNode;
-
-class SimpleStringInternalCache
+namespace cpputest
 {
-public:
-    SimpleStringInternalCache();
-    ~SimpleStringInternalCache();
+    struct SimpleStringMemoryBlock;
+    struct SimpleStringInternalCacheNode;
 
-    void setAllocator(TestMemoryAllocator* allocator);
-
-    char* alloc(size_t size);
-    void dealloc(char* memory, size_t size);
-
-    bool hasFreeBlocksOfSize(size_t size);
-
-    void clearCache();
-    void clearAllIncludingCurrentlyUsedMemory();
-
-private:
-    void printDeallocatingUnknownMemory(char* memory);
-
-    enum
+    class SimpleStringInternalCache
     {
-        amountOfInternalCacheNodes = 5
+    public:
+        SimpleStringInternalCache();
+        ~SimpleStringInternalCache();
+
+        void setAllocator(TestMemoryAllocator* allocator);
+
+        char* alloc(size_t size);
+        void dealloc(char* memory, size_t size);
+
+        bool hasFreeBlocksOfSize(size_t size);
+
+        void clearCache();
+        void clearAllIncludingCurrentlyUsedMemory();
+
+    private:
+        void printDeallocatingUnknownMemory(char* memory);
+
+        enum
+        {
+            amountOfInternalCacheNodes = 5
+        };
+        bool isCached(size_t size);
+        size_t getIndexForCache(size_t size);
+        SimpleStringInternalCacheNode* getCacheNodeFromSize(size_t size);
+
+        SimpleStringInternalCacheNode* createInternalCacheNodes();
+        void destroyInternalCacheNode(SimpleStringInternalCacheNode* node);
+        SimpleStringMemoryBlock* createSimpleStringMemoryBlock(
+            size_t sizeOfString, SimpleStringMemoryBlock* next
+        );
+        void destroySimpleStringMemoryBlock(
+            SimpleStringMemoryBlock* block, size_t size
+        );
+        void destroySimpleStringMemoryBlockList(
+            SimpleStringMemoryBlock* block, size_t size
+        );
+
+        SimpleStringMemoryBlock*
+        reserveCachedBlockFrom(SimpleStringInternalCacheNode* node);
+        void releaseCachedBlockFrom(
+            char* memory, SimpleStringInternalCacheNode* node
+        );
+        void releaseNonCachedMemory(char* memory, size_t size);
+
+        SimpleStringMemoryBlock*
+        allocateNewCacheBlockFrom(SimpleStringInternalCacheNode* node);
+        SimpleStringMemoryBlock* addToSimpleStringMemoryBlockList(
+            SimpleStringMemoryBlock* newBlock,
+            SimpleStringMemoryBlock* previousHead
+        );
+
+        TestMemoryAllocator* allocator_;
+        SimpleStringInternalCacheNode* cache_;
+        SimpleStringMemoryBlock* nonCachedAllocations_;
+        bool hasWarnedAboutDeallocations;
     };
-    bool isCached(size_t size);
-    size_t getIndexForCache(size_t size);
-    SimpleStringInternalCacheNode* getCacheNodeFromSize(size_t size);
 
-    SimpleStringInternalCacheNode* createInternalCacheNodes();
-    void destroyInternalCacheNode(SimpleStringInternalCacheNode* node);
-    SimpleStringMemoryBlock* createSimpleStringMemoryBlock(
-        size_t sizeOfString, SimpleStringMemoryBlock* next
-    );
-    void
-    destroySimpleStringMemoryBlock(SimpleStringMemoryBlock* block, size_t size);
-    void destroySimpleStringMemoryBlockList(
-        SimpleStringMemoryBlock* block, size_t size
-    );
+    class SimpleStringCacheAllocator : public TestMemoryAllocator
+    {
+    public:
+        SimpleStringCacheAllocator(
+            SimpleStringInternalCache& cache,
+            TestMemoryAllocator* previousAllocator
+        );
+        virtual ~SimpleStringCacheAllocator() override;
 
-    SimpleStringMemoryBlock*
-    reserveCachedBlockFrom(SimpleStringInternalCacheNode* node);
-    void
-    releaseCachedBlockFrom(char* memory, SimpleStringInternalCacheNode* node);
-    void releaseNonCachedMemory(char* memory, size_t size);
+        virtual char*
+        alloc_memory(size_t size, const char* file, size_t line) override;
+        virtual void free_memory(
+            char* memory, size_t size, const char* file, size_t line
+        ) override;
 
-    SimpleStringMemoryBlock*
-    allocateNewCacheBlockFrom(SimpleStringInternalCacheNode* node);
-    SimpleStringMemoryBlock* addToSimpleStringMemoryBlockList(
-        SimpleStringMemoryBlock* newBlock, SimpleStringMemoryBlock* previousHead
-    );
+        virtual const char* name() const override;
+        virtual const char* alloc_name() const override;
+        virtual const char* free_name() const override;
 
-    TestMemoryAllocator* allocator_;
-    SimpleStringInternalCacheNode* cache_;
-    SimpleStringMemoryBlock* nonCachedAllocations_;
-    bool hasWarnedAboutDeallocations;
-};
+        virtual TestMemoryAllocator* actualAllocator() override;
+        TestMemoryAllocator* originalAllocator();
 
-class SimpleStringCacheAllocator : public TestMemoryAllocator
-{
-public:
-    SimpleStringCacheAllocator(
-        SimpleStringInternalCache& cache, TestMemoryAllocator* previousAllocator
-    );
-    virtual ~SimpleStringCacheAllocator() override;
+    private:
+        SimpleStringInternalCache& cache_;
+        TestMemoryAllocator* originalAllocator_;
+    };
 
-    virtual char*
-    alloc_memory(size_t size, const char* file, size_t line) override;
-    virtual void free_memory(
-        char* memory, size_t size, const char* file, size_t line
-    ) override;
+    class GlobalSimpleStringCache
+    {
+        SimpleStringCacheAllocator* allocator_;
+        SimpleStringInternalCache cache_;
 
-    virtual const char* name() const override;
-    virtual const char* alloc_name() const override;
-    virtual const char* free_name() const override;
+    public:
+        GlobalSimpleStringCache();
+        ~GlobalSimpleStringCache();
 
-    virtual TestMemoryAllocator* actualAllocator() override;
-    TestMemoryAllocator* originalAllocator();
-
-private:
-    SimpleStringInternalCache& cache_;
-    TestMemoryAllocator* originalAllocator_;
-};
-
-class GlobalSimpleStringCache
-{
-    SimpleStringCacheAllocator* allocator_;
-    SimpleStringInternalCache cache_;
-
-public:
-    GlobalSimpleStringCache();
-    ~GlobalSimpleStringCache();
-
-    TestMemoryAllocator* getAllocator();
-};
+        TestMemoryAllocator* getAllocator();
+    };
+}
 
 #endif

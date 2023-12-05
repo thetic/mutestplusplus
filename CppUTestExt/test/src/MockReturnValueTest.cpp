@@ -28,6 +28,9 @@
 #include "CppUTest/TestHarness.hpp"
 #include "MockFailureReporterForTest.hpp"
 
+using cpputest::extensions::mock;
+using cpputest::extensions::MockActualCall;
+
 TEST_GROUP(MockReturnValueTest)
 {
     void teardown() override

@@ -35,9 +35,11 @@
 
     #include "IEEE754PluginTest.h"
 
+using cpputest::extensions::IEEE754ExceptionsPlugin;
+
 TEST_GROUP(FE_with_Plugin)
 {
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
     IEEE754ExceptionsPlugin ieee754Plugin;
     void setup(void) override
     {
@@ -132,7 +134,7 @@ TEST_GROUP(IEEE754ExceptionsPlugin2)
 {
     void setup(void) override
     {
-        TestRegistry::getCurrentRegistry()->installPlugin(&ip);
+        cpputest::TestRegistry::getCurrentRegistry()->installPlugin(&ip);
     }
 };
 

@@ -25,18 +25,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTestExt/MockExpectedCall.hpp"
 #include "CppUTestExt/MockSupport.h"
 
-#include "CppUTest/CppUTestConfig.hpp"
-#include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/Utest.hpp"
 #include "CppUTest/UtestMacros.hpp"
 #include "CppUTestExt/MockSupport.hpp"
 
+using namespace cpputest::extensions;
+
 typedef void (*cpputest_cpp_function_pointer)(
 ); /* Cl2000 requires cast to C++ function */
 
-class MockFailureReporterTestTerminatorForInCOnlyCode : public TestTerminator
+class MockFailureReporterTestTerminatorForInCOnlyCode
+    : public cpputest::TestTerminator
 {
 public:
     MockFailureReporterTestTerminatorForInCOnlyCode(bool crashOnFailure) :
@@ -49,8 +51,8 @@ public:
         if (crashOnFailure_)
             UT_CRASH();
 
-        UtestShell::getCurrentTestTerminatorWithoutExceptions().exitCurrentTest(
-        );
+        cpputest::UtestShell::getCurrentTestTerminatorWithoutExceptions()
+            .exitCurrentTest();
     } // LCOV_EXCL_LINE
     // LCOV_EXCL_START
     virtual ~MockFailureReporterTestTerminatorForInCOnlyCode() override {}
@@ -96,9 +98,9 @@ public:
     {
         return equal_(object1, object2) != 0;
     }
-    virtual SimpleString valueToString(const void* object) override
+    virtual cpputest::SimpleString valueToString(const void* object) override
     {
-        return SimpleString(toString_(object));
+        return cpputest::SimpleString(toString_(object));
     }
 
     MockCFunctionComparatorNode* next_;
@@ -644,56 +646,57 @@ MockExpectedCall_c* andReturnFunctionPointerValue_c(void (*value)())
 static MockValue_c getMockValueCFromNamedValue(const MockNamedValue& namedValue)
 {
     MockValue_c returnValue;
-    if (SimpleString::StrCmp(namedValue.getType().asCharString(), "bool") ==
-        0) {
+    if (cpputest::SimpleString::StrCmp(
+            namedValue.getType().asCharString(), "bool"
+        ) == 0) {
         returnValue.type = MOCKVALUETYPE_BOOL;
         returnValue.value.boolValue = namedValue.getBoolValue() ? 1 : 0;
-    } else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "int") == 0) {
+    } else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "int") == 0) {
         returnValue.type = MOCKVALUETYPE_INTEGER;
         returnValue.value.intValue = namedValue.getIntValue();
     }
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "unsigned int") == 0) {
+            else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "unsigned int") == 0) {
         returnValue.type = MOCKVALUETYPE_UNSIGNED_INTEGER;
         returnValue.value.unsignedIntValue = namedValue.getUnsignedIntValue();
     }
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "long int") == 0) {
+            else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "long int") == 0) {
         returnValue.type = MOCKVALUETYPE_LONG_INTEGER;
         returnValue.value.longIntValue = namedValue.getLongIntValue();
     }
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "unsigned long int") == 0) {
+            else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "unsigned long int") == 0) {
         returnValue.type = MOCKVALUETYPE_UNSIGNED_LONG_INTEGER;
         returnValue.value.unsignedLongIntValue =
             namedValue.getUnsignedLongIntValue();
     }
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "long long int") == 0) {
+            else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "long long int") == 0) {
         returnValue.type = MOCKVALUETYPE_LONG_LONG_INTEGER;
         returnValue.value.longLongIntValue = namedValue.getLongLongIntValue();
     }
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "unsigned long long int") == 0) {
+            else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "unsigned long long int") == 0) {
         returnValue.type = MOCKVALUETYPE_UNSIGNED_LONG_LONG_INTEGER;
         returnValue.value.unsignedLongLongIntValue =
             namedValue.getUnsignedLongLongIntValue();
-    } else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "double") == 0) {
+    } else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "double") == 0) {
         returnValue.type = MOCKVALUETYPE_DOUBLE;
         returnValue.value.doubleValue = namedValue.getDoubleValue();
     }
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "const char*") == 0) {
+            else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "const char*") == 0) {
         returnValue.type = MOCKVALUETYPE_STRING;
         returnValue.value.stringValue = namedValue.getStringValue();
-    } else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "void*") == 0) {
+    } else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "void*") == 0) {
         returnValue.type = MOCKVALUETYPE_POINTER;
         returnValue.value.pointerValue = namedValue.getPointerValue();
     }
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "const void*") == 0) {
+            else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "const void*") == 0) {
         returnValue.type = MOCKVALUETYPE_CONST_POINTER;
         returnValue.value.constPointerValue = namedValue.getConstPointerValue();
     }
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "void (*)()") == 0) {
+            else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "void (*)()") == 0) {
         returnValue.type = MOCKVALUETYPE_FUNCTIONPOINTER;
         returnValue.value.functionPointerValue =
             reinterpret_cast<void (*)()>(namedValue.getFunctionPointerValue());
     }
-    else if (SimpleString::StrCmp(namedValue.getType().asCharString(), "const unsigned char*") == 0) {
+            else if (cpputest::SimpleString::StrCmp(namedValue.getType().asCharString(), "const unsigned char*") == 0) {
         returnValue.type = MOCKVALUETYPE_MEMORYBUFFER;
         returnValue.value.memoryBufferValue = namedValue.getMemoryBuffer();
     } else {

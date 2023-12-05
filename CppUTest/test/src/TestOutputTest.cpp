@@ -30,6 +30,8 @@
 #include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestResult.hpp"
 
+using namespace cpputest;
+
 static long millisTime;
 
 static long MockGetPlatformSpecificTimeInMillis()
@@ -49,6 +51,7 @@ TEST_GROUP(TestOutput)
 
     void setup() override
     {
+        using namespace cpputest;
         mock = new StringBufferTestOutput();
         printer = mock;
         tst = new UtestShell("group", "test", "file", 10);
@@ -65,6 +68,7 @@ TEST_GROUP(TestOutput)
     }
     void teardown() override
     {
+        using cpputest::TestOutput;
         TestOutput::setWorkingEnvironment(TestOutput::detectEnvironment);
         delete printer;
         delete tst;
@@ -310,7 +314,7 @@ TEST(TestOutput, printTestsEndedWithNoTestsRunOrIgnored)
 }
 
 class CompositeTestOutputTestStringBufferTestOutput
-    : public StringBufferTestOutput
+    : public cpputest::StringBufferTestOutput
 {
 public:
     virtual void printTestsStarted() override
@@ -318,28 +322,28 @@ public:
         output += "Test Start\n";
     }
 
-    virtual void printTestsEnded(const TestResult& result) override
+    virtual void printTestsEnded(const cpputest::TestResult& result) override
     {
-        output += StringFromFormat(
+        output += cpputest::StringFromFormat(
             "Test End %d\n", static_cast<int>(result.getTestCount())
         );
     }
 
-    void printCurrentGroupStarted(const UtestShell& test) override
+    void printCurrentGroupStarted(const cpputest::UtestShell& test) override
     {
-        output += StringFromFormat(
+        output += cpputest::StringFromFormat(
             "Group %s Start\n", test.getGroup().asCharString()
         );
     }
 
-    void printCurrentGroupEnded(const TestResult& res) override
+    void printCurrentGroupEnded(const cpputest::TestResult& res) override
     {
-        output += StringFromFormat(
+        output += cpputest::StringFromFormat(
             "Group End %d\n", static_cast<int>(res.getTestCount())
         );
     }
 
-    virtual void printCurrentTestStarted(const UtestShell&) override
+    virtual void printCurrentTestStarted(const cpputest::UtestShell&) override
     {
         output += "s";
     }
@@ -369,9 +373,9 @@ TEST_GROUP(CompositeTestOutput)
 {
     CompositeTestOutputTestStringBufferTestOutput* output1;
     CompositeTestOutputTestStringBufferTestOutput* output2;
-    CompositeTestOutput compositeOutput;
-    TestResult* result;
-    UtestShell* test;
+    cpputest::CompositeTestOutput compositeOutput;
+    cpputest::TestResult* result;
+    cpputest::UtestShell* test;
 
     void setup() override
     {
@@ -379,8 +383,8 @@ TEST_GROUP(CompositeTestOutput)
         output2 = new CompositeTestOutputTestStringBufferTestOutput;
         compositeOutput.setOutputOne(output1);
         compositeOutput.setOutputTwo(output2);
-        result = new TestResult(compositeOutput);
-        test = new UtestShell("Group", "Name", "file", 10);
+        result = new cpputest::TestResult(compositeOutput);
+        test = new cpputest::UtestShell("Group", "Name", "file", 10);
     }
 
     void teardown() override
@@ -478,7 +482,7 @@ TEST(CompositeTestOutput, PrintTestFailure)
     TestOutput::WorkingEnvironment previousEnvironment =
         TestOutput::getWorkingEnvironment();
     TestOutput::setWorkingEnvironment(TestOutput::eclipse);
-    TestFailure failure(test, "file", 10, "failed");
+    cpputest::TestFailure failure(test, "file", 10, "failed");
     compositeOutput.printFailure(failure);
     STRCMP_EQUAL(
         "\nfile:10: error: Failure in TEST(Group, Name)\n\tfailed\n\n",
@@ -514,8 +518,8 @@ TEST(CompositeTestOutput, flush)
 
 TEST(CompositeTestOutput, deletePreviousInstanceWhenSettingNew)
 {
-    compositeOutput.setOutputOne(new CompositeTestOutput);
-    compositeOutput.setOutputTwo(new CompositeTestOutput);
+    compositeOutput.setOutputOne(new cpputest::CompositeTestOutput);
+    compositeOutput.setOutputTwo(new cpputest::CompositeTestOutput);
 
     // CHECK NO MEMORY LEAKS
 }

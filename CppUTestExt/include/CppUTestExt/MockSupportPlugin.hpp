@@ -31,25 +31,32 @@
 #include "CppUTest/TestPlugin.hpp"
 #include "CppUTestExt/MockNamedValue.hpp"
 
-class MockSupportPlugin : public TestPlugin
+namespace cpputest
 {
-public:
-    MockSupportPlugin(const SimpleString& name = "MockSupportPLugin");
-    virtual ~MockSupportPlugin() override;
+    namespace extensions
+    {
+        class MockSupportPlugin : public TestPlugin
+        {
+        public:
+            MockSupportPlugin(const SimpleString& name = "MockSupportPLugin");
+            virtual ~MockSupportPlugin() override;
 
-    virtual void preTestAction(UtestShell&, TestResult&) override;
-    virtual void postTestAction(UtestShell&, TestResult&) override;
+            virtual void preTestAction(UtestShell&, TestResult&) override;
+            virtual void postTestAction(UtestShell&, TestResult&) override;
 
-    virtual void installComparator(
-        const SimpleString& name, MockNamedValueComparator& comparator
-    );
-    virtual void
-    installCopier(const SimpleString& name, MockNamedValueCopier& copier);
+            virtual void installComparator(
+                const SimpleString& name, MockNamedValueComparator& comparator
+            );
+            virtual void installCopier(
+                const SimpleString& name, MockNamedValueCopier& copier
+            );
 
-    void clear();
+            void clear();
 
-private:
-    MockNamedValueComparatorsAndCopiersRepository repository_;
-};
+        private:
+            MockNamedValueComparatorsAndCopiersRepository repository_;
+        };
+    }
+}
 
 #endif

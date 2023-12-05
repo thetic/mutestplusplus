@@ -29,11 +29,11 @@
 #include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestTestingFixture.hpp"
 
-class TestFunctionWithCache : public ExecFunction
+class TestFunctionWithCache : public cpputest::ExecFunction
 {
 public:
-    void (*testFunction)(SimpleStringInternalCache*, size_t);
-    SimpleStringInternalCache* parameter;
+    void (*testFunction)(cpputest::SimpleStringInternalCache*, size_t);
+    cpputest::SimpleStringInternalCache* parameter;
     size_t allocationSize;
 
     void exec() override
@@ -44,12 +44,12 @@ public:
 
 TEST_GROUP(SimpleStringInternalCache)
 {
-    SimpleStringInternalCache cache;
-    MemoryAccountant accountant;
-    AccountingTestMemoryAllocator* allocator;
+    cpputest::SimpleStringInternalCache cache;
+    cpputest::MemoryAccountant accountant;
+    cpputest::AccountingTestMemoryAllocator* allocator;
 
     TestFunctionWithCache testFunction;
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
 
     void setup() override
     {
@@ -249,10 +249,10 @@ TEST(
 }
 
 static void deallocatingStringMemoryThatWasntAllocatedWithCache_(
-    SimpleStringInternalCache* cache, size_t allocationSize
+    cpputest::SimpleStringInternalCache* cache, size_t allocationSize
 )
 {
-    char* mem = defaultMallocAllocator()->alloc_memory(
+    char* mem = cpputest::defaultMallocAllocator()->alloc_memory(
         allocationSize, __FILE__, __LINE__
     );
     mem[0] = 'B';
@@ -260,7 +260,7 @@ static void deallocatingStringMemoryThatWasntAllocatedWithCache_(
     mem[2] = 's';
     mem[3] = '\0';
     cache->dealloc(mem, allocationSize);
-    defaultMallocAllocator()->free_memory(
+    cpputest::defaultMallocAllocator()->free_memory(
         mem, allocationSize, __FILE__, __LINE__
     );
 }
@@ -287,16 +287,16 @@ TEST(
 }
 
 static void deallocatingStringMemoryTwiceThatWasntAllocatedWithCache_(
-    SimpleStringInternalCache* cache, size_t allocationSize
+    cpputest::SimpleStringInternalCache* cache, size_t allocationSize
 )
 {
-    char* mem = defaultMallocAllocator()->alloc_memory(
+    char* mem = cpputest::defaultMallocAllocator()->alloc_memory(
         allocationSize, __FILE__, __LINE__
     );
     mem[0] = '\0';
     cache->dealloc(mem, allocationSize);
     cache->dealloc(mem, allocationSize);
-    defaultMallocAllocator()->free_memory(
+    cpputest::defaultMallocAllocator()->free_memory(
         mem, allocationSize, __FILE__, __LINE__
     );
 }
@@ -354,17 +354,19 @@ TEST(
 
 TEST_GROUP(SimpleStringCacheAllocator)
 {
-    SimpleStringCacheAllocator* allocator;
-    SimpleStringInternalCache cache;
-    MemoryAccountant accountant;
-    AccountingTestMemoryAllocator* accountingAllocator;
+    cpputest::SimpleStringCacheAllocator* allocator;
+    cpputest::SimpleStringInternalCache cache;
+    cpputest::MemoryAccountant accountant;
+    cpputest::AccountingTestMemoryAllocator* accountingAllocator;
 
     void setup() override
     {
-        accountingAllocator = new AccountingTestMemoryAllocator(
-            accountant, defaultMallocAllocator()
+        accountingAllocator = new cpputest::AccountingTestMemoryAllocator(
+            accountant, cpputest::defaultMallocAllocator()
         );
-        allocator = new SimpleStringCacheAllocator(cache, accountingAllocator);
+        allocator = new cpputest::SimpleStringCacheAllocator(
+            cache, accountingAllocator
+        );
     }
 
     void teardown() override
@@ -392,11 +394,16 @@ TEST(SimpleStringCacheAllocator, allocationIsCached)
 
 TEST(SimpleStringCacheAllocator, originalAllocator)
 {
-    POINTERS_EQUAL(defaultMallocAllocator(), allocator->actualAllocator());
-    STRCMP_EQUAL(
-        defaultMallocAllocator()->alloc_name(), allocator->alloc_name()
+    POINTERS_EQUAL(
+        cpputest::defaultMallocAllocator(), allocator->actualAllocator()
     );
-    STRCMP_EQUAL(defaultMallocAllocator()->free_name(), allocator->free_name());
+    STRCMP_EQUAL(
+        cpputest::defaultMallocAllocator()->alloc_name(),
+        allocator->alloc_name()
+    );
+    STRCMP_EQUAL(
+        cpputest::defaultMallocAllocator()->free_name(), allocator->free_name()
+    );
 }
 
 TEST(SimpleStringCacheAllocator, name)
@@ -410,17 +417,19 @@ TEST_GROUP(GlobalSimpleStringCache)
 
 TEST(GlobalSimpleStringCache, installsAndRemovedCache)
 {
-    TestMemoryAllocator* originalStringAllocator =
-        SimpleString::getStringAllocator();
+    cpputest::TestMemoryAllocator* originalStringAllocator =
+        cpputest::SimpleString::getStringAllocator();
     {
-        GlobalSimpleStringCache cache;
+        cpputest::GlobalSimpleStringCache cache;
         STRCMP_EQUAL(
             "SimpleStringCacheAllocator",
-            SimpleString::getStringAllocator()->name()
+            cpputest::SimpleString::getStringAllocator()->name()
         );
         POINTERS_EQUAL(
-            cache.getAllocator(), SimpleString::getStringAllocator()
+            cache.getAllocator(), cpputest::SimpleString::getStringAllocator()
         );
     }
-    POINTERS_EQUAL(originalStringAllocator, SimpleString::getStringAllocator());
+    POINTERS_EQUAL(
+        originalStringAllocator, cpputest::SimpleString::getStringAllocator()
+    );
 }

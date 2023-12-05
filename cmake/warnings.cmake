@@ -22,6 +22,7 @@ if(
     )
 
     set(WARNING_C_FLAGS
+        -Wmissing-prototypes
         -Wstrict-prototypes
     )
 

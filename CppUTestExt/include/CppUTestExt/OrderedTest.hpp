@@ -30,48 +30,54 @@
 
 #include "CppUTest/Utest.hpp"
 
-class OrderedTestShell : public UtestShell
+namespace cpputest
 {
-public:
-    OrderedTestShell();
-    virtual ~OrderedTestShell() override;
+    namespace extensions
+    {
+        class OrderedTestShell : public UtestShell
+        {
+        public:
+            OrderedTestShell();
+            virtual ~OrderedTestShell() override;
 
-    virtual OrderedTestShell* addOrderedTest(OrderedTestShell* test);
-    virtual OrderedTestShell* getNextOrderedTest();
+            virtual OrderedTestShell* addOrderedTest(OrderedTestShell* test);
+            virtual OrderedTestShell* getNextOrderedTest();
 
-    int getLevel();
-    void setLevel(int level);
+            int getLevel();
+            void setLevel(int level);
 
-    static void addOrderedTestToHead(OrderedTestShell* test);
-    static OrderedTestShell* getOrderedTestHead();
-    static bool firstOrderedTest();
+            static void addOrderedTestToHead(OrderedTestShell* test);
+            static OrderedTestShell* getOrderedTestHead();
+            static bool firstOrderedTest();
 
-    static void setOrderedTestHead(OrderedTestShell* test);
+            static void setOrderedTestHead(OrderedTestShell* test);
 
-private:
-    static OrderedTestShell* _orderedTestsHead;
-    OrderedTestShell* _nextOrderedTest;
+        private:
+            static OrderedTestShell* _orderedTestsHead;
+            OrderedTestShell* _nextOrderedTest;
 
-    int _level;
-};
+            int _level;
+        };
 
-class OrderedTestInstaller
-{
-public:
-    explicit OrderedTestInstaller(
-        OrderedTestShell& test,
-        const char* groupName,
-        const char* testName,
-        const char* fileName,
-        size_t lineNumber,
-        int level
-    );
-    virtual ~OrderedTestInstaller();
+        class OrderedTestInstaller
+        {
+        public:
+            explicit OrderedTestInstaller(
+                OrderedTestShell& test,
+                const char* groupName,
+                const char* testName,
+                const char* fileName,
+                size_t lineNumber,
+                int level
+            );
+            virtual ~OrderedTestInstaller();
 
-private:
-    void addOrderedTestInOrder(OrderedTestShell* test);
-    void addOrderedTestInOrderNotAtHeadPosition(OrderedTestShell* test);
-};
+        private:
+            void addOrderedTestInOrder(OrderedTestShell* test);
+            void addOrderedTestInOrderNotAtHeadPosition(OrderedTestShell* test);
+        };
+    }
+}
 
 #define TEST_ORDERED(testGroup, testName, testLevel)                           \
     /* declarations for compilers */                                           \
@@ -88,17 +94,19 @@ private:
         }                                                                      \
         void testBody() override;                                              \
     };                                                                         \
-    class TEST_##testGroup##_##testName##_TestShell : public OrderedTestShell  \
+    class TEST_##testGroup##_##testName##_TestShell                            \
+        : public cpputest::extensions::OrderedTestShell                        \
     {                                                                          \
-        virtual Utest* createTest() override                                   \
+        virtual cpputest::Utest* createTest() override                         \
         {                                                                      \
             return new TEST_##testGroup##_##testName##_Test;                   \
         }                                                                      \
     } TEST_##testGroup##_##testName##_Instance;                                \
-    static OrderedTestInstaller TEST_##testGroup##_##testName##_Installer(     \
-        TEST_##testGroup##_##testName##_Instance, #testGroup, #testName,       \
-        __FILE__, __LINE__, testLevel                                          \
-    );                                                                         \
+    static cpputest::extensions::OrderedTestInstaller                          \
+        TEST_##testGroup##_##testName##_Installer(                             \
+            TEST_##testGroup##_##testName##_Instance, #testGroup, #testName,   \
+            __FILE__, __LINE__, testLevel                                      \
+        );                                                                     \
     void TEST_##testGroup##_##testName##_Test::testBody()
 
 #define TEST_ORDERED_C_WRAPPER(group_name, test_name, testLevel)               \

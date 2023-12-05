@@ -29,6 +29,12 @@
 #include "CppUTest/TestHarness.hpp"
 #include "MockFailureReporterForTest.hpp"
 
+using cpputest::extensions::mock;
+using cpputest::extensions::MockExpectedCallsDidntHappenFailure;
+using cpputest::extensions::MockExpectedParameterDidntHappenFailure;
+using cpputest::extensions::MockNamedValue;
+using cpputest::extensions::MockUnexpectedInputParameterFailure;
+
 TEST_GROUP(MockParameterTest)
 {
     void teardown() override
@@ -684,7 +690,8 @@ TEST(MockParameterTest, ignoreOtherParametersMultipleCallsButOneDidntHappen)
     MockFailureReporterInstaller failureReporterInstaller;
 
     MockExpectedCallsListForTest expectations;
-    MockCheckedExpectedCall* call = expectations.addFunction("boo");
+    cpputest::extensions::MockCheckedExpectedCall* call =
+        expectations.addFunction("boo");
     call->ignoreOtherParameters();
     call->callWasMade(1);
     call->finalizeActualCallMatch();
@@ -796,7 +803,7 @@ TEST(MockParameterTest, unexpectedOutputParameter)
     expectations.addFunction("foo");
     MockNamedValue parameter("parameterName");
     parameter.setValue(&param);
-    MockUnexpectedOutputParameterFailure expectedFailure(
+    cpputest::extensions::MockUnexpectedOutputParameterFailure expectedFailure(
         mockFailureTest(), "foo", parameter, expectations
     );
 

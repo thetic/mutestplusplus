@@ -26,113 +26,125 @@
  */
 
 #include "CppUTestExt/OrderedTest.hpp"
-#include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestRegistry.hpp"
 
-OrderedTestShell* OrderedTestShell::_orderedTestsHead = nullptr;
-
-OrderedTestShell::OrderedTestShell() : _nextOrderedTest(nullptr), _level(0) {}
-
-OrderedTestShell::~OrderedTestShell() {}
-
-int OrderedTestShell::getLevel()
+namespace cpputest
 {
-    return _level;
-}
+    namespace extensions
+    {
+        OrderedTestShell* OrderedTestShell::_orderedTestsHead = nullptr;
 
-void OrderedTestShell::setLevel(int level)
-{
-    _level = level;
-}
+        OrderedTestShell::OrderedTestShell() :
+            _nextOrderedTest(nullptr),
+            _level(0)
+        {
+        }
 
-void OrderedTestShell::setOrderedTestHead(OrderedTestShell* test)
-{
-    _orderedTestsHead = test;
-}
+        OrderedTestShell::~OrderedTestShell() {}
 
-OrderedTestShell* OrderedTestShell::getOrderedTestHead()
-{
-    return _orderedTestsHead;
-}
+        int OrderedTestShell::getLevel()
+        {
+            return _level;
+        }
 
-bool OrderedTestShell::firstOrderedTest()
-{
-    return (getOrderedTestHead() == nullptr);
-}
+        void OrderedTestShell::setLevel(int level)
+        {
+            _level = level;
+        }
 
-OrderedTestShell* OrderedTestShell::addOrderedTest(OrderedTestShell* test)
-{
-    UtestShell::addTest(test);
-    _nextOrderedTest = test;
-    return this;
-}
+        void OrderedTestShell::setOrderedTestHead(OrderedTestShell* test)
+        {
+            _orderedTestsHead = test;
+        }
 
-void OrderedTestShell::addOrderedTestToHead(OrderedTestShell* test)
-{
-    TestRegistry* reg = TestRegistry::getCurrentRegistry();
-    UtestShell* head = getOrderedTestHead();
+        OrderedTestShell* OrderedTestShell::getOrderedTestHead()
+        {
+            return _orderedTestsHead;
+        }
 
-    if (nullptr == reg->getFirstTest() || head == reg->getFirstTest()) {
-        reg->addTest(test);
-    } else {
-        reg->getTestWithNext(head)->addTest(test);
-        test->addTest(head);
-    }
+        bool OrderedTestShell::firstOrderedTest()
+        {
+            return (getOrderedTestHead() == nullptr);
+        }
 
-    test->_nextOrderedTest = getOrderedTestHead();
-    setOrderedTestHead(test);
-}
+        OrderedTestShell*
+        OrderedTestShell::addOrderedTest(OrderedTestShell* test)
+        {
+            UtestShell::addTest(test);
+            _nextOrderedTest = test;
+            return this;
+        }
 
-OrderedTestShell* OrderedTestShell::getNextOrderedTest()
-{
-    return _nextOrderedTest;
-}
+        void OrderedTestShell::addOrderedTestToHead(OrderedTestShell* test)
+        {
+            TestRegistry* reg = TestRegistry::getCurrentRegistry();
+            UtestShell* head = getOrderedTestHead();
 
-OrderedTestInstaller::OrderedTestInstaller(
-    OrderedTestShell& test,
-    const char* groupName,
-    const char* testName,
-    const char* fileName,
-    size_t lineNumber,
-    int level
-)
-{
-    test.setTestName(testName);
-    test.setGroupName(groupName);
-    test.setFileName(fileName);
-    test.setLineNumber(lineNumber);
-    test.setLevel(level);
+            if (nullptr == reg->getFirstTest() || head == reg->getFirstTest()) {
+                reg->addTest(test);
+            } else {
+                reg->getTestWithNext(head)->addTest(test);
+                test->addTest(head);
+            }
 
-    if (OrderedTestShell::firstOrderedTest())
-        OrderedTestShell::addOrderedTestToHead(&test);
-    else
-        addOrderedTestInOrder(&test);
-}
+            test->_nextOrderedTest = getOrderedTestHead();
+            setOrderedTestHead(test);
+        }
 
-void OrderedTestInstaller::addOrderedTestInOrder(OrderedTestShell* test)
-{
-    if (test->getLevel() < OrderedTestShell::getOrderedTestHead()->getLevel())
-        OrderedTestShell::addOrderedTestToHead(test);
-    else
-        addOrderedTestInOrderNotAtHeadPosition(test);
-}
+        OrderedTestShell* OrderedTestShell::getNextOrderedTest()
+        {
+            return _nextOrderedTest;
+        }
 
-void OrderedTestInstaller::addOrderedTestInOrderNotAtHeadPosition(
-    OrderedTestShell* test
-)
-{
-    OrderedTestShell* current = OrderedTestShell::getOrderedTestHead();
-    while (current->getNextOrderedTest()) {
+        OrderedTestInstaller::OrderedTestInstaller(
+            OrderedTestShell& test,
+            const char* groupName,
+            const char* testName,
+            const char* fileName,
+            size_t lineNumber,
+            int level
+        )
+        {
+            test.setTestName(testName);
+            test.setGroupName(groupName);
+            test.setFileName(fileName);
+            test.setLineNumber(lineNumber);
+            test.setLevel(level);
 
-        if (current->getNextOrderedTest()->getLevel() > test->getLevel()) {
+            if (OrderedTestShell::firstOrderedTest())
+                OrderedTestShell::addOrderedTestToHead(&test);
+            else
+                addOrderedTestInOrder(&test);
+        }
+
+        void OrderedTestInstaller::addOrderedTestInOrder(OrderedTestShell* test)
+        {
+            if (test->getLevel() <
+                OrderedTestShell::getOrderedTestHead()->getLevel())
+                OrderedTestShell::addOrderedTestToHead(test);
+            else
+                addOrderedTestInOrderNotAtHeadPosition(test);
+        }
+
+        void OrderedTestInstaller::addOrderedTestInOrderNotAtHeadPosition(
+            OrderedTestShell* test
+        )
+        {
+            OrderedTestShell* current = OrderedTestShell::getOrderedTestHead();
+            while (current->getNextOrderedTest()) {
+
+                if (current->getNextOrderedTest()->getLevel() >
+                    test->getLevel()) {
+                    test->addOrderedTest(current->getNextOrderedTest());
+                    current->addOrderedTest(test);
+                    return;
+                }
+                current = current->getNextOrderedTest();
+            }
             test->addOrderedTest(current->getNextOrderedTest());
             current->addOrderedTest(test);
-            return;
         }
-        current = current->getNextOrderedTest();
-    }
-    test->addOrderedTest(current->getNextOrderedTest());
-    current->addOrderedTest(test);
-}
 
-OrderedTestInstaller::~OrderedTestInstaller() {}
+        OrderedTestInstaller::~OrderedTestInstaller() {}
+    }
+}

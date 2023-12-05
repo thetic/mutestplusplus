@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "CppUTest/TestFailure.hpp"
 #include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestOutput.hpp"
 
@@ -38,11 +39,11 @@ namespace
 
 TEST_GROUP(TestFailure)
 {
-    UtestShell* test;
+    cpputest::UtestShell* test;
 
     void setup() override
     {
-        test = new UtestShell(
+        test = new cpputest::UtestShell(
             "groupname", "testname", failFileName, failLineNumber - 1
         );
     }
@@ -58,6 +59,7 @@ TEST_GROUP(TestFailure)
 
 TEST(TestFailure, CreateFailure)
 {
+    using cpputest::TestFailure;
     TestFailure f1(test, failFileName, failLineNumber, "the failure message");
     TestFailure f2(test, "the failure message");
     TestFailure f3(test, failFileName, failLineNumber);
@@ -65,14 +67,16 @@ TEST(TestFailure, CreateFailure)
 
 TEST(TestFailure, GetTestFileAndLineFromFailure)
 {
-    TestFailure f1(test, failFileName, failLineNumber, "the failure message");
+    cpputest::TestFailure f1(
+        test, failFileName, failLineNumber, "the failure message"
+    );
     STRCMP_EQUAL(failFileName, f1.getTestFileName().asCharString());
     LONGS_EQUAL(1, f1.getTestLineNumber());
 }
 
 TEST(TestFailure, EqualsFailureWithText)
 {
-    EqualsFailure f(
+    cpputest::EqualsFailure f(
         test, failFileName, failLineNumber, "expected", "actual", "text"
     );
     FAILURE_EQUAL(
@@ -84,7 +88,7 @@ TEST(TestFailure, EqualsFailureWithText)
 
 TEST(TestFailure, EqualsFailure)
 {
-    EqualsFailure f(
+    cpputest::EqualsFailure f(
         test, failFileName, failLineNumber, "expected", "actual", ""
     );
     FAILURE_EQUAL("expected <expected>\n\tbut was  <actual>", f);
@@ -92,7 +96,7 @@ TEST(TestFailure, EqualsFailure)
 
 TEST(TestFailure, EqualsFailureWithNullAsActual)
 {
-    EqualsFailure f(
+    cpputest::EqualsFailure f(
         test, failFileName, failLineNumber, "expected", nullptr, ""
     );
     FAILURE_EQUAL("expected <expected>\n\tbut was  <(null)>", f);
@@ -100,13 +104,15 @@ TEST(TestFailure, EqualsFailureWithNullAsActual)
 
 TEST(TestFailure, EqualsFailureWithNullAsExpected)
 {
-    EqualsFailure f(test, failFileName, failLineNumber, nullptr, "actual", "");
+    cpputest::EqualsFailure f(
+        test, failFileName, failLineNumber, nullptr, "actual", ""
+    );
     FAILURE_EQUAL("expected <(null)>\n\tbut was  <actual>", f);
 }
 
 TEST(TestFailure, CheckEqualFailureWithText)
 {
-    CheckEqualFailure f(
+    cpputest::CheckEqualFailure f(
         test, failFileName, failLineNumber, "expected", "actual", "text"
     );
     FAILURE_EQUAL(
@@ -121,7 +127,7 @@ TEST(TestFailure, CheckEqualFailureWithText)
 
 TEST(TestFailure, CheckEqualFailure)
 {
-    CheckEqualFailure f(
+    cpputest::CheckEqualFailure f(
         test, failFileName, failLineNumber, "expected", "actual", ""
     );
     FAILURE_EQUAL(
@@ -135,13 +141,17 @@ TEST(TestFailure, CheckEqualFailure)
 
 TEST(TestFailure, CheckFailure)
 {
-    CheckFailure f(test, failFileName, failLineNumber, "CHECK", "chk");
+    cpputest::CheckFailure f(
+        test, failFileName, failLineNumber, "CHECK", "chk"
+    );
     FAILURE_EQUAL("CHECK(chk) failed", f);
 }
 
 TEST(TestFailure, CheckFailureWithText)
 {
-    CheckFailure f(test, failFileName, failLineNumber, "CHECK", "chk", "text");
+    cpputest::CheckFailure f(
+        test, failFileName, failLineNumber, "CHECK", "chk", "text"
+    );
     FAILURE_EQUAL(
         "Message: text\n"
         "\tCHECK(chk) failed",
@@ -151,13 +161,15 @@ TEST(TestFailure, CheckFailureWithText)
 
 TEST(TestFailure, FailFailure)
 {
-    FailFailure f(test, failFileName, failLineNumber, "chk");
+    cpputest::FailFailure f(test, failFileName, failLineNumber, "chk");
     FAILURE_EQUAL("chk", f);
 }
 
 TEST(TestFailure, LongsEqualFailureWithText)
 {
-    LongsEqualFailure f(test, failFileName, failLineNumber, 1, 2, "text");
+    cpputest::LongsEqualFailure f(
+        test, failFileName, failLineNumber, 1, 2, "text"
+    );
     FAILURE_EQUAL(
         "Message: text\n"
         "\texpected <1 (0x1)>\n\tbut was  <2 (0x2)>",
@@ -167,19 +179,21 @@ TEST(TestFailure, LongsEqualFailureWithText)
 
 TEST(TestFailure, LongsEqualFailure)
 {
-    LongsEqualFailure f(test, failFileName, failLineNumber, 1, 2, "");
+    cpputest::LongsEqualFailure f(test, failFileName, failLineNumber, 1, 2, "");
     FAILURE_EQUAL("expected <1 (0x1)>\n\tbut was  <2 (0x2)>", f);
 }
 
 TEST(TestFailure, LongLongsEqualFailure)
 {
-    LongLongsEqualFailure f(test, failFileName, failLineNumber, 1, 2, "");
+    cpputest::LongLongsEqualFailure f(
+        test, failFileName, failLineNumber, 1, 2, ""
+    );
     FAILURE_EQUAL("expected <1 (0x1)>\n\tbut was  <2 (0x2)>", f);
 }
 
 TEST(TestFailure, UnsignedLongLongsEqualFailure)
 {
-    UnsignedLongLongsEqualFailure f(
+    cpputest::UnsignedLongLongsEqualFailure f(
         test, failFileName, failLineNumber, 1, 2, ""
     );
     FAILURE_EQUAL("expected <1 (0x1)>\n\tbut was  <2 (0x2)>", f);
@@ -187,7 +201,7 @@ TEST(TestFailure, UnsignedLongLongsEqualFailure)
 
 TEST(TestFailure, SignedBytesEqualFailure)
 {
-    SignedBytesEqualFailure f(
+    cpputest::SignedBytesEqualFailure f(
         test, failFileName, failLineNumber, static_cast<signed char>(-1),
         static_cast<signed char>(2), ""
     );
@@ -196,7 +210,7 @@ TEST(TestFailure, SignedBytesEqualFailure)
 
 TEST(TestFailure, StringsEqualFailureWithText)
 {
-    StringEqualFailure f(
+    cpputest::StringEqualFailure f(
         test, failFileName, failLineNumber, "abc", "abd", "text"
     );
     FAILURE_EQUAL(
@@ -211,7 +225,9 @@ TEST(TestFailure, StringsEqualFailureWithText)
 
 TEST(TestFailure, StringsEqualFailure)
 {
-    StringEqualFailure f(test, failFileName, failLineNumber, "abc", "abd", "");
+    cpputest::StringEqualFailure f(
+        test, failFileName, failLineNumber, "abc", "abd", ""
+    );
     FAILURE_EQUAL(
         "expected <abc>\n"
         "\tbut was  <abd>\n"
@@ -223,7 +239,9 @@ TEST(TestFailure, StringsEqualFailure)
 
 TEST(TestFailure, StringsEqualFailureAtTheEnd)
 {
-    StringEqualFailure f(test, failFileName, failLineNumber, "abc", "ab", "");
+    cpputest::StringEqualFailure f(
+        test, failFileName, failLineNumber, "abc", "ab", ""
+    );
     FAILURE_EQUAL(
         "expected <abc>\n"
         "\tbut was  <ab>\n"
@@ -235,7 +253,7 @@ TEST(TestFailure, StringsEqualFailureAtTheEnd)
 
 TEST(TestFailure, StringsEqualFailureNewVariantAtTheEnd)
 {
-    StringEqualFailure f(
+    cpputest::StringEqualFailure f(
         test, failFileName, failLineNumber, "EndOfALongerString",
         "EndOfALongerStrinG", ""
     );
@@ -250,7 +268,7 @@ TEST(TestFailure, StringsEqualFailureNewVariantAtTheEnd)
 
 TEST(TestFailure, StringsEqualFailureWithNewLinesAndTabs)
 {
-    StringEqualFailure f(
+    cpputest::StringEqualFailure f(
         test, failFileName, failLineNumber, "StringWith\t\nDifferentString",
         "StringWith\t\ndifferentString", ""
     );
@@ -266,7 +284,9 @@ TEST(TestFailure, StringsEqualFailureWithNewLinesAndTabs)
 
 TEST(TestFailure, StringsEqualFailureInTheMiddle)
 {
-    StringEqualFailure f(test, failFileName, failLineNumber, "aa", "ab", "");
+    cpputest::StringEqualFailure f(
+        test, failFileName, failLineNumber, "aa", "ab", ""
+    );
     FAILURE_EQUAL(
         "expected <aa>\n"
         "\tbut was  <ab>\n"
@@ -278,7 +298,9 @@ TEST(TestFailure, StringsEqualFailureInTheMiddle)
 
 TEST(TestFailure, StringsEqualFailureAtTheBeginning)
 {
-    StringEqualFailure f(test, failFileName, failLineNumber, "aaa", "bbb", "");
+    cpputest::StringEqualFailure f(
+        test, failFileName, failLineNumber, "aaa", "bbb", ""
+    );
     FAILURE_EQUAL(
         "expected <aaa>\n"
         "\tbut was  <bbb>\n"
@@ -290,7 +312,7 @@ TEST(TestFailure, StringsEqualFailureAtTheBeginning)
 
 TEST(TestFailure, StringsEqualFailureWithNullAsActual)
 {
-    StringEqualFailure f(
+    cpputest::StringEqualFailure f(
         test, failFileName, failLineNumber, "abc", nullptr, ""
     );
     FAILURE_EQUAL(
@@ -302,7 +324,7 @@ TEST(TestFailure, StringsEqualFailureWithNullAsActual)
 
 TEST(TestFailure, StringsEqualFailureWithNullAsExpected)
 {
-    StringEqualFailure f(
+    cpputest::StringEqualFailure f(
         test, failFileName, failLineNumber, nullptr, "abd", ""
     );
     FAILURE_EQUAL(
@@ -314,7 +336,7 @@ TEST(TestFailure, StringsEqualFailureWithNullAsExpected)
 
 TEST(TestFailure, StringsEqualNoCaseFailureWithText)
 {
-    StringEqualNoCaseFailure f(
+    cpputest::StringEqualNoCaseFailure f(
         test, failFileName, failLineNumber, "ABC", "abd", "text"
     );
     FAILURE_EQUAL(
@@ -329,7 +351,7 @@ TEST(TestFailure, StringsEqualNoCaseFailureWithText)
 
 TEST(TestFailure, StringsEqualNoCaseFailure)
 {
-    StringEqualNoCaseFailure f(
+    cpputest::StringEqualNoCaseFailure f(
         test, failFileName, failLineNumber, "ABC", "abd", ""
     );
     FAILURE_EQUAL(
@@ -343,7 +365,7 @@ TEST(TestFailure, StringsEqualNoCaseFailure)
 
 TEST(TestFailure, StringsEqualNoCaseFailureWithActualAsNull)
 {
-    StringEqualNoCaseFailure f(
+    cpputest::StringEqualNoCaseFailure f(
         test, failFileName, failLineNumber, "ABC", nullptr, ""
     );
     FAILURE_EQUAL(
@@ -355,7 +377,7 @@ TEST(TestFailure, StringsEqualNoCaseFailureWithActualAsNull)
 
 TEST(TestFailure, StringsEqualNoCaseFailureWithExpectedAsNull)
 {
-    StringEqualNoCaseFailure f(
+    cpputest::StringEqualNoCaseFailure f(
         test, failFileName, failLineNumber, nullptr, "abd", ""
     );
     FAILURE_EQUAL(
@@ -367,7 +389,7 @@ TEST(TestFailure, StringsEqualNoCaseFailureWithExpectedAsNull)
 
 TEST(TestFailure, StringsEqualNoCaseFailure2)
 {
-    StringEqualNoCaseFailure f(
+    cpputest::StringEqualNoCaseFailure f(
         test, failFileName, failLineNumber, "ac", "AB", ""
     );
     FAILURE_EQUAL(
@@ -381,7 +403,7 @@ TEST(TestFailure, StringsEqualNoCaseFailure2)
 
 TEST(TestFailure, DoublesEqualNormalWithText)
 {
-    DoublesEqualFailure f(
+    cpputest::DoublesEqualFailure f(
         test, failFileName, failLineNumber, 1.0, 2.0, 3.0, "text"
     );
     FAILURE_EQUAL(
@@ -394,7 +416,7 @@ TEST(TestFailure, DoublesEqualNormalWithText)
 
 TEST(TestFailure, DoublesEqualNormal)
 {
-    DoublesEqualFailure f(
+    cpputest::DoublesEqualFailure f(
         test, failFileName, failLineNumber, 1.0, 2.0, 3.0, ""
     );
     FAILURE_EQUAL(
@@ -408,7 +430,7 @@ TEST(TestFailure, BinaryEqualWithText)
 {
     const unsigned char expectedData[] = {0x00};
     const unsigned char actualData[] = {0x01};
-    BinaryEqualFailure f(
+    cpputest::BinaryEqualFailure f(
         test, failFileName, failLineNumber, expectedData, actualData,
         sizeof(expectedData), "text"
     );
@@ -426,7 +448,7 @@ TEST(TestFailure, BinaryEqualOneByte)
 {
     const unsigned char expectedData[] = {0x00};
     const unsigned char actualData[] = {0x01};
-    BinaryEqualFailure f(
+    cpputest::BinaryEqualFailure f(
         test, failFileName, failLineNumber, expectedData, actualData,
         sizeof(expectedData), ""
     );
@@ -443,7 +465,7 @@ TEST(TestFailure, BinaryEqualTwoBytes)
 {
     const unsigned char expectedData[] = {0x00, 0x01};
     const unsigned char actualData[] = {0x00, 0x02};
-    BinaryEqualFailure f(
+    cpputest::BinaryEqualFailure f(
         test, failFileName, failLineNumber, expectedData, actualData,
         sizeof(expectedData), ""
     );
@@ -460,7 +482,7 @@ TEST(TestFailure, BinaryEqualThreeBytes)
 {
     const unsigned char expectedData[] = {0x00, 0x01, 0x00};
     const unsigned char actualData[] = {0x00, 0x02, 0x00};
-    BinaryEqualFailure f(
+    cpputest::BinaryEqualFailure f(
         test, failFileName, failLineNumber, expectedData, actualData,
         sizeof(expectedData), ""
     );
@@ -479,7 +501,7 @@ TEST(TestFailure, BinaryEqualFullWidth)
                                           0x00, 0x00, 0x00};
     const unsigned char actualData[] = {0x00, 0x00, 0x00, 0x02,
                                         0x00, 0x00, 0x00};
-    BinaryEqualFailure f(
+    cpputest::BinaryEqualFailure f(
         test, failFileName, failLineNumber, expectedData, actualData,
         sizeof(expectedData), ""
     );
@@ -498,7 +520,7 @@ TEST(TestFailure, BinaryEqualLast)
                                           0x00, 0x00, 0x00};
     const unsigned char actualData[] = {0x00, 0x00, 0x00, 0x00,
                                         0x00, 0x00, 0x01};
-    BinaryEqualFailure f(
+    cpputest::BinaryEqualFailure f(
         test, failFileName, failLineNumber, expectedData, actualData,
         sizeof(expectedData), ""
     );
@@ -515,7 +537,7 @@ TEST(TestFailure, BinaryEqualActualNull)
 {
     const unsigned char expectedData[] = {0x00, 0x00, 0x00, 0x00,
                                           0x00, 0x00, 0x00};
-    BinaryEqualFailure f(
+    cpputest::BinaryEqualFailure f(
         test, failFileName, failLineNumber, expectedData, nullptr,
         sizeof(expectedData), ""
     );
@@ -526,7 +548,7 @@ TEST(TestFailure, BinaryEqualExpectedNull)
 {
     const unsigned char actualData[] = {0x00, 0x00, 0x00, 0x00,
                                         0x00, 0x00, 0x01};
-    BinaryEqualFailure f(
+    cpputest::BinaryEqualFailure f(
         test, failFileName, failLineNumber, nullptr, actualData,
         sizeof(actualData), ""
     );
@@ -535,7 +557,7 @@ TEST(TestFailure, BinaryEqualExpectedNull)
 
 TEST(TestFailure, BitsEqualWithText)
 {
-    BitsEqualFailure f(
+    cpputest::BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x0001, 0x0003, 0x00FF,
         2 * 8 / CHAR_BIT, "text"
     );
@@ -549,7 +571,7 @@ TEST(TestFailure, BitsEqualWithText)
 #if (CHAR_BIT == 16)
 TEST(TestFailure, BitsEqualChar)
 {
-    BitsEqualFailure f(
+    cpputestBitsEqualFailure f(
         test, failFileName, failLineNumber, 0x01, 0x03, 0xFF, sizeof(char), ""
     );
     FAILURE_EQUAL(
@@ -559,7 +581,7 @@ TEST(TestFailure, BitsEqualChar)
 #elif (CHAR_BIT == 8)
 TEST(TestFailure, BitsEqualChar)
 {
-    BitsEqualFailure f(
+    cpputest::BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x01, 0x03, 0xFF, sizeof(char), ""
     );
     FAILURE_EQUAL("expected <00000001>\n\tbut was  <00000011>", f);
@@ -568,7 +590,7 @@ TEST(TestFailure, BitsEqualChar)
 
 TEST(TestFailure, BitsEqual16Bit)
 {
-    BitsEqualFailure f(
+    cpputest::BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x0001, 0x0003, 0xFFFF,
         2 * 8 / CHAR_BIT, ""
     );
@@ -579,7 +601,7 @@ TEST(TestFailure, BitsEqual16Bit)
 
 TEST(TestFailure, BitsEqual32Bit)
 {
-    BitsEqualFailure f(
+    cpputest::BitsEqualFailure f(
         test, failFileName, failLineNumber, 0x00000001, 0x00000003, 0xFFFFFFFF,
         4 * 8 / CHAR_BIT, ""
     );
@@ -592,7 +614,7 @@ TEST(TestFailure, BitsEqual32Bit)
 
 TEST(TestFailure, FeatureUnsupported)
 {
-    FeatureUnsupportedFailure f(
+    cpputest::FeatureUnsupportedFailure f(
         test, failFileName, failLineNumber, "SOME_FEATURE", ""
     );
     FAILURE_EQUAL(
@@ -605,7 +627,7 @@ TEST(TestFailure, FeatureUnsupported)
 #if CPPUTEST_HAVE_EXCEPTIONS
 TEST(TestFailure, UnexpectedExceptionFailure_UnknownException)
 {
-    UnexpectedExceptionFailure f(test);
+    cpputest::UnexpectedExceptionFailure f(test);
     FAILURE_EQUAL("Unexpected exception of unknown type was thrown.", f);
 }
 #endif
@@ -614,7 +636,7 @@ TEST(TestFailure, UnexpectedExceptionFailure_UnknownException)
 TEST(TestFailure, UnexpectedExceptionFailure_StandardException)
 {
     std::runtime_error e("Some error");
-    UnexpectedExceptionFailure f(test, e);
+    cpputest::UnexpectedExceptionFailure f(test, e);
     #if CPPUTEST_HAVE_RTTI
     STRCMP_CONTAINS(
         "Unexpected exception of type '", f.getMessage().asCharString()

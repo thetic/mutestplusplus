@@ -30,6 +30,13 @@
 #include "CppUTestExt/MockFailure.hpp"
 #include "MockFailureReporterForTest.hpp"
 
+using cpputest::extensions::MockCheckedExpectedCall;
+using cpputest::extensions::MockIgnoredExpectedCall;
+using cpputest::extensions::MockNamedValue;
+using cpputest::extensions::MockNamedValueComparator;
+using cpputest::extensions::MockNamedValueComparatorsAndCopiersRepository;
+using cpputest::extensions::MockNamedValueCopier;
+
 class TypeForTestingExpectedFunctionCall
 {
 public:
@@ -58,11 +65,11 @@ public:
             );
         return *(obj1->value) == *(obj2->value);
     }
-    virtual SimpleString valueToString(const void* object) override
+    virtual cpputest::SimpleString valueToString(const void* object) override
     {
         const TypeForTestingExpectedFunctionCall* obj =
             reinterpret_cast<const TypeForTestingExpectedFunctionCall*>(object);
-        return StringFrom(*(obj->value));
+        return cpputest::StringFrom(*(obj->value));
     }
 };
 
@@ -192,7 +199,7 @@ TEST(MockExpectedCall, callWithoutParameterSetOrNotFound)
 
 TEST(MockExpectedCall, callWithUnsignedIntegerParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     unsigned int value = 356;
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -210,7 +217,7 @@ TEST(MockExpectedCall, callWithUnsignedIntegerParameter)
 
 TEST(MockExpectedCall, callWithIntegerParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     int value = 2;
     call->withParameter(paramName, value);
     STRCMP_EQUAL("int", call->getInputParameterType(paramName).asCharString());
@@ -224,7 +231,7 @@ TEST(MockExpectedCall, callWithIntegerParameter)
 
 TEST(MockExpectedCall, callWithBooleanParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     bool value = true;
     call->withParameter(paramName, value);
     STRCMP_EQUAL("bool", call->getInputParameterType(paramName).asCharString());
@@ -238,7 +245,7 @@ TEST(MockExpectedCall, callWithBooleanParameter)
 
 TEST(MockExpectedCall, callWithUnsignedLongIntegerParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     unsigned long value = 888;
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -257,7 +264,7 @@ TEST(MockExpectedCall, callWithUnsignedLongIntegerParameter)
 
 TEST(MockExpectedCall, callWithLongIntegerParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     long value = 777;
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -273,7 +280,7 @@ TEST(MockExpectedCall, callWithLongIntegerParameter)
 
 TEST(MockExpectedCall, callWithUnsignedLongLongIntegerParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     unsigned long long value = 888;
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -292,7 +299,7 @@ TEST(MockExpectedCall, callWithUnsignedLongLongIntegerParameter)
 
 TEST(MockExpectedCall, callWithLongLongIntegerParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     long long value = 777;
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -310,7 +317,7 @@ TEST(MockExpectedCall, callWithLongLongIntegerParameter)
 
 TEST(MockExpectedCall, callWithDoubleParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     double value = 1.2;
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -327,7 +334,7 @@ TEST(MockExpectedCall, callWithDoubleParameter)
 
 TEST(MockExpectedCall, callWithDoubleParameterAndTolerance)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     double value = 1.2;
     double tolerance = 0.2;
     call->withParameter(paramName, value, tolerance);
@@ -348,7 +355,7 @@ TEST(MockExpectedCall, callWithDoubleParameterAndTolerance)
 
 TEST(MockExpectedCall, callWithStringParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     const char* value = "hello world";
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -363,7 +370,7 @@ TEST(MockExpectedCall, callWithStringParameter)
 
 TEST(MockExpectedCall, callWithPointerParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     void* value = reinterpret_cast<void*>(0x123);
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -378,7 +385,7 @@ TEST(MockExpectedCall, callWithPointerParameter)
 
 TEST(MockExpectedCall, callWithConstPointerParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     const void* value = reinterpret_cast<const void*>(0x345);
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -395,7 +402,7 @@ TEST(MockExpectedCall, callWithConstPointerParameter)
 
 TEST(MockExpectedCall, callWithFunctionPointerParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     void (*value)() = reinterpret_cast<void (*)()>(0xdead);
     call->withParameter(paramName, value);
     STRCMP_EQUAL(
@@ -412,7 +419,7 @@ TEST(MockExpectedCall, callWithFunctionPointerParameter)
 
 TEST(MockExpectedCall, callWithMemoryBuffer)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     const unsigned char value[] = {0x12, 0xFE, 0xA1};
     call->withParameter(paramName, value, sizeof(value));
     STRCMP_EQUAL(
@@ -430,7 +437,7 @@ TEST(MockExpectedCall, callWithMemoryBuffer)
 
 TEST(MockExpectedCall, callWithObjectParameter)
 {
-    const SimpleString paramName = "paramName";
+    const cpputest::SimpleString paramName = "paramName";
     void* value = reinterpret_cast<void*>(0x123);
     call->withParameterOfType("ClassName", paramName, value);
     POINTERS_EQUAL(

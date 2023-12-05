@@ -29,6 +29,8 @@
 #include "CppUTest/TestHarness.hpp"
 #include "CppUTestExt/MockSupport.hpp"
 
+using cpputest::extensions::mock;
+
 class ObserverMock : public EventObserver
 {
 public:
@@ -49,7 +51,7 @@ public:
     }
 };
 
-class EventComparator : public MockNamedValueComparator
+class EventComparator : public cpputest::extensions::MockNamedValueComparator
 {
 public:
     virtual bool isEqual(const void* object1, const void* object2) override
@@ -57,9 +59,10 @@ public:
         return reinterpret_cast<const Event*>(object1)->type ==
                reinterpret_cast<const Event*>(object2)->type;
     }
-    virtual SimpleString valueToString(const void* object) override
+    virtual cpputest::SimpleString valueToString(const void* object) override
     {
-        return StringFrom(reinterpret_cast<const Event*>(object)->type);
+        return cpputest::StringFrom(reinterpret_cast<const Event*>(object)->type
+        );
     }
 };
 

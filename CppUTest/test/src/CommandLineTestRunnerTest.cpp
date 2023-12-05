@@ -33,14 +33,14 @@
 #include "CppUTest/TestRegistry.hpp"
 #include "CppUTest/TestTestingFixture.hpp"
 
-class DummyPluginWhichCountsThePlugins : public TestPlugin
+class DummyPluginWhichCountsThePlugins : public cpputest::TestPlugin
 {
 public:
     bool returnValue;
     int amountOfPlugins;
 
     DummyPluginWhichCountsThePlugins(
-        const SimpleString& name, TestRegistry* registry
+        const cpputest::SimpleString& name, cpputest::TestRegistry* registry
     ) :
         TestPlugin(name),
         returnValue(true),
@@ -57,18 +57,19 @@ public:
     }
 
 private:
-    TestRegistry* registry_;
+    cpputest::TestRegistry* registry_;
 };
 
-class CommandLineTestRunnerWithStringBufferOutput : public CommandLineTestRunner
+class CommandLineTestRunnerWithStringBufferOutput
+    : public cpputest::CommandLineTestRunner
 {
 public:
-    StringBufferTestOutput* fakeJUnitOutputWhichIsReallyABuffer_;
-    StringBufferTestOutput* fakeConsoleOutputWhichIsReallyABuffer;
-    StringBufferTestOutput* fakeTCOutputWhichIsReallyABuffer;
+    cpputest::StringBufferTestOutput* fakeJUnitOutputWhichIsReallyABuffer_;
+    cpputest::StringBufferTestOutput* fakeConsoleOutputWhichIsReallyABuffer;
+    cpputest::StringBufferTestOutput* fakeTCOutputWhichIsReallyABuffer;
 
     CommandLineTestRunnerWithStringBufferOutput(
-        int argc, const char* const* argv, TestRegistry* registry
+        int argc, const char* const* argv, cpputest::TestRegistry* registry
     ) :
         CommandLineTestRunner(argc, argv, registry),
         fakeJUnitOutputWhichIsReallyABuffer_(nullptr),
@@ -77,36 +78,39 @@ public:
     {
     }
 
-    TestOutput* createConsoleOutput() override
+    cpputest::TestOutput* createConsoleOutput() override
     {
-        fakeConsoleOutputWhichIsReallyABuffer = new StringBufferTestOutput;
+        fakeConsoleOutputWhichIsReallyABuffer =
+            new cpputest::StringBufferTestOutput;
         return fakeConsoleOutputWhichIsReallyABuffer;
     }
 
-    TestOutput* createJUnitOutput(const SimpleString&) override
+    cpputest::TestOutput*
+    createJUnitOutput(const cpputest::SimpleString&) override
     {
-        fakeJUnitOutputWhichIsReallyABuffer_ = new StringBufferTestOutput;
+        fakeJUnitOutputWhichIsReallyABuffer_ =
+            new cpputest::StringBufferTestOutput;
         return fakeJUnitOutputWhichIsReallyABuffer_;
     }
 
-    TestOutput* createTeamCityOutput() override
+    cpputest::TestOutput* createTeamCityOutput() override
     {
-        fakeTCOutputWhichIsReallyABuffer = new StringBufferTestOutput;
+        fakeTCOutputWhichIsReallyABuffer = new cpputest::StringBufferTestOutput;
         return fakeTCOutputWhichIsReallyABuffer;
     }
 };
 
 TEST_GROUP(CommandLineTestRunner)
 {
-    TestRegistry registry;
-    UtestShell* test1;
-    UtestShell* test2;
+    cpputest::TestRegistry registry;
+    cpputest::UtestShell* test1;
+    cpputest::UtestShell* test2;
     DummyPluginWhichCountsThePlugins* pluginCountingPlugin;
 
     void setup() override
     {
-        test1 = new UtestShell("group1", "test1", "file1", 1);
-        test2 = new UtestShell("group2", "test2", "file2", 2);
+        test1 = new cpputest::UtestShell("group1", "test1", "file1", 1);
+        test2 = new cpputest::UtestShell("group2", "test2", "file2", 2);
         registry.addTest(test1);
         pluginCountingPlugin = new DummyPluginWhichCountsThePlugins(
             "PluginCountingPlugin", &registry
@@ -119,7 +123,7 @@ TEST_GROUP(CommandLineTestRunner)
         delete test1;
     }
 
-    SimpleString runAndGetOutput(const int argc, const char* argv[])
+    cpputest::SimpleString runAndGetOutput(const int argc, const char* argv[])
     {
         CommandLineTestRunnerWithStringBufferOutput commandLineTestRunner(
             argc, argv, &registry
@@ -287,7 +291,7 @@ TEST(CommandLineTestRunner, defaultTestsAreRunInOrderTheyAreInRepository)
     );
     commandLineTestRunner.runAllTestsMain();
 
-    SimpleStringCollection stringCollection;
+    cpputest::SimpleStringCollection stringCollection;
     commandLineTestRunner.fakeConsoleOutputWhichIsReallyABuffer->getOutput()
         .split("\n", stringCollection);
     STRCMP_CONTAINS("test2", stringCollection[0].asCharString());
@@ -304,7 +308,7 @@ TEST(CommandLineTestRunner, testsCanBeRunInReverseOrder)
     );
     commandLineTestRunner.runAllTestsMain();
 
-    SimpleStringCollection stringCollection;
+    cpputest::SimpleStringCollection stringCollection;
     commandLineTestRunner.fakeConsoleOutputWhichIsReallyABuffer->getOutput()
         .split("\n", stringCollection);
     STRCMP_CONTAINS("test1", stringCollection[0].asCharString());
@@ -363,11 +367,12 @@ TEST(CommandLineTestRunner, randomShuffleSeedIsPrintedAndRandFuncIsExercised)
 {
     // more than 1 item in test list ensures that shuffle algorithm calls
     // rand_()
-    UtestShell* anotherTest = new UtestShell("group", "test2", "file", 1);
+    cpputest::UtestShell* anotherTest =
+        new cpputest::UtestShell("group", "test2", "file", 1);
     registry.addTest(anotherTest);
 
     const char* argv[] = {"tests.exe", "-s"};
-    SimpleString text = runAndGetOutput(2, argv);
+    cpputest::SimpleString text = runAndGetOutput(2, argv);
     STRCMP_CONTAINS("shuffling enabled with seed:", text.asCharString());
 
     delete anotherTest;
@@ -376,7 +381,7 @@ TEST(CommandLineTestRunner, randomShuffleSeedIsPrintedAndRandFuncIsExercised)
 TEST(CommandLineTestRunner, specificShuffleSeedIsPrintedVerbose)
 {
     const char* argv[] = {"tests.exe", "-s2", "-v"};
-    SimpleString text = runAndGetOutput(3, argv);
+    cpputest::SimpleString text = runAndGetOutput(3, argv);
     STRCMP_CONTAINS("shuffling enabled with seed: 2", text.asCharString());
 }
 
@@ -431,8 +436,8 @@ struct FakeOutput
 
     static void fclose_fake(PlatformSpecificFile) {}
 
-    SimpleString file;
-    SimpleString console;
+    cpputest::SimpleString file;
+    cpputest::SimpleString console;
 
     static FakeOutput* currentFake;
 
@@ -455,7 +460,7 @@ TEST(CommandLineTestRunner, realJunitOutputShouldBeCreatedAndWorkProperly)
 
     FakeOutput fakeOutput; /* UT_PTR_SET() is not reentrant */
 
-    CommandLineTestRunner commandLineTestRunner(4, argv, &registry);
+    cpputest::CommandLineTestRunner commandLineTestRunner(4, argv, &registry);
     commandLineTestRunner.runAllTestsMain();
 
     fakeOutput.restoreOriginals();
@@ -478,7 +483,7 @@ TEST(CommandLineTestRunner, realTeamCityOutputShouldBeCreatedAndWorkProperly)
 
     FakeOutput fakeOutput; /* UT_PTR_SET() is not reentrant */
 
-    CommandLineTestRunner commandLineTestRunner(4, argv, &registry);
+    cpputest::CommandLineTestRunner commandLineTestRunner(4, argv, &registry);
     commandLineTestRunner.runAllTestsMain();
 
     fakeOutput.restoreOriginals();
@@ -500,7 +505,7 @@ TEST(CommandLineTestRunner, realTeamCityOutputShouldBeCreatedAndWorkProperly)
     );
 }
 
-class RunIgnoredUtest : public Utest
+class RunIgnoredUtest : public cpputest::Utest
 {
 public:
     static bool Checker;
@@ -512,7 +517,7 @@ public:
 
 bool RunIgnoredUtest::Checker = false;
 
-class RunIgnoredUtestShell : public IgnoredUtestShell
+class RunIgnoredUtestShell : public cpputest::IgnoredUtestShell
 {
 public:
     RunIgnoredUtestShell(
@@ -524,7 +529,7 @@ public:
         IgnoredUtestShell(groupName, testName, fileName, lineNumber)
     {
     }
-    virtual Utest* createTest() override
+    virtual cpputest::Utest* createTest() override
     {
         return new RunIgnoredUtest;
     }
@@ -532,7 +537,7 @@ public:
 
 TEST_GROUP(RunIgnoredTest)
 {
-    TestRegistry registry;
+    cpputest::TestRegistry registry;
     RunIgnoredUtestShell* runIgnoredTest;
     DummyPluginWhichCountsThePlugins* pluginCountingPlugin;
 

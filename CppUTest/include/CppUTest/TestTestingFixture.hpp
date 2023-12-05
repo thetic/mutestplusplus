@@ -31,72 +31,76 @@
 #include "CppUTest/TestOutput.hpp"
 #include "CppUTest/TestRegistry.hpp"
 
-class ExecFunction;
-class ExecFunctionTestShell;
-
-class TestTestingFixture
+namespace cpputest
 {
-public:
-    TestTestingFixture();
-    virtual ~TestTestingFixture();
-    void flushOutputAndResetResult();
+    class ExecFunction;
+    class ExecFunctionTestShell;
 
-    void addTest(UtestShell* test);
-    void installPlugin(TestPlugin* plugin);
-
-    void setTestFunction(void (*testFunction)());
-    void setTestFunction(ExecFunction* testFunction);
-    void setSetup(void (*setupFunction)());
-    void setTeardown(void (*teardownFunction)());
-
-    void setOutputVerbose();
-    void setRunTestsInSeperateProcess();
-
-    void runTestWithMethod(void (*method)());
-    void runAllTests();
-
-    size_t getFailureCount();
-    size_t getCheckCount();
-    size_t getIgnoreCount();
-    size_t getRunCount();
-    size_t getTestCount();
-    const SimpleString& getOutput();
-    TestRegistry* getRegistry();
-
-    bool hasTestFailed();
-    void assertPrintContains(const SimpleString& contains);
-    void assertPrintContainsNot(const SimpleString& contains);
-    void checkTestFailsWithProperTestLocation(
-        const char* text, const char* file, size_t line
-    );
-
-    static void lineExecutedAfterCheck();
-
-private:
-    void clearExecFunction();
-
-    static bool lineOfCodeExecutedAfterCheck;
-
-    TestRegistry* registry_;
-    ExecFunctionTestShell* genTest_;
-    bool ownsExecFunction_;
-    StringBufferTestOutput* output_;
-    TestResult* result_;
-};
-
-class SetBooleanOnDestructorCall
-{
-    bool& booleanToSet_;
-
-public:
-    SetBooleanOnDestructorCall(bool& booleanToSet) : booleanToSet_(booleanToSet)
+    class TestTestingFixture
     {
-    }
+    public:
+        TestTestingFixture();
+        virtual ~TestTestingFixture();
+        void flushOutputAndResetResult();
 
-    virtual ~SetBooleanOnDestructorCall()
+        void addTest(UtestShell* test);
+        void installPlugin(TestPlugin* plugin);
+
+        void setTestFunction(void (*testFunction)());
+        void setTestFunction(ExecFunction* testFunction);
+        void setSetup(void (*setupFunction)());
+        void setTeardown(void (*teardownFunction)());
+
+        void setOutputVerbose();
+        void setRunTestsInSeperateProcess();
+
+        void runTestWithMethod(void (*method)());
+        void runAllTests();
+
+        size_t getFailureCount();
+        size_t getCheckCount();
+        size_t getIgnoreCount();
+        size_t getRunCount();
+        size_t getTestCount();
+        const SimpleString& getOutput();
+        TestRegistry* getRegistry();
+
+        bool hasTestFailed();
+        void assertPrintContains(const SimpleString& contains);
+        void assertPrintContainsNot(const SimpleString& contains);
+        void checkTestFailsWithProperTestLocation(
+            const char* text, const char* file, size_t line
+        );
+
+        static void lineExecutedAfterCheck();
+
+    private:
+        void clearExecFunction();
+
+        static bool lineOfCodeExecutedAfterCheck;
+
+        TestRegistry* registry_;
+        ExecFunctionTestShell* genTest_;
+        bool ownsExecFunction_;
+        StringBufferTestOutput* output_;
+        TestResult* result_;
+    };
+
+    class SetBooleanOnDestructorCall
     {
-        booleanToSet_ = true;
-    }
-};
+        bool& booleanToSet_;
+
+    public:
+        SetBooleanOnDestructorCall(bool& booleanToSet) :
+            booleanToSet_(booleanToSet)
+        {
+        }
+
+        virtual ~SetBooleanOnDestructorCall()
+        {
+            booleanToSet_ = true;
+        }
+    };
+}
 
 #endif

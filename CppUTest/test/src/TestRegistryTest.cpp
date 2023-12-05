@@ -30,6 +30,8 @@
 #include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestOutput.hpp"
 
+using namespace cpputest;
+
 namespace
 {
     const int testLineNumber = 1;

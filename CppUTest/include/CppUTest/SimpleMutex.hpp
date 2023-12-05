@@ -28,28 +28,31 @@
 #ifndef D_SimpleMutex_h
 #define D_SimpleMutex_h
 
-#include "CppUTest/PlatformSpecificFunctions.hpp"
+#include "CppUTest/PlatformSpecificFunctions.h"
 
-class SimpleMutex
+namespace cpputest
 {
-public:
-    SimpleMutex(void);
-    ~SimpleMutex(void);
-    void Lock(void);
-    void Unlock(void);
+    class SimpleMutex
+    {
+    public:
+        SimpleMutex(void);
+        ~SimpleMutex(void);
+        void Lock(void);
+        void Unlock(void);
 
-private:
-    PlatformSpecificMutex psMtx;
-};
+    private:
+        PlatformSpecificMutex psMtx;
+    };
 
-class ScopedMutexLock
-{
-public:
-    ScopedMutexLock(SimpleMutex*);
-    ~ScopedMutexLock(void);
+    class ScopedMutexLock
+    {
+    public:
+        ScopedMutexLock(SimpleMutex*);
+        ~ScopedMutexLock(void);
 
-private:
-    SimpleMutex* mutex;
-};
+    private:
+        SimpleMutex* mutex;
+    };
+}
 
 #endif

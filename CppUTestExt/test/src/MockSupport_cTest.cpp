@@ -931,7 +931,7 @@ static bool destructorWasCalled = false;
 
 static void failedCallToMockC()
 {
-    SetBooleanOnDestructorCall setOneDestructor(destructorWasCalled);
+    cpputest::SetBooleanOnDestructorCall setOneDestructor(destructorWasCalled);
     mock_c()->actualCall("Not a call");
 } // LCOV_EXCL_LINE
 
@@ -946,7 +946,7 @@ static void failedCallToMockC()
 
 MSC_SWITCHED_TEST(MockSupport_c, NoExceptionsAreThrownWhenAMock_cCallFailed)
 {
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
 
     fixture.setTestFunction(failedCallToMockC);
     fixture.runAllTests();
@@ -966,8 +966,8 @@ static void crashMethod()
 TEST_ORDERED(MockSupport_c, shouldCrashOnFailure, 21)
 {
     cpputestHasCrashed = false;
-    TestTestingFixture fixture;
-    UtestShell::setCrashMethod(crashMethod);
+    cpputest::TestTestingFixture fixture;
+    cpputest::UtestShell::setCrashMethod(crashMethod);
     mock_c()->crashOnFailure(true);
     fixture.setTestFunction(failedCallToMockC);
 
@@ -975,29 +975,29 @@ TEST_ORDERED(MockSupport_c, shouldCrashOnFailure, 21)
 
     CHECK(cpputestHasCrashed);
 
-    UtestShell::resetCrashMethod();
+    cpputest::UtestShell::resetCrashMethod();
     mock_c()->crashOnFailure(false);
 }
 
 TEST_ORDERED(MockSupport_c, nextTestShouldNotCrashOnFailure, 22)
 {
     cpputestHasCrashed = false;
-    TestTestingFixture fixture;
-    UtestShell::setCrashMethod(crashMethod);
+    cpputest::TestTestingFixture fixture;
+    cpputest::UtestShell::setCrashMethod(crashMethod);
     fixture.setTestFunction(failedCallToMockC);
 
     fixture.runAllTests();
 
     CHECK_FALSE(cpputestHasCrashed);
 
-    UtestShell::resetCrashMethod();
+    cpputest::UtestShell::resetCrashMethod();
 }
 
 TEST(MockSupport_c, FailWillNotCrashIfNotEnabled)
 {
     cpputestHasCrashed = false;
-    TestTestingFixture fixture;
-    UtestShell::setCrashMethod(crashMethod);
+    cpputest::TestTestingFixture fixture;
+    cpputest::UtestShell::setCrashMethod(crashMethod);
 
     fixture.setTestFunction(failedCallToMockC);
 
@@ -1006,15 +1006,15 @@ TEST(MockSupport_c, FailWillNotCrashIfNotEnabled)
     CHECK_FALSE(cpputestHasCrashed);
     LONGS_EQUAL(1, fixture.getFailureCount());
 
-    UtestShell::resetCrashMethod();
+    cpputest::UtestShell::resetCrashMethod();
 }
 
 TEST(MockSupport_c, FailWillCrashIfEnabled)
 {
     cpputestHasCrashed = false;
-    TestTestingFixture fixture;
-    UtestShell::setCrashOnFail();
-    UtestShell::setCrashMethod(crashMethod);
+    cpputest::TestTestingFixture fixture;
+    cpputest::UtestShell::setCrashOnFail();
+    cpputest::UtestShell::setCrashMethod(crashMethod);
 
     fixture.setTestFunction(failedCallToMockC);
 
@@ -1023,8 +1023,8 @@ TEST(MockSupport_c, FailWillCrashIfEnabled)
     CHECK(cpputestHasCrashed);
     LONGS_EQUAL(1, fixture.getFailureCount());
 
-    UtestShell::restoreDefaultTestTerminator();
-    UtestShell::resetCrashMethod();
+    cpputest::UtestShell::restoreDefaultTestTerminator();
+    cpputest::UtestShell::resetCrashMethod();
 }
 
 static void failingCallToMockCWithParameterOfType_()
@@ -1039,7 +1039,7 @@ static void failingCallToMockCWithParameterOfType_()
 
 TEST(MockSupport_c, failureWithParameterOfTypeCoversValueToString)
 {
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
     mock_c()->installComparator(
         "typeName", typeNameIsEqual, typeNameValueToString
     );
@@ -1064,7 +1064,7 @@ static void callToMockCWithOutputParameterOfType_()
 
 TEST(MockSupport_c, successWithOutputParameterOfType)
 {
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
     mock_c()->installCopier("intType", typeCopy);
     fixture.setTestFunction(callToMockCWithOutputParameterOfType_);
     fixture.runAllTests();
@@ -1087,7 +1087,7 @@ static void failingCallToMockCWithMemoryBuffer_()
 
 TEST(MockSupport_c, expectOneMemBufferParameterAndValueFailsDueToContents)
 {
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
     fixture.setTestFunction(failingCallToMockCWithMemoryBuffer_);
     fixture.runAllTests();
     fixture.assertPrintContains(

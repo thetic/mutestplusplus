@@ -38,6 +38,8 @@ extern "C" int test_was_called_in_test_group_in_C;
 int setup_teardown_was_called_in_test_group_in_C = 0;
 int test_was_called_in_test_group_in_C = 0;
 
+using cpputest::UtestShell;
+
 TEST_GROUP_C_WRAPPER(TestGroupInC){TEST_GROUP_C_SETUP_WRAPPER(TestGroupInC
 ) TEST_GROUP_C_TEARDOWN_WRAPPER(TestGroupInC)};
 
@@ -72,11 +74,11 @@ public:
 
 TEST_GROUP(TestHarness_c)
 {
-    TestTestingFixture* fixture;
+    cpputest::TestTestingFixture* fixture;
     TEST_SETUP()
     {
         hasDestructorOfTheDestructorCheckedBeenCalled = false;
-        fixture = new TestTestingFixture();
+        fixture = new cpputest::TestTestingFixture();
     }
     TEST_TEARDOWN()
     {
@@ -461,7 +463,7 @@ TEST(TestHarness_c, checkString)
     fixture->setTestFunction(failStringMethod_);
     fixture->runAllTests();
 
-    StringEqualFailure failure(
+    cpputest::StringEqualFailure failure(
         UtestShell::getCurrent(), "file", 1, "Hello", "Hello World", ""
     );
     fixture->assertPrintContains(failure.getMessage());
@@ -481,7 +483,7 @@ TEST(TestHarness_c, checkStringText)
     fixture->setTestFunction(failStringTextMethod_);
     fixture->runAllTests();
 
-    StringEqualFailure failure(
+    cpputest::StringEqualFailure failure(
         UtestShell::getCurrent(), "file", 1, "Hello", "Hello World", ""
     );
     fixture->assertPrintContains(failure.getMessage());

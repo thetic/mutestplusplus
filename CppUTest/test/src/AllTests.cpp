@@ -27,12 +27,13 @@
 
 #include "CppUTest/CommandLineTestRunner.hpp"
 #include "CppUTest/SimpleStringInternalCache.hpp"
+#include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestMemoryAllocator.hpp"
 
 int main(int ac, char** av)
 {
     int returnValue = 0;
-    GlobalSimpleStringCache stringCache;
+    cpputest::GlobalSimpleStringCache stringCache;
 
     {
         /* These checks are here to make sure assertions outside test runs don't
@@ -40,7 +41,7 @@ int main(int ac, char** av)
         CHECK(true);
         LONGS_EQUAL(1, 1);
 
-        returnValue = CommandLineTestRunner::RunAllTests(
+        returnValue = cpputest::CommandLineTestRunner::RunAllTests(
             ac, av
         ); /* cover alternate method */
     }

@@ -30,14 +30,17 @@
 
 #include "CppUTest/TestOutput.hpp"
 
-TestOutput::WorkingEnvironment PlatformSpecificGetWorkingEnvironment();
+namespace cpputest
+{
+    TestOutput::WorkingEnvironment PlatformSpecificGetWorkingEnvironment();
 
-class TestPlugin;
-extern void (*PlatformSpecificRunTestInASeperateProcess)(
-    UtestShell* shell, TestPlugin* plugin, TestResult* result
-);
-extern int (*PlatformSpecificFork)(void);
-extern int (*PlatformSpecificWaitPid)(int pid, int* status, int options);
+    class TestPlugin;
+    extern void (*PlatformSpecificRunTestInASeperateProcess)(
+        UtestShell* shell, TestPlugin* plugin, TestResult* result
+    );
+    extern int (*PlatformSpecificFork)(void);
+    extern int (*PlatformSpecificWaitPid)(int pid, int* status, int options);
+}
 
 /* Platform specific interface we use in order to minimize dependencies with
  * LibC. This enables porting to different embedded platforms.

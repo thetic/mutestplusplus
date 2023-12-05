@@ -25,34 +25,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "CppUTest/SimpleMutex.hpp"
-#include "CppUTest/TestHarness.hpp"
 
-SimpleMutex::SimpleMutex(void)
+namespace cpputest
 {
-    psMtx = PlatformSpecificMutexCreate();
-}
+    SimpleMutex::SimpleMutex(void)
+    {
+        psMtx = PlatformSpecificMutexCreate();
+    }
 
-SimpleMutex::~SimpleMutex(void)
-{
-    PlatformSpecificMutexDestroy(psMtx);
-}
+    SimpleMutex::~SimpleMutex(void)
+    {
+        PlatformSpecificMutexDestroy(psMtx);
+    }
 
-void SimpleMutex::Lock(void)
-{
-    PlatformSpecificMutexLock(psMtx);
-}
+    void SimpleMutex::Lock(void)
+    {
+        PlatformSpecificMutexLock(psMtx);
+    }
 
-void SimpleMutex::Unlock(void)
-{
-    PlatformSpecificMutexUnlock(psMtx);
-}
+    void SimpleMutex::Unlock(void)
+    {
+        PlatformSpecificMutexUnlock(psMtx);
+    }
 
-ScopedMutexLock::ScopedMutexLock(SimpleMutex* mtx) : mutex(mtx)
-{
-    mutex->Lock();
-}
+    ScopedMutexLock::ScopedMutexLock(SimpleMutex* mtx) : mutex(mtx)
+    {
+        mutex->Lock();
+    }
 
-ScopedMutexLock::~ScopedMutexLock()
-{
-    mutex->Unlock();
+    ScopedMutexLock::~ScopedMutexLock()
+    {
+        mutex->Unlock();
+    }
 }

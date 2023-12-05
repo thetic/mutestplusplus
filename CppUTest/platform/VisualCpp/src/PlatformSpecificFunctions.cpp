@@ -28,6 +28,8 @@
     #define LOCALTIME(_tm, timer) memcpy(_tm, localtime(timer), sizeof(tm))
 #endif
 
+using namespace cpputest;
+
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
 
@@ -67,11 +69,11 @@ static void VisualCppRunTestInASeperateProcess(
     ));
 }
 
-void (*PlatformSpecificRunTestInASeperateProcess)(
+void (*cpputest::PlatformSpecificRunTestInASeperateProcess)(
     UtestShell* shell, TestPlugin* plugin, TestResult* result
 ) = VisualCppRunTestInASeperateProcess;
 
-TestOutput::WorkingEnvironment PlatformSpecificGetWorkingEnvironment()
+TestOutput::WorkingEnvironment cpputest::PlatformSpecificGetWorkingEnvironment()
 {
     return TestOutput::visualStudio;
 }

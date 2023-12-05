@@ -33,13 +33,13 @@
 
 // This will cause a crash in VS2010 due to PlatformSpecificFree being
 // uninitialized
-static const SimpleString str1("abc");
-static const SimpleString str2("def");
-static const SimpleString str3(str1 + str2);
+static const cpputest::SimpleString str1("abc");
+static const cpputest::SimpleString str2("def");
+static const cpputest::SimpleString str3(str1 + str2);
 
 TEST_GROUP(UTestPlatformsTest_PlatformSpecificRunTestInASeperateProcess)
 {
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
 };
 
 // There is a possibility that a compiler provides fork but not waitpid.
@@ -70,8 +70,8 @@ static void exitNonZeroFunction_()
     /* destructor of static objects will be called. If StringCache was there
      * then the allocator will report invalid deallocations of static
      * SimpleString */
-    SimpleString::setStringAllocator(
-        SimpleString::getStringAllocator()->actualAllocator()
+    cpputest::SimpleString::setStringAllocator(
+        cpputest::SimpleString::getStringAllocator()->actualAllocator()
     );
     exit(1);
 }

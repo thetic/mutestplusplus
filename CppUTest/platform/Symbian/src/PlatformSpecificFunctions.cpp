@@ -36,6 +36,8 @@
 #include <string.h>
 #include <sys/time.h>
 
+using namespace cpputest;
+
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
 
