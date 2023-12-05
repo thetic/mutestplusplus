@@ -35,17 +35,17 @@ using cpputest::extensions::mock;
 
 TEST_GROUP(MockPlugin)
 {
-    StringBufferTestOutput output;
+    cpputest::StringBufferTestOutput output;
 
-    UtestShell* test;
-    TestResult* result;
+    cpputest::UtestShell* test;
+    cpputest::TestResult* result;
 
     cpputest::extensions::MockSupportPlugin plugin;
 
     void setup() override
     {
-        test = new UtestShell("group", "name", "file", 1);
-        result = new TestResult(output);
+        test = new cpputest::UtestShell("group", "name", "file", 1);
+        result = new cpputest::TestResult(output);
     }
 
     void teardown() override
@@ -111,7 +111,7 @@ public:
     {
         return object1 == object2;
     }
-    SimpleString valueToString(const void*) override
+    cpputest::SimpleString valueToString(const void*) override
     {
         return "string";
     }
@@ -200,7 +200,7 @@ static void failTwiceFunction_()
 
 TEST(MockPlugin, shouldNotFailAgainWhenTestAlreadyFailed)
 {
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
     fixture.installPlugin(&plugin);
     fixture.setTestFunction(failTwiceFunction_);
     fixture.runAllTests();

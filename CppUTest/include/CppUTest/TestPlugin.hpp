@@ -31,88 +31,94 @@
 #include "CppUTest/SimpleString.hpp"
 #include "CppUTest/TestResult.hpp"
 
-class TestPlugin
+namespace cpputest
 {
-public:
-    TestPlugin(const SimpleString& name);
-    virtual ~TestPlugin();
-
-    virtual void preTestAction(UtestShell&, TestResult&) {}
-
-    virtual void postTestAction(UtestShell&, TestResult&) {}
-
-    virtual bool
-    parseArguments(int /* ac */, const char* const* /* av */, int /* index */)
+    class TestPlugin
     {
-        return false;
-    }
+    public:
+        TestPlugin(const SimpleString& name);
+        virtual ~TestPlugin();
 
-    virtual void runAllPreTestAction(UtestShell&, TestResult&);
-    virtual void runAllPostTestAction(UtestShell&, TestResult&);
-    virtual bool parseAllArguments(int ac, const char* const* av, int index);
-    virtual bool parseAllArguments(int ac, char** av, int index);
+        virtual void preTestAction(UtestShell&, TestResult&) {}
 
-    virtual TestPlugin* addPlugin(TestPlugin*);
-    virtual TestPlugin* removePluginByName(const SimpleString& name);
-    virtual TestPlugin* getNext();
+        virtual void postTestAction(UtestShell&, TestResult&) {}
 
-    virtual void disable();
-    virtual void enable();
-    virtual bool isEnabled();
+        virtual bool parseArguments(
+            int /* ac */, const char* const* /* av */, int /* index */
+        )
+        {
+            return false;
+        }
 
-    const SimpleString& getName();
-    TestPlugin* getPluginByName(const SimpleString& name);
+        virtual void runAllPreTestAction(UtestShell&, TestResult&);
+        virtual void runAllPostTestAction(UtestShell&, TestResult&);
+        virtual bool
+        parseAllArguments(int ac, const char* const* av, int index);
+        virtual bool parseAllArguments(int ac, char** av, int index);
 
-protected:
-    TestPlugin(TestPlugin* next_);
+        virtual TestPlugin* addPlugin(TestPlugin*);
+        virtual TestPlugin* removePluginByName(const SimpleString& name);
+        virtual TestPlugin* getNext();
 
-private:
-    TestPlugin* next_;
-    SimpleString name_;
-    bool enabled_;
-};
+        virtual void disable();
+        virtual void enable();
+        virtual bool isEnabled();
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// SetPointerPlugin
-//
-// This is a very small plugin_ that resets pointers to their original value.
-//
-///////////////////////////////////////////////////////////////////////////////
+        const SimpleString& getName();
+        TestPlugin* getPluginByName(const SimpleString& name);
 
-extern void CppUTestStore(void** location);
+    protected:
+        TestPlugin(TestPlugin* next_);
 
-class SetPointerPlugin : public TestPlugin
-{
-public:
-    SetPointerPlugin(const SimpleString& name);
-    virtual void postTestAction(UtestShell&, TestResult&) override;
-
-    enum
-    {
-        MAX_SET = 32
+    private:
+        TestPlugin* next_;
+        SimpleString name_;
+        bool enabled_;
     };
-};
+
+    ///////////////////////////////////////////////////////////////////////////////
+    //
+    // SetPointerPlugin
+    //
+    // This is a very small plugin_ that resets pointers to their original
+    // value.
+    //
+    ///////////////////////////////////////////////////////////////////////////////
+
+    extern void CppUTestStore(void** location);
+
+    class SetPointerPlugin : public TestPlugin
+    {
+    public:
+        SetPointerPlugin(const SimpleString& name);
+        virtual void postTestAction(UtestShell&, TestResult&) override;
+
+        enum
+        {
+            MAX_SET = 32
+        };
+    };
+
+    ///////////// Null Plugin
+
+    class NullTestPlugin : public TestPlugin
+    {
+    public:
+        NullTestPlugin();
+
+        virtual void
+        runAllPreTestAction(UtestShell& test, TestResult& result) override;
+        virtual void
+        runAllPostTestAction(UtestShell& test, TestResult& result) override;
+
+        static NullTestPlugin* instance();
+    };
+}
 
 #define UT_PTR_SET(a, b)                                                       \
     do {                                                                       \
-        CppUTestStore(reinterpret_cast<void**>(&a));                           \
+        cpputest::CppUTestStore(reinterpret_cast<void**>(&a));                 \
         a = b;                                                                 \
     } while (0)
-
-///////////// Null Plugin
-
-class NullTestPlugin : public TestPlugin
-{
-public:
-    NullTestPlugin();
-
-    virtual void
-    runAllPreTestAction(UtestShell& test, TestResult& result) override;
-    virtual void
-    runAllPostTestAction(UtestShell& test, TestResult& result) override;
-
-    static NullTestPlugin* instance();
-};
 
 #endif

@@ -258,8 +258,8 @@ TEST(MockExpectedCallsList, callToStringForUnfulfilledFunctions)
     list->addExpectedCall(call2);
     list->addExpectedCall(call3);
 
-    SimpleString expectedString;
-    expectedString = StringFromFormat(
+    cpputest::SimpleString expectedString;
+    expectedString = cpputest::StringFromFormat(
         "%s\n%s", call1->callToString().asCharString(),
         call2->callToString().asCharString()
     );
@@ -280,8 +280,8 @@ TEST(MockExpectedCallsList, callsWithMissingParametersToString)
     list->addExpectedCall(call1);
     list->addExpectedCall(call2);
 
-    SimpleString expectedString;
-    expectedString = StringFromFormat(
+    cpputest::SimpleString expectedString;
+    expectedString = cpputest::StringFromFormat(
         "-%s\n-#%s\n-%s\n-#%s", call1->callToString().asCharString(),
         call1->missingParametersToString().asCharString(),
         call2->callToString().asCharString(),
@@ -304,8 +304,8 @@ TEST(MockExpectedCallsList, callToStringForFulfilledFunctions)
     list->addExpectedCall(call1);
     list->addExpectedCall(call2);
 
-    SimpleString expectedString;
-    expectedString = StringFromFormat(
+    cpputest::SimpleString expectedString;
+    expectedString = cpputest::StringFromFormat(
         "%s\n%s", call1->callToString().asCharString(),
         call2->callToString().asCharString()
     );

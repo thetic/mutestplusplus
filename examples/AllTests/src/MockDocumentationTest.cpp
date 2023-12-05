@@ -117,9 +117,9 @@ public:
     {
         return object1 == object2;
     }
-    virtual SimpleString valueToString(const void* object) override
+    virtual cpputest::SimpleString valueToString(const void* object) override
     {
-        return StringFrom(object);
+        return cpputest::StringFrom(object);
     }
 };
 

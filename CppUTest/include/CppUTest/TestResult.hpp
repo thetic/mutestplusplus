@@ -38,84 +38,87 @@
 
 #include <stddef.h>
 
-class TestFailure;
-class TestOutput;
-class UtestShell;
-
-class TestResult
+namespace cpputest
 {
-public:
-    TestResult(TestOutput&);
-    TestResult(const TestResult&) = default;
-    virtual ~TestResult();
+    class TestFailure;
+    class TestOutput;
+    class UtestShell;
 
-    virtual void testsStarted();
-    virtual void testsEnded();
-    virtual void currentGroupStarted(UtestShell* test);
-    virtual void currentGroupEnded(UtestShell* test);
-    virtual void currentTestStarted(UtestShell* test);
-    virtual void currentTestEnded(UtestShell* test);
+    class TestResult
+    {
+    public:
+        TestResult(TestOutput&);
+        TestResult(const TestResult&) = default;
+        virtual ~TestResult();
 
-    virtual void countTest();
-    virtual void countRun();
-    virtual void countCheck();
-    virtual void countFilteredOut();
-    virtual void countIgnored();
-    virtual void addFailure(const TestFailure& failure);
-    virtual void print(const char* text);
-    virtual void printVeryVerbose(const char* text);
+        virtual void testsStarted();
+        virtual void testsEnded();
+        virtual void currentGroupStarted(UtestShell* test);
+        virtual void currentGroupEnded(UtestShell* test);
+        virtual void currentTestStarted(UtestShell* test);
+        virtual void currentTestEnded(UtestShell* test);
 
-    size_t getTestCount() const
-    {
-        return testCount_;
-    }
-    size_t getRunCount() const
-    {
-        return runCount_;
-    }
-    size_t getCheckCount() const
-    {
-        return checkCount_;
-    }
-    size_t getFilteredOutCount() const
-    {
-        return filteredOutCount_;
-    }
-    size_t getIgnoredCount() const
-    {
-        return ignoredCount_;
-    }
-    size_t getFailureCount() const
-    {
-        return failureCount_;
-    }
+        virtual void countTest();
+        virtual void countRun();
+        virtual void countCheck();
+        virtual void countFilteredOut();
+        virtual void countIgnored();
+        virtual void addFailure(const TestFailure& failure);
+        virtual void print(const char* text);
+        virtual void printVeryVerbose(const char* text);
 
-    bool isFailure() const
-    {
-        return (getFailureCount() != 0) ||
-               (getRunCount() + getIgnoredCount() == 0);
-    }
+        size_t getTestCount() const
+        {
+            return testCount_;
+        }
+        size_t getRunCount() const
+        {
+            return runCount_;
+        }
+        size_t getCheckCount() const
+        {
+            return checkCount_;
+        }
+        size_t getFilteredOutCount() const
+        {
+            return filteredOutCount_;
+        }
+        size_t getIgnoredCount() const
+        {
+            return ignoredCount_;
+        }
+        size_t getFailureCount() const
+        {
+            return failureCount_;
+        }
 
-    size_t getTotalExecutionTime() const;
-    void setTotalExecutionTime(size_t exTime);
+        bool isFailure() const
+        {
+            return (getFailureCount() != 0) ||
+                   (getRunCount() + getIgnoredCount() == 0);
+        }
 
-    size_t getCurrentTestTotalExecutionTime() const;
-    size_t getCurrentGroupTotalExecutionTime() const;
+        size_t getTotalExecutionTime() const;
+        void setTotalExecutionTime(size_t exTime);
 
-private:
-    TestOutput& output_;
-    size_t testCount_;
-    size_t runCount_;
-    size_t checkCount_;
-    size_t failureCount_;
-    size_t filteredOutCount_;
-    size_t ignoredCount_;
-    size_t totalExecutionTime_;
-    size_t timeStarted_;
-    size_t currentTestTimeStarted_;
-    size_t currentTestTotalExecutionTime_;
-    size_t currentGroupTimeStarted_;
-    size_t currentGroupTotalExecutionTime_;
-};
+        size_t getCurrentTestTotalExecutionTime() const;
+        size_t getCurrentGroupTotalExecutionTime() const;
+
+    private:
+        TestOutput& output_;
+        size_t testCount_;
+        size_t runCount_;
+        size_t checkCount_;
+        size_t failureCount_;
+        size_t filteredOutCount_;
+        size_t ignoredCount_;
+        size_t totalExecutionTime_;
+        size_t timeStarted_;
+        size_t currentTestTimeStarted_;
+        size_t currentTestTotalExecutionTime_;
+        size_t currentGroupTimeStarted_;
+        size_t currentGroupTotalExecutionTime_;
+    };
+}
 
 #endif

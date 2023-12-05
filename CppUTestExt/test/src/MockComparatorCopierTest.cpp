@@ -66,11 +66,11 @@ public:
             reinterpret_cast<const MyTypeForTesting*>(object2);
         return *(obj1->value) == *(obj2->value);
     }
-    virtual SimpleString valueToString(const void* object) override
+    virtual cpputest::SimpleString valueToString(const void* object) override
     {
         const MyTypeForTesting* obj =
             reinterpret_cast<const MyTypeForTesting*>(object);
-        return StringFrom(*(obj->value));
+        return cpputest::StringFrom(*(obj->value));
     }
 };
 
@@ -156,9 +156,11 @@ static bool myTypeIsEqual(const void* object1, const void* object2)
            reinterpret_cast<const MyTypeForTesting*>(object2)->value;
 }
 
-static SimpleString myTypeValueToString(const void* object)
+static cpputest::SimpleString myTypeValueToString(const void* object)
 {
-    return StringFrom(reinterpret_cast<const MyTypeForTesting*>(object)->value);
+    return cpputest::StringFrom(
+        reinterpret_cast<const MyTypeForTesting*>(object)->value
+    );
 }
 
 TEST(MockComparatorCopierTest, customObjectWithFunctionComparator)
@@ -198,7 +200,7 @@ TEST(
     expectations.addFunction("function")
         ->withParameterOfType("MyTypeForTesting", "parameterName", &object);
     cpputest::extensions::MockExpectedCallsDidntHappenFailure failure(
-        UtestShell::getCurrent(), expectations
+        cpputest::UtestShell::getCurrent(), expectations
     );
 
     mock()
@@ -800,7 +802,7 @@ public:
     {
         return true;
     }
-    virtual SimpleString valueToString(const void*) override
+    virtual cpputest::SimpleString valueToString(const void*) override
     {
         return "";
     }

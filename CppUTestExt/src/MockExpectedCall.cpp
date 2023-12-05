@@ -720,9 +720,9 @@ namespace cpputest
             return call;
         }
     }
-}
 
-SimpleString StringFrom(const cpputest::extensions::MockNamedValue& parameter)
-{
-    return parameter.toString();
+    SimpleString StringFrom(const extensions::MockNamedValue& parameter)
+    {
+        return parameter.toString();
+    }
 }

@@ -76,7 +76,7 @@ TEST_GROUP(SimpleMutexTest)
 TEST(SimpleMutexTest, CreateAndDestroy)
 {
     {
-        SimpleMutex mtx;
+        cpputest::SimpleMutex mtx;
     }
 
     CHECK_EQUAL(1, mutexCreateCount);
@@ -88,7 +88,7 @@ TEST(SimpleMutexTest, CreateAndDestroy)
 TEST(SimpleMutexTest, LockUnlockTest)
 {
     {
-        SimpleMutex mtx;
+        cpputest::SimpleMutex mtx;
         mtx.Lock();
         mtx.Unlock();
     }

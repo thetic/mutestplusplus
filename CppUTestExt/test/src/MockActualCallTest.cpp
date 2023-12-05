@@ -249,10 +249,10 @@ TEST(MockCheckedActualCall, remainderOfMockActualCallTraceWorksAsItShould)
     );
     actual.withParameterOfType("int", "named_type", &const_value);
 
-    SimpleString expectedString("\nFunction name:func");
+    cpputest::SimpleString expectedString("\nFunction name:func");
     expectedString += " withCallOrder:1";
     expectedString += " onObject:0x";
-    expectedString += HexStringFrom(&value);
+    expectedString += cpputest::HexStringFrom(&value);
     expectedString += " bool:true";
     expectedString += " unsigned_int:1 (0x1)";
     expectedString += " unsigned_long:1 (0x1)";
@@ -260,14 +260,14 @@ TEST(MockCheckedActualCall, remainderOfMockActualCallTraceWorksAsItShould)
     expectedString += " long_long_int:1 (0x1)";
     expectedString += " unsigned_long_long_int:1 (0x1)";
     expectedString += " pointer:0x";
-    expectedString += HexStringFrom(&value);
+    expectedString += cpputest::HexStringFrom(&value);
     expectedString += " const_pointer:0x";
-    expectedString += HexStringFrom(&const_value);
+    expectedString += cpputest::HexStringFrom(&const_value);
     expectedString += " function_pointer:0x";
-    expectedString += HexStringFrom(function_value);
+    expectedString += cpputest::HexStringFrom(function_value);
     expectedString += " mem_buffer:Size = 2 | HexContents = FE 15";
     expectedString += " int named_type:0x";
-    expectedString += HexStringFrom(&const_value);
+    expectedString += cpputest::HexStringFrom(&const_value);
     STRCMP_EQUAL(expectedString.asCharString(), actual.getTraceOutput());
 
     CHECK_FALSE(actual.hasReturnValue());

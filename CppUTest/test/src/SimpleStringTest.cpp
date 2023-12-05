@@ -50,6 +50,10 @@
     #define CPPUTEST_16BIT_INTS
 #endif
 
+using cpputest::SimpleString;
+using cpputest::SimpleStringCollection;
+using cpputest::StringFrom;
+
 TEST_GROUP(SimpleString)
 {
 };
@@ -58,11 +62,11 @@ TEST(SimpleString, defaultAllocatorIsNewArrayAllocator)
 {
     SimpleString::setStringAllocator(nullptr);
     POINTERS_EQUAL(
-        defaultNewArrayAllocator(), SimpleString::getStringAllocator()
+        cpputest::defaultNewArrayAllocator(), SimpleString::getStringAllocator()
     );
 }
 
-class MyOwnStringAllocator : public TestMemoryAllocator
+class MyOwnStringAllocator : public cpputest::TestMemoryAllocator
 {
 public:
     MyOwnStringAllocator() : memoryWasAllocated(false) {}
@@ -480,12 +484,14 @@ TEST(SimpleString, ContainsNull)
 
 TEST(SimpleString, NULLReportsNullString)
 {
-    STRCMP_EQUAL("(null)", StringFromOrNull(nullptr).asCharString());
+    STRCMP_EQUAL("(null)", cpputest::StringFromOrNull(nullptr).asCharString());
 }
 
 TEST(SimpleString, NULLReportsNullStringPrintable)
 {
-    STRCMP_EQUAL("(null)", PrintableStringFromOrNull(nullptr).asCharString());
+    STRCMP_EQUAL(
+        "(null)", cpputest::PrintableStringFromOrNull(nullptr).asCharString()
+    );
 }
 
 TEST(SimpleString, Booleans)
@@ -601,6 +607,7 @@ TEST(SimpleString, nullptr_type)
 
 TEST(SimpleString, HexStrings)
 {
+    using cpputest::HexStringFrom;
     STRCMP_EQUAL(
         "f3", HexStringFrom(static_cast<signed char>(-13)).asCharString()
     );
@@ -620,7 +627,8 @@ TEST(SimpleString, HexStrings)
 
 TEST(SimpleString, StringFromFormat)
 {
-    SimpleString h1 = StringFromFormat("%s %s! %d", "Hello", "World", 2009);
+    SimpleString h1 =
+        cpputest::StringFromFormat("%s %s! %d", "Hello", "World", 2009);
     STRCMP_EQUAL("Hello World! 2009", h1.asCharString());
 }
 
@@ -628,7 +636,8 @@ TEST(SimpleString, StringFromFormatpointer)
 {
     // this is not a great test. but %p is odd on mingw and even more odd on
     // Solaris.
-    SimpleString h1 = StringFromFormat("%p", reinterpret_cast<void*>(1));
+    SimpleString h1 =
+        cpputest::StringFromFormat("%p", reinterpret_cast<void*>(1));
     if (h1.size() == 3)
         STRCMP_EQUAL("0x1", h1.asCharString());
     else if (h1.size() == 8)
@@ -647,8 +656,9 @@ TEST(SimpleString, StringFromFormatLarge)
 {
     const char* s =
         "ThisIsAPrettyLargeStringAndIfWeAddThisManyTimesToABufferItWillbeFull";
-    SimpleString h1 =
-        StringFromFormat("%s%s%s%s%s%s%s%s%s%s", s, s, s, s, s, s, s, s, s, s);
+    SimpleString h1 = cpputest::StringFromFormat(
+        "%s%s%s%s%s%s%s%s%s%s", s, s, s, s, s, s, s, s, s, s
+    );
     LONGS_EQUAL(10, h1.count(s));
 }
 
@@ -762,7 +772,7 @@ TEST(SimpleString, BracketsFormattedHexStringFromForLongOnDifferentPlatform)
 
     STRCMP_EQUAL(
         "(0xffffffffffffffff)",
-        BracketsFormattedHexStringFrom(value).asCharString()
+        cpputest::BracketsFormattedHexStringFrom(value).asCharString()
     );
 }
 
@@ -773,7 +783,8 @@ TEST(SimpleString, BracketsFormattedHexStringFromForLongOnDifferentPlatform)
     long value = -1;
 
     STRCMP_EQUAL(
-        "(0xffffffff)", BracketsFormattedHexStringFrom(value).asCharString()
+        "(0xffffffff)",
+        cpputest::BracketsFormattedHexStringFrom(value).asCharString()
     );
 }
 
@@ -789,7 +800,8 @@ TEST(SimpleString, BracketsFormattedHexStringFromForLongOnDifferentPlatform)
     long value = -1;
 
     STRCMP_EQUAL(
-        "(0xffffffff)", BracketsFormattedHexStringFrom(value).asCharString()
+        "(0xffffffff)",
+        cpputest::BracketsFormattedHexStringFrom(value).asCharString()
     );
 }
 #endif
@@ -985,6 +997,9 @@ TEST(SimpleString, AtoU)
 
 TEST(SimpleString, Binary)
 {
+    using cpputest::StringFromBinary;
+    using cpputest::StringFromBinaryOrNull;
+
     const unsigned char value[] = {0x00, 0x01, 0x2A, 0xFF};
     const char expectedString[] = "00 01 2A FF";
 
@@ -1001,6 +1016,9 @@ TEST(SimpleString, Binary)
 
 TEST(SimpleString, BinaryWithSize)
 {
+    using cpputest::StringFromBinaryWithSize;
+    using cpputest::StringFromBinaryWithSizeOrNull;
+
     const unsigned char value[] = {0x12, 0xFE, 0xA1};
     const char expectedString[] = "Size = 3 | HexContents = 12 FE A1";
 
@@ -1028,7 +1046,8 @@ TEST(SimpleString, BinaryWithSizeLargerThan128)
     value[128] = 0xff;
 
     STRCMP_CONTAINS(
-        "00 ...", StringFromBinaryWithSize(value, sizeof(value)).asCharString()
+        "00 ...",
+        cpputest::StringFromBinaryWithSize(value, sizeof(value)).asCharString()
     );
 }
 
@@ -1077,6 +1096,7 @@ TEST(SimpleString, MaskedBitsChar)
 #elif (CHAR_BIT == 8)
 TEST(SimpleString, MaskedBitsChar)
 {
+    using cpputest::StringFromMaskedBits;
     STRCMP_EQUAL(
         "xxxxxxxx", StringFromMaskedBits(0x00, 0x00, 1).asCharString()
     );
@@ -1100,6 +1120,7 @@ TEST(SimpleString, MaskedBitsChar)
 
 TEST(SimpleString, MaskedBits16Bit)
 {
+    using cpputest::StringFromMaskedBits;
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxxx",
         StringFromMaskedBits(0x0000, 0x0000, 2 * 8 / CHAR_BIT).asCharString()
@@ -1128,6 +1149,7 @@ TEST(SimpleString, MaskedBits16Bit)
 
 TEST(SimpleString, MaskedBits32Bit)
 {
+    using cpputest::StringFromMaskedBits;
     STRCMP_EQUAL(
         "xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx",
         StringFromMaskedBits(0x00000000, 0x00000000, 4 * 8 / CHAR_BIT)
@@ -1162,6 +1184,7 @@ TEST(SimpleString, MaskedBits32Bit)
 
 TEST(SimpleString, StringFromOrdinalNumberOnes)
 {
+    using cpputest::StringFromOrdinalNumber;
     STRCMP_EQUAL("2nd", StringFromOrdinalNumber(2).asCharString());
     STRCMP_EQUAL("3rd", StringFromOrdinalNumber(3).asCharString());
     STRCMP_EQUAL("4th", StringFromOrdinalNumber(4).asCharString());
@@ -1172,6 +1195,7 @@ TEST(SimpleString, StringFromOrdinalNumberOnes)
 
 TEST(SimpleString, StringFromOrdinalNumberTens)
 {
+    using cpputest::StringFromOrdinalNumber;
     STRCMP_EQUAL("10th", StringFromOrdinalNumber(10).asCharString());
     STRCMP_EQUAL("11th", StringFromOrdinalNumber(11).asCharString());
     STRCMP_EQUAL("12th", StringFromOrdinalNumber(12).asCharString());
@@ -1182,6 +1206,7 @@ TEST(SimpleString, StringFromOrdinalNumberTens)
 
 TEST(SimpleString, StringFromOrdinalNumberOthers)
 {
+    using cpputest::StringFromOrdinalNumber;
     STRCMP_EQUAL("21st", StringFromOrdinalNumber(21).asCharString());
     STRCMP_EQUAL("22nd", StringFromOrdinalNumber(22).asCharString());
     STRCMP_EQUAL("23rd", StringFromOrdinalNumber(23).asCharString());
@@ -1196,7 +1221,7 @@ TEST(SimpleString, BracketsFormattedHexStringFromForSignedChar)
     signed char value = 'c';
 
     STRCMP_EQUAL(
-        "(0x63)", BracketsFormattedHexStringFrom(value).asCharString()
+        "(0x63)", cpputest::BracketsFormattedHexStringFrom(value).asCharString()
     );
 }
 
@@ -1204,14 +1229,18 @@ TEST(SimpleString, BracketsFormattedHexStringFromForUnsignedInt)
 {
     unsigned int value = 1;
 
-    STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
+    STRCMP_EQUAL(
+        "(0x1)", cpputest::BracketsFormattedHexStringFrom(value).asCharString()
+    );
 }
 
 TEST(SimpleString, BracketsFormattedHexStringFromForUnsignedLong)
 {
     unsigned long value = 1;
 
-    STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
+    STRCMP_EQUAL(
+        "(0x1)", cpputest::BracketsFormattedHexStringFrom(value).asCharString()
+    );
 }
 
 #ifdef CPPUTEST_16BIT_INTS
@@ -1220,7 +1249,8 @@ TEST(SimpleString, BracketsFormattedHexStringFromForInt)
     int value = -1;
 
     STRCMP_EQUAL(
-        "(0xffff)", BracketsFormattedHexStringFrom(value).asCharString()
+        "(0xffff)",
+        cpputest::BracketsFormattedHexStringFrom(value).asCharString()
     );
 }
 #else
@@ -1228,7 +1258,8 @@ TEST(SimpleString, BracketsFormattedHexStringFromForInt)
 {
     int value = -1;
     STRCMP_EQUAL(
-        "(0xffffffff)", BracketsFormattedHexStringFrom(value).asCharString()
+        "(0xffffffff)",
+        cpputest::BracketsFormattedHexStringFrom(value).asCharString()
     );
 }
 #endif
@@ -1237,18 +1268,25 @@ TEST(SimpleString, BracketsFormattedHexStringFromForLong)
 {
     long value = 1;
 
-    STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
+    STRCMP_EQUAL(
+        "(0x1)", cpputest::BracketsFormattedHexStringFrom(value).asCharString()
+    );
 }
 
 TEST(SimpleString, BracketsFormattedHexStringFromForLongLong)
 {
     long long value = 1;
 
-    STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
+    STRCMP_EQUAL(
+        "(0x1)", cpputest::BracketsFormattedHexStringFrom(value).asCharString()
+    );
 }
+
 TEST(SimpleString, BracketsFormattedHexStringFromForULongLong)
 {
     unsigned long long value = 1;
 
-    STRCMP_EQUAL("(0x1)", BracketsFormattedHexStringFrom(value).asCharString());
+    STRCMP_EQUAL(
+        "(0x1)", cpputest::BracketsFormattedHexStringFrom(value).asCharString()
+    );
 }

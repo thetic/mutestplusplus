@@ -97,7 +97,7 @@ namespace cpputest
     class TEST_##testGroup##_##testName##_TestShell                            \
         : public cpputest::extensions::OrderedTestShell                        \
     {                                                                          \
-        virtual Utest* createTest() override                                   \
+        virtual cpputest::Utest* createTest() override                         \
         {                                                                      \
             return new TEST_##testGroup##_##testName##_Test;                   \
         }                                                                      \

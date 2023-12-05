@@ -37,14 +37,14 @@ using cpputest::extensions::OrderedTestShell;
 
 TEST_GROUP(TestOrderedTest)
 {
-    TestTestingFixture* fixture;
+    cpputest::TestTestingFixture* fixture;
 
     OrderedTestShell orderedTest;
     OrderedTestShell orderedTest2;
     OrderedTestShell orderedTest3;
-    ExecFunctionTestShell normalTest;
-    ExecFunctionTestShell normalTest2;
-    ExecFunctionTestShell normalTest3;
+    cpputest::ExecFunctionTestShell normalTest;
+    cpputest::ExecFunctionTestShell normalTest2;
+    cpputest::ExecFunctionTestShell normalTest3;
 
     OrderedTestShell* orderedTestCache;
     void setup() override
@@ -52,7 +52,7 @@ TEST_GROUP(TestOrderedTest)
         orderedTestCache = OrderedTestShell::getOrderedTestHead();
         OrderedTestShell::setOrderedTestHead(nullptr);
 
-        fixture = new TestTestingFixture();
+        fixture = new cpputest::TestTestingFixture();
         fixture->getRegistry()->unDoLastAddTest();
     }
 
@@ -69,17 +69,19 @@ TEST_GROUP(TestOrderedTest)
         );
     }
 
-    void InstallNormalTest(UtestShell& test)
+    void InstallNormalTest(cpputest::UtestShell& test)
     {
-        TestInstaller(test, "testgroup", "testname", __FILE__, __LINE__);
+        cpputest::TestInstaller(
+            test, "testgroup", "testname", __FILE__, __LINE__
+        );
     }
 
-    UtestShell* firstTest()
+    cpputest::UtestShell* firstTest()
     {
         return fixture->getRegistry()->getFirstTest();
     }
 
-    UtestShell* secondTest()
+    cpputest::UtestShell* secondTest()
     {
         return firstTest()->getNext();
     }
@@ -136,7 +138,8 @@ TEST(TestOrderedTest, MultipleOrderedTests)
     InstallNormalTest(normalTest3);
     InstallOrderedTest(orderedTest3, 7);
 
-    UtestShell* firstOrderedTest = firstTest()->getNext()->getNext()->getNext();
+    cpputest::UtestShell* firstOrderedTest =
+        firstTest()->getNext()->getNext()->getNext();
     CHECK(firstOrderedTest == &orderedTest2);
     CHECK(firstOrderedTest->getNext() == &orderedTest);
     CHECK(firstOrderedTest->getNext()->getNext() == &orderedTest3);
@@ -181,7 +184,7 @@ TEST_GROUP(TestOrderedTestMacros)
     void setup() override
     {
         OrderedTestTestingFixture::checkRun(
-            TestRegistry::getCurrentRegistry()->getCurrentRepetition()
+            cpputest::TestRegistry::getCurrentRegistry()->getCurrentRepetition()
         );
     }
 };

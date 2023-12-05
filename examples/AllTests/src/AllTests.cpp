@@ -39,9 +39,9 @@ public:
         return object1 == object2;
     }
 
-    virtual SimpleString valueToString(const void* object) override
+    virtual cpputest::SimpleString valueToString(const void* object) override
     {
-        return StringFrom(object);
+        return cpputest::StringFrom(object);
     }
 };
 
@@ -52,9 +52,9 @@ int main(int ac, char** av)
     cpputest::extensions::IEEE754ExceptionsPlugin ieee754Plugin;
 
     mockPlugin.installComparator("MyDummyType", dummyComparator);
-    TestRegistry::getCurrentRegistry()->installPlugin(&mockPlugin);
-    TestRegistry::getCurrentRegistry()->installPlugin(&ieee754Plugin);
-    return CommandLineTestRunner::RunAllTests(ac, av);
+    cpputest::TestRegistry::getCurrentRegistry()->installPlugin(&mockPlugin);
+    cpputest::TestRegistry::getCurrentRegistry()->installPlugin(&ieee754Plugin);
+    return cpputest::CommandLineTestRunner::RunAllTests(ac, av);
 }
 
 #include "AllTests.h"

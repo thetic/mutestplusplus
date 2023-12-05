@@ -2,7 +2,7 @@
 #include "CppUTest/TeamCityTestOutput.hpp"
 #include "CppUTest/TestHarness.hpp"
 
-class TeamCityOutputToBuffer : public TeamCityTestOutput
+class TeamCityOutputToBuffer : public cpputest::TeamCityTestOutput
 {
 public:
     explicit TeamCityOutputToBuffer() {}
@@ -19,13 +19,13 @@ public:
         output = "";
     }
 
-    const SimpleString& getOutput()
+    const cpputest::SimpleString& getOutput()
     {
         return output;
     }
 
 private:
-    SimpleString output;
+    cpputest::SimpleString output;
 };
 
 static long millisTime;
@@ -37,21 +37,23 @@ static long MockGetPlatformSpecificTimeInMillis()
 
 TEST_GROUP(TeamCityOutputTest)
 {
-    TeamCityTestOutput* tcout;
+    cpputest::TeamCityTestOutput* tcout;
     TeamCityOutputToBuffer* mock;
-    UtestShell* tst;
-    TestFailure *f, *f2, *f3;
-    TestResult* result;
+    cpputest::UtestShell* tst;
+    cpputest::TestFailure *f, *f2, *f3;
+    cpputest::TestResult* result;
 
     void setup() override
     {
         mock = new TeamCityOutputToBuffer();
         tcout = mock;
-        tst = new UtestShell("group", "test", "file", 10);
-        f = new TestFailure(tst, "failfile", 20, "failure message");
-        f2 = new TestFailure(tst, "file", 20, "message");
-        f3 = new TestFailure(tst, "file", 30, "apos' pipe| [brackets]\r\nCRLF");
-        result = new TestResult(*mock);
+        tst = new cpputest::UtestShell("group", "test", "file", 10);
+        f = new cpputest::TestFailure(tst, "failfile", 20, "failure message");
+        f2 = new cpputest::TestFailure(tst, "file", 20, "message");
+        f3 = new cpputest::TestFailure(
+            tst, "file", 30, "apos' pipe| [brackets]\r\nCRLF"
+        );
+        result = new cpputest::TestResult(*mock);
         result->setTotalExecutionTime(10);
         millisTime = 0;
         UT_PTR_SET(
@@ -128,8 +130,8 @@ TEST(TeamCityOutputTest, PrintTestIgnored)
         "##teamcity[testIgnored name='test']\n"
         "##teamcity[testFinished name='test' duration='41']\n";
 
-    IgnoredUtestShell* itst =
-        new IgnoredUtestShell("group", "test", "file", 10);
+    cpputest::IgnoredUtestShell* itst =
+        new cpputest::IgnoredUtestShell("group", "test", "file", 10);
     result->currentTestStarted(itst);
     millisTime = 41;
     result->currentTestEnded(itst);
@@ -206,7 +208,7 @@ TEST(TeamCityOutputTest, TestNameEscaped_End)
 
 TEST(TeamCityOutputTest, TestNameEscaped_Ignore)
 {
-    IgnoredUtestShell itst("group", "'[]\n\r", "file", 10);
+    cpputest::IgnoredUtestShell itst("group", "'[]\n\r", "file", 10);
     result->currentTestStarted(&itst);
     const char* expected =
         "##teamcity[testStarted name='|'|[|]|n|r']\n"
@@ -217,7 +219,7 @@ TEST(TeamCityOutputTest, TestNameEscaped_Ignore)
 TEST(TeamCityOutputTest, TestNameEscaped_Fail)
 {
     tst->setTestName("'[]\n\r");
-    TestFailure fail(tst, "failfile", 20, "failure message");
+    cpputest::TestFailure fail(tst, "failfile", 20, "failure message");
     tcout->printFailure(fail);
     const char* expected =
         "##teamcity[testFailed name='|'|[|]|n|r' message='TEST failed "

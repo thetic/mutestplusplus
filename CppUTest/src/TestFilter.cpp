@@ -27,91 +27,94 @@
 
 #include "CppUTest/TestFilter.hpp"
 
-TestFilter::TestFilter() :
-    strictMatching_(false),
-    invertMatching_(false),
-    next_(nullptr)
+namespace cpputest
 {
-}
+    TestFilter::TestFilter() :
+        strictMatching_(false),
+        invertMatching_(false),
+        next_(nullptr)
+    {
+    }
 
-TestFilter::TestFilter(const SimpleString& filter) :
-    strictMatching_(false),
-    invertMatching_(false),
-    next_(nullptr)
-{
-    filter_ = filter;
-}
+    TestFilter::TestFilter(const SimpleString& filter) :
+        strictMatching_(false),
+        invertMatching_(false),
+        next_(nullptr)
+    {
+        filter_ = filter;
+    }
 
-TestFilter::TestFilter(const char* filter) :
-    strictMatching_(false),
-    invertMatching_(false),
-    next_(nullptr)
-{
-    filter_ = filter;
-}
+    TestFilter::TestFilter(const char* filter) :
+        strictMatching_(false),
+        invertMatching_(false),
+        next_(nullptr)
+    {
+        filter_ = filter;
+    }
 
-TestFilter* TestFilter::add(TestFilter* filter)
-{
-    next_ = filter;
-    return this;
-}
+    TestFilter* TestFilter::add(TestFilter* filter)
+    {
+        next_ = filter;
+        return this;
+    }
 
-TestFilter* TestFilter::getNext() const
-{
-    return next_;
-}
+    TestFilter* TestFilter::getNext() const
+    {
+        return next_;
+    }
 
-void TestFilter::strictMatching()
-{
-    strictMatching_ = true;
-}
+    void TestFilter::strictMatching()
+    {
+        strictMatching_ = true;
+    }
 
-void TestFilter::invertMatching()
-{
-    invertMatching_ = true;
-}
+    void TestFilter::invertMatching()
+    {
+        invertMatching_ = true;
+    }
 
-bool TestFilter::match(const SimpleString& name) const
-{
-    bool matches = false;
+    bool TestFilter::match(const SimpleString& name) const
+    {
+        bool matches = false;
 
-    if (strictMatching_)
-        matches = name == filter_;
-    else
-        matches = name.contains(filter_);
+        if (strictMatching_)
+            matches = name == filter_;
+        else
+            matches = name.contains(filter_);
 
-    return invertMatching_ ? !matches : matches;
-}
+        return invertMatching_ ? !matches : matches;
+    }
 
-bool TestFilter::operator==(const TestFilter& filter) const
-{
-    return (
-        filter_ == filter.filter_ &&
-        strictMatching_ == filter.strictMatching_ &&
-        invertMatching_ == filter.invertMatching_
-    );
-}
+    bool TestFilter::operator==(const TestFilter& filter) const
+    {
+        return (
+            filter_ == filter.filter_ &&
+            strictMatching_ == filter.strictMatching_ &&
+            invertMatching_ == filter.invertMatching_
+        );
+    }
 
-bool TestFilter::operator!=(const TestFilter& filter) const
-{
-    return !(filter == *this);
-}
+    bool TestFilter::operator!=(const TestFilter& filter) const
+    {
+        return !(filter == *this);
+    }
 
-SimpleString TestFilter::asString() const
-{
-    SimpleString textFilter =
-        StringFromFormat("TestFilter: \"%s\"", filter_.asCharString());
-    if (strictMatching_ && invertMatching_)
-        textFilter += " with strict, invert matching";
-    else if (strictMatching_)
-        textFilter += " with strict matching";
-    else if (invertMatching_)
-        textFilter += " with invert matching";
+    SimpleString TestFilter::asString() const
+    {
+        SimpleString textFilter =
+            StringFromFormat("TestFilter: \"%s\"", filter_.asCharString());
+        if (strictMatching_ && invertMatching_)
+            textFilter += " with strict, invert matching";
+        else if (strictMatching_)
+            textFilter += " with strict matching";
+        else if (invertMatching_)
+            textFilter += " with invert matching";
 
-    return textFilter;
-}
+        return textFilter;
+    }
 
-SimpleString StringFrom(const TestFilter& filter)
-{
-    return filter.asString();
+    cpputest::SimpleString StringFrom(const cpputest::TestFilter& filter)
+    {
+        return filter.asString();
+    }
 }

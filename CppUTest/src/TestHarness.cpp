@@ -28,6 +28,8 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/TestHarness.hpp"
 
+using namespace cpputest;
+
 void CHECK_EQUAL_C_BOOL_LOCATION(
     int expected,
     int actual,

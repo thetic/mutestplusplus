@@ -39,7 +39,7 @@ class MockFailureReporterForTest
     : public cpputest::extensions::MockFailureReporter
 {
 public:
-    SimpleString mockFailureString;
+    cpputest::SimpleString mockFailureString;
 
     virtual void failTest(const cpputest::extensions::MockFailure& failure
     ) override;
@@ -57,8 +57,8 @@ public:
     ~MockFailureReporterInstaller();
 };
 
-UtestShell* mockFailureTest();
-SimpleString mockFailureString();
+cpputest::UtestShell* mockFailureTest();
+cpputest::SimpleString mockFailureString();
 void CLEAR_MOCK_FAILURE();
 void CHECK_EXPECTED_MOCK_FAILURE_LOCATION(
     const cpputest::extensions::MockFailure& expectedFailure,
@@ -73,11 +73,11 @@ class MockExpectedCallsListForTest
 public:
     ~MockExpectedCallsListForTest() override;
     cpputest::extensions::MockCheckedExpectedCall*
-    addFunction(const SimpleString& name);
+    addFunction(const cpputest::SimpleString& name);
     cpputest::extensions::MockCheckedExpectedCall*
-    addFunction(unsigned int numCalls, const SimpleString& name);
+    addFunction(unsigned int numCalls, const cpputest::SimpleString& name);
     cpputest::extensions::MockCheckedExpectedCall*
-    addFunctionOrdered(const SimpleString& name, unsigned int order);
+    addFunctionOrdered(const cpputest::SimpleString& name, unsigned int order);
 };
 
 #endif

@@ -193,9 +193,8 @@ namespace cpputest
             virtual MockExpectedCall& onObject(void* objectPtr) = 0;
         };
     }
-}
 
-extern SimpleString
-StringFrom(const cpputest::extensions::MockNamedValue& parameter);
+    extern SimpleString StringFrom(const extensions::MockNamedValue& parameter);
+}
 
 #endif

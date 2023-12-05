@@ -36,16 +36,16 @@ static long MockGetPlatformSpecificTimeInMillis()
 
 TEST_GROUP(TestResult)
 {
-    TestOutput* printer;
-    StringBufferTestOutput* mock;
+    cpputest::TestOutput* printer;
+    cpputest::StringBufferTestOutput* mock;
 
-    TestResult* res;
+    cpputest::TestResult* res;
 
     void setup() override
     {
-        mock = new StringBufferTestOutput();
+        mock = new cpputest::StringBufferTestOutput();
         printer = mock;
-        res = new TestResult(*printer);
+        res = new cpputest::TestResult(*printer);
         UT_PTR_SET(
             GetPlatformSpecificTimeInMillis, MockGetPlatformSpecificTimeInMillis
         );
@@ -81,9 +81,10 @@ TEST(TestResult, ResultIsNotOkIfFailures)
 {
     res->countTest();
     res->countRun();
-    res->addFailure(
-        TestFailure(UtestShell::getCurrent(), StringFrom("dummy message"))
-    );
+    res->addFailure(cpputest::TestFailure(
+        cpputest::UtestShell::getCurrent(),
+        cpputest::StringFrom("dummy message")
+    ));
     CHECK_TRUE(res->isFailure());
 }
 

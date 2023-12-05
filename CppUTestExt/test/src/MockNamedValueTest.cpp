@@ -42,7 +42,7 @@ public:
     {
         return false;
     }
-    virtual SimpleString valueToString(const void*) override
+    virtual cpputest::SimpleString valueToString(const void*) override
     {
         return "";
     }

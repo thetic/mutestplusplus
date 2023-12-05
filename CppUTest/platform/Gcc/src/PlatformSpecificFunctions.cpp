@@ -52,33 +52,12 @@
     #include <pthread.h>
 #endif
 
+using namespace cpputest;
+
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
 
-// There is a possibility that a compiler provides fork but not waitpid.
-#if !defined(CPPUTEST_HAVE_FORK) || !defined(CPPUTEST_HAVE_WAITPID)
-
-static void GccPlatformSpecificRunTestInASeperateProcess(
-    UtestShell* shell, TestPlugin*, TestResult* result
-)
-{
-    result->addFailure(TestFailure(
-        shell, "-p doesn't work on this platform, as it is lacking fork.\b"
-    ));
-}
-
-static int PlatformSpecificForkImplementation(void)
-{
-    return 0;
-}
-
-static int PlatformSpecificWaitPidImplementation(int, int*, int)
-{
-    return 0;
-}
-
-#else
-
+#if defined(CPPUTEST_HAVE_FORK) && defined(CPPUTEST_HAVE_WAITPID)
 static void
 SetTestFailureByStatusCode(UtestShell* shell, TestResult* result, int status)
 {
@@ -94,11 +73,13 @@ SetTestFailureByStatusCode(UtestShell* shell, TestResult* result, int status)
         );
     }
 }
+#endif
 
 static void GccPlatformSpecificRunTestInASeperateProcess(
     UtestShell* shell, TestPlugin* plugin, TestResult* result
 )
 {
+#if defined(CPPUTEST_HAVE_FORK) && defined(CPPUTEST_HAVE_WAITPID)
     const pid_t syscallError = -1;
     pid_t cpid;
     pid_t w;
@@ -148,31 +129,47 @@ static void GccPlatformSpecificRunTestInASeperateProcess(
         } while ((w == syscallError) ||
                  (!WIFEXITED(status) && !WIFSIGNALED(status)));
     }
+#else
+    static_cast<void>(plugin);
+    result->addFailure(TestFailure(
+        shell, "-p doesn't work on this platform, as it is lacking fork.\b"
+    ));
+#endif
 }
 
-static pid_t PlatformSpecificForkImplementation(void)
+static int PlatformSpecificForkImplementation(void)
 {
+#if defined(CPPUTEST_HAVE_FORK) && defined(CPPUTEST_HAVE_WAITPID)
     return fork();
+#else
+    return 0;
+#endif
 }
 
-static pid_t
+static int
 PlatformSpecificWaitPidImplementation(int pid, int* status, int options)
 {
+#if defined(CPPUTEST_HAVE_FORK) && defined(CPPUTEST_HAVE_WAITPID)
     return waitpid(pid, status, options);
+#else
+    static_cast<void>(pid);
+    static_cast<void>(status);
+    static_cast<void>(options);
+    return 0;
+#endif
 }
 
-#endif
-
-TestOutput::WorkingEnvironment PlatformSpecificGetWorkingEnvironment()
+TestOutput::WorkingEnvironment cpputest::PlatformSpecificGetWorkingEnvironment()
 {
     return TestOutput::eclipse;
 }
 
-void (*PlatformSpecificRunTestInASeperateProcess)(
+void (*cpputest::PlatformSpecificRunTestInASeperateProcess)(
     UtestShell* shell, TestPlugin* plugin, TestResult* result
 ) = GccPlatformSpecificRunTestInASeperateProcess;
-int (*PlatformSpecificFork)(void) = PlatformSpecificForkImplementation;
-int (*PlatformSpecificWaitPid)(int, int*, int) =
+int (*cpputest::PlatformSpecificFork)(void
+) = PlatformSpecificForkImplementation;
+int (*cpputest::PlatformSpecificWaitPid)(int, int*, int) =
     PlatformSpecificWaitPidImplementation;
 
 static int
@@ -239,15 +236,6 @@ static const char* TimeStringImplementation()
 long (*GetPlatformSpecificTimeInMillis)() = TimeInMillisImplementation;
 const char* (*GetPlatformSpecificTimeString)() = TimeStringImplementation;
 
-/* Wish we could add an attribute to the format for discovering mis-use... but
- * the __attribute__(format) seems to not work on va_list */
-#ifdef __clang__
-    #pragma clang diagnostic ignored "-Wformat-nonliteral"
-#endif
-
-#ifdef __clang__
-    #pragma clang diagnostic ignored "-Wused-but-marked-unused"
-#endif
 int (*PlatformSpecificVSNprintf)(
     char* str, size_t size, const char* format, va_list va_args_list
 ) = vsnprintf;
@@ -297,14 +285,6 @@ void (*PlatformSpecificFree)(void* memory) = free;
 void* (*PlatformSpecificMemCpy)(void*, const void*, size_t) = memcpy;
 void* (*PlatformSpecificMemset)(void*, int, size_t) = memset;
 
-/* GCC 4.9.x introduces -Wfloat-conversion, which causes a warning / error
- * in GCC's own (macro) implementation of isnan() and isinf().
- */
-#if defined(__GNUC__) &&                                                       \
-    (__GNUC__ >= 5 || (__GNUC__ == 4 && __GNUC_MINOR__ > 8))
-    #pragma GCC diagnostic ignored "-Wfloat-conversion"
-#endif
-
 static int IsNanImplementation(double d)
 {
     return isnan(d);
@@ -335,34 +315,34 @@ static PlatformSpecificMutex PThreadMutexCreate(void)
 #endif
 }
 
-#ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
 static void PThreadMutexLock(PlatformSpecificMutex mtx)
 {
-    pthread_mutex_lock(reinterpret_cast<pthread_mutex_t*>(mtx));
-}
-#else
-static void PThreadMutexLock(PlatformSpecificMutex) {}
-#endif
-
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
+    pthread_mutex_lock(reinterpret_cast<pthread_mutex_t*>(mtx));
+#else
+    static_cast<void>(mtx);
+#endif
+}
+
 static void PThreadMutexUnlock(PlatformSpecificMutex mtx)
 {
-    pthread_mutex_unlock(reinterpret_cast<pthread_mutex_t*>(mtx));
-}
-#else
-static void PThreadMutexUnlock(PlatformSpecificMutex) {}
-#endif
-
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
+    pthread_mutex_unlock(reinterpret_cast<pthread_mutex_t*>(mtx));
+#else
+    static_cast<void>(mtx);
+#endif
+}
+
 static void PThreadMutexDestroy(PlatformSpecificMutex mtx)
 {
+#ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
     pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mtx);
     pthread_mutex_destroy(mutex);
     delete mutex;
-}
 #else
-static void PThreadMutexDestroy(PlatformSpecificMutex) {}
+    static_cast<void>(mtx);
 #endif
+}
 
 PlatformSpecificMutex (*PlatformSpecificMutexCreate)(void) = PThreadMutexCreate;
 void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = PThreadMutexLock;

@@ -118,49 +118,56 @@ namespace cpputest
                 result.addFailure(failure);
             }
         }
-
-#else
-
-bool IEEE754ExceptionsPlugin::inexactDisabled_ = true;
-
-IEEE754ExceptionsPlugin::IEEE754ExceptionsPlugin(const SimpleString& name) :
-    TestPlugin(name)
-{
-}
-
-void IEEE754ExceptionsPlugin::preTestAction(UtestShell&, TestResult&) {}
-
-void IEEE754ExceptionsPlugin::postTestAction(UtestShell&, TestResult&) {}
-
-void IEEE754ExceptionsPlugin::disableInexact() {}
-
-void IEEE754ExceptionsPlugin::enableInexact() {}
-
-bool IEEE754ExceptionsPlugin::checkIeee754OverflowExceptionFlag()
-{
-    return false;
-}
-
-bool IEEE754ExceptionsPlugin::checkIeee754UnderflowExceptionFlag()
-{
-    return false;
-}
-
-bool IEEE754ExceptionsPlugin::checkIeee754InexactExceptionFlag()
-{
-    return false;
-}
-
-bool IEEE754ExceptionsPlugin::checkIeee754DivByZeroExceptionFlag()
-{
-    return false;
-}
-
-void IEEE754ExceptionsPlugin::
-    ieee754Check(UtestShell&, TestResult&, int, const char*)
-{
-}
-
-#endif
     }
 }
+#else
+namespace cpputest
+{
+    namespace extensions
+    {
+        bool IEEE754ExceptionsPlugin::inexactDisabled_ = true;
+
+        IEEE754ExceptionsPlugin::IEEE754ExceptionsPlugin(
+            const SimpleString& name
+        ) :
+            TestPlugin(name)
+        {
+        }
+
+        void IEEE754ExceptionsPlugin::preTestAction(UtestShell&, TestResult&) {}
+
+        void IEEE754ExceptionsPlugin::postTestAction(UtestShell&, TestResult&)
+        {
+        }
+
+        void IEEE754ExceptionsPlugin::disableInexact() {}
+
+        void IEEE754ExceptionsPlugin::enableInexact() {}
+
+        bool IEEE754ExceptionsPlugin::checkIeee754OverflowExceptionFlag()
+        {
+            return false;
+        }
+
+        bool IEEE754ExceptionsPlugin::checkIeee754UnderflowExceptionFlag()
+        {
+            return false;
+        }
+
+        bool IEEE754ExceptionsPlugin::checkIeee754InexactExceptionFlag()
+        {
+            return false;
+        }
+
+        bool IEEE754ExceptionsPlugin::checkIeee754DivByZeroExceptionFlag()
+        {
+            return false;
+        }
+
+        void IEEE754ExceptionsPlugin::
+            ieee754Check(UtestShell&, TestResult&, int, const char*)
+        {
+        }
+    }
+}
+#endif

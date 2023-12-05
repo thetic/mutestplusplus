@@ -39,13 +39,15 @@ namespace
     const char* failFileName = "fail.cpp";
 }
 
+using cpputest::DoublesEqualFailure;
+
 TEST_GROUP(TestFailureNanAndInf)
 {
-    UtestShell* test;
+    cpputest::UtestShell* test;
 
     void setup() override
     {
-        test = new UtestShell(
+        test = new cpputest::UtestShell(
             "groupname", "testname", failFileName, failLineNumber - 1
         );
     }

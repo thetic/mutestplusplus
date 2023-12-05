@@ -544,7 +544,7 @@ static void mocksAreCountedAsChecksTestFunction_()
 
 TEST(MockCallTest, mockExpectationShouldIncreaseNumberOfChecks)
 {
-    TestTestingFixture fixture;
+    cpputest::TestTestingFixture fixture;
     fixture.setTestFunction(mocksAreCountedAsChecksTestFunction_);
     fixture.runAllTests();
     LONGS_EQUAL(3, fixture.getCheckCount());

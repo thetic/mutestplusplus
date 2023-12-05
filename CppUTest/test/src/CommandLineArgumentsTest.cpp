@@ -29,7 +29,10 @@
 #include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestRegistry.hpp"
 
-class OptionsPlugin : public TestPlugin
+using cpputest::SimpleString;
+using cpputest::TestFilter;
+
+class OptionsPlugin : public cpputest::TestPlugin
 {
 public:
     OptionsPlugin(const SimpleString& name) : TestPlugin(name) {}
@@ -43,7 +46,7 @@ public:
 
 TEST_GROUP(CommandLineArguments)
 {
-    CommandLineArguments* args;
+    cpputest::CommandLineArguments* args;
     OptionsPlugin* plugin;
 
     void setup() override
@@ -59,7 +62,7 @@ TEST_GROUP(CommandLineArguments)
 
     bool newArgumentParser(int argc, const char* const* argv)
     {
-        args = new CommandLineArguments(argc, argv);
+        args = new cpputest::CommandLineArguments(argc, argv);
         return args->parse(plugin);
     }
 };
@@ -550,9 +553,9 @@ TEST(CommandLineArguments, pluginKnowsOption)
 {
     int argc = 2;
     const char* argv[] = {"tests.exe", "-pPluginOption"};
-    TestRegistry::getCurrentRegistry()->installPlugin(plugin);
+    cpputest::TestRegistry::getCurrentRegistry()->installPlugin(plugin);
     CHECK(newArgumentParser(argc, argv));
-    TestRegistry::getCurrentRegistry()->removePluginByName("options");
+    cpputest::TestRegistry::getCurrentRegistry()->removePluginByName("options");
 }
 
 TEST(CommandLineArguments, checkDefaultArguments)

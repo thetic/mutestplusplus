@@ -45,9 +45,9 @@
     int externTestGroup##testGroup = 0;                                        \
     struct TEST_GROUP_##CppUTestGroup##testGroup : public baseclass
 
-#define TEST_BASE(testBaseClass) struct testBaseClass : public Utest
+#define TEST_BASE(testBaseClass) struct testBaseClass : public cpputest::Utest
 
-#define TEST_GROUP(testGroup) TEST_GROUP_BASE(testGroup, Utest)
+#define TEST_GROUP(testGroup) TEST_GROUP_BASE(testGroup, cpputest::Utest)
 
 #define TEST_SETUP() virtual void setup() override
 
@@ -69,14 +69,15 @@
         }                                                                      \
         void testBody() override;                                              \
     };                                                                         \
-    class TEST_##testGroup##_##testName##_TestShell : public UtestShell        \
+    class TEST_##testGroup##_##testName##_TestShell                            \
+        : public cpputest::UtestShell                                          \
     {                                                                          \
-        virtual Utest* createTest() override                                   \
+        virtual cpputest::Utest* createTest() override                         \
         {                                                                      \
             return new TEST_##testGroup##_##testName##_Test;                   \
         }                                                                      \
     } TEST_##testGroup##_##testName##_TestShell_instance;                      \
-    static TestInstaller TEST_##testGroup##_##testName##_Installer(            \
+    static cpputest::TestInstaller TEST_##testGroup##_##testName##_Installer(  \
         TEST_##testGroup##_##testName##_TestShell_instance, #testGroup,        \
         #testName, __FILE__, __LINE__                                          \
     );                                                                         \
@@ -101,14 +102,14 @@
         void testBody() override;                                              \
     };                                                                         \
     class IGNORE##testGroup##_##testName##_TestShell                           \
-        : public IgnoredUtestShell                                             \
+        : public cpputest::IgnoredUtestShell                                   \
     {                                                                          \
-        virtual Utest* createTest() override                                   \
+        virtual cpputest::Utest* createTest() override                         \
         {                                                                      \
             return new IGNORE##testGroup##_##testName##_Test;                  \
         }                                                                      \
     } IGNORE##testGroup##_##testName##_TestShell_instance;                     \
-    static TestInstaller TEST_##testGroup##testName##_Installer(               \
+    static cpputest::TestInstaller TEST_##testGroup##testName##_Installer(     \
         IGNORE##testGroup##_##testName##_TestShell_instance, #testGroup,       \
         #testName, __FILE__, __LINE__                                          \
     );                                                                         \
@@ -123,7 +124,7 @@
     /*#include <CppUTest/CommandLineTestRunner.h>*/                            \
     int main(int argc, char** argv)                                            \
     {                                                                          \
-        return CommandLineTestRunner::RunAllTests(argc, argv);                 \
+        return cpputest::CommandLineTestRunner::RunAllTests(argc, argv);       \
     }
 
 // Different checking macros
@@ -164,7 +165,7 @@
     condition, checkString, conditionString, text, file, line                  \
 )                                                                              \
     do {                                                                       \
-        UtestShell::getCurrent()->assertTrue(                                  \
+        cpputest::UtestShell::getCurrent()->assertTrue(                        \
             (condition), checkString, conditionString, text, file, line        \
         );                                                                     \
     } while (0)
@@ -173,7 +174,7 @@
     condition, checkString, conditionString, text, file, line                  \
 )                                                                              \
     do {                                                                       \
-        UtestShell::getCurrent()->assertTrue(                                  \
+        cpputest::UtestShell::getCurrent()->assertTrue(                        \
             !(condition), checkString, conditionString, text, file, line       \
         );                                                                     \
     } while (0)
@@ -189,7 +190,7 @@
     do {                                                                       \
         if ((expected) != (actual)) {                                          \
             if ((actual) != (actual))                                          \
-                UtestShell::getCurrent()->print(                               \
+                cpputest::UtestShell::getCurrent()->print(                     \
                     "WARNING:\n\tThe \"Actual Parameter\" parameter is "       \
                     "evaluated multiple times resulting in different "         \
                     "values.\n\tThus the value in the error message is "       \
@@ -197,19 +198,19 @@
                     file, line                                                 \
                 );                                                             \
             if ((expected) != (expected))                                      \
-                UtestShell::getCurrent()->print(                               \
+                cpputest::UtestShell::getCurrent()->print(                     \
                     "WARNING:\n\tThe \"Expected Parameter\" parameter is "     \
                     "evaluated multiple times resulting in different "         \
                     "values.\n\tThus the value in the error message is "       \
                     "probably incorrect.",                                     \
                     file, line                                                 \
                 );                                                             \
-            UtestShell::getCurrent()->assertEquals(                            \
-                true, StringFrom(expected).asCharString(),                     \
-                StringFrom(actual).asCharString(), text, file, line            \
+            cpputest::UtestShell::getCurrent()->assertEquals(                  \
+                true, cpputest::StringFrom(expected).asCharString(),           \
+                cpputest::StringFrom(actual).asCharString(), text, file, line  \
             );                                                                 \
         } else {                                                               \
-            UtestShell::getCurrent()->assertLongsEqual(                        \
+            cpputest::UtestShell::getCurrent()->assertLongsEqual(              \
                 0L, 0L, nullptr, file, line                                    \
             );                                                                 \
         }                                                                      \
@@ -230,13 +231,13 @@
     do {                                                                       \
         bool success = (first)relop(second);                                   \
         if (!success) {                                                        \
-            SimpleString conditionString;                                      \
-            conditionString += StringFrom(first);                              \
+            cpputest::SimpleString conditionString;                            \
+            conditionString += cpputest::StringFrom(first);                    \
             conditionString += " ";                                            \
             conditionString += #relop;                                         \
             conditionString += " ";                                            \
-            conditionString += StringFrom(second);                             \
-            UtestShell::getCurrent()->assertCompare(                           \
+            conditionString += cpputest::StringFrom(second);                   \
+            cpputest::UtestShell::getCurrent()->assertCompare(                 \
                 false, "CHECK_COMPARE", conditionString.asCharString(), text,  \
                 __FILE__, __LINE__                                             \
             );                                                                 \
@@ -254,7 +255,7 @@
 
 #define STRCMP_EQUAL_LOCATION(expected, actual, text, file, line)              \
     do {                                                                       \
-        UtestShell::getCurrent()->assertCstrEqual(                             \
+        cpputest::UtestShell::getCurrent()->assertCstrEqual(                   \
             expected, actual, text, file, line                                 \
         );                                                                     \
     } while (0)
@@ -269,7 +270,7 @@
 
 #define STRNCMP_EQUAL_LOCATION(expected, actual, length, text, file, line)     \
     do {                                                                       \
-        UtestShell::getCurrent()->assertCstrNEqual(                            \
+        cpputest::UtestShell::getCurrent()->assertCstrNEqual(                  \
             expected, actual, length, text, file, line                         \
         );                                                                     \
     } while (0)
@@ -282,7 +283,7 @@
 
 #define STRCMP_NOCASE_EQUAL_LOCATION(expected, actual, text, file, line)       \
     do {                                                                       \
-        UtestShell::getCurrent()->assertCstrNoCaseEqual(                       \
+        cpputest::UtestShell::getCurrent()->assertCstrNoCaseEqual(             \
             expected, actual, text, file, line                                 \
         );                                                                     \
     } while (0)
@@ -295,7 +296,7 @@
 
 #define STRCMP_CONTAINS_LOCATION(expected, actual, text, file, line)           \
     do {                                                                       \
-        UtestShell::getCurrent()->assertCstrContains(                          \
+        cpputest::UtestShell::getCurrent()->assertCstrContains(                \
             expected, actual, text, file, line                                 \
         );                                                                     \
     } while (0)
@@ -310,7 +311,7 @@
 
 #define STRCMP_NOCASE_CONTAINS_LOCATION(expected, actual, text, file, line)    \
     do {                                                                       \
-        UtestShell::getCurrent()->assertCstrNoCaseContains(                    \
+        cpputest::UtestShell::getCurrent()->assertCstrNoCaseContains(          \
             expected, actual, text, file, line                                 \
         );                                                                     \
     } while (0)
@@ -337,7 +338,7 @@
 
 #define LONGS_EQUAL_LOCATION(expected, actual, text, file, line)               \
     do {                                                                       \
-        UtestShell::getCurrent()->assertLongsEqual(                            \
+        cpputest::UtestShell::getCurrent()->assertLongsEqual(                  \
             static_cast<long>(expected), static_cast<long>(actual), text,      \
             file, line                                                         \
         );                                                                     \
@@ -345,7 +346,7 @@
 
 #define UNSIGNED_LONGS_EQUAL_LOCATION(expected, actual, text, file, line)      \
     do {                                                                       \
-        UtestShell::getCurrent()->assertUnsignedLongsEqual(                    \
+        cpputest::UtestShell::getCurrent()->assertUnsignedLongsEqual(          \
             static_cast<unsigned long>(expected),                              \
             static_cast<unsigned long>(actual), text, file, line               \
         );                                                                     \
@@ -369,14 +370,14 @@
 
 #define LONGLONGS_EQUAL_LOCATION(expected, actual, text, file, line)           \
     do {                                                                       \
-        UtestShell::getCurrent()->assertLongLongsEqual(                        \
+        cpputest::UtestShell::getCurrent()->assertLongLongsEqual(              \
             expected, actual, text, file, line                                 \
         );                                                                     \
     } while (0)
 
 #define UNSIGNED_LONGLONGS_EQUAL_LOCATION(expected, actual, text, file, line)  \
     do {                                                                       \
-        UtestShell::getCurrent()->assertUnsignedLongLongsEqual(                \
+        cpputest::UtestShell::getCurrent()->assertUnsignedLongLongsEqual(      \
             expected, actual, text, file, line                                 \
         );                                                                     \
     } while (0)
@@ -392,7 +393,7 @@
 
 #define SIGNED_BYTES_EQUAL_LOCATION(expected, actual, file, line)              \
     do {                                                                       \
-        UtestShell::getCurrent()->assertSignedBytesEqual(                      \
+        cpputest::UtestShell::getCurrent()->assertSignedBytesEqual(            \
             expected, actual, nullptr, file, line                              \
         );                                                                     \
     } while (0)
@@ -402,7 +403,7 @@
 
 #define SIGNED_BYTES_EQUAL_TEXT_LOCATION(expected, actual, text, file, line)   \
     do {                                                                       \
-        UtestShell::getCurrent()->assertSignedBytesEqual(                      \
+        cpputest::UtestShell::getCurrent()->assertSignedBytesEqual(            \
             expected, actual, text, file, line                                 \
         );                                                                     \
     } while (0)
@@ -415,7 +416,7 @@
 
 #define POINTERS_EQUAL_LOCATION(expected, actual, text, file, line)            \
     do {                                                                       \
-        UtestShell::getCurrent()->assertPointersEqual(                         \
+        cpputest::UtestShell::getCurrent()->assertPointersEqual(               \
             (expected), (actual), text, file, line                             \
         );                                                                     \
     } while (0)
@@ -430,7 +431,7 @@
 
 #define FUNCTIONPOINTERS_EQUAL_LOCATION(expected, actual, text, file, line)    \
     do {                                                                       \
-        UtestShell::getCurrent()->assertFunctionPointersEqual(                 \
+        cpputest::UtestShell::getCurrent()->assertFunctionPointersEqual(       \
             expected, actual, text, file, line                                 \
         );                                                                     \
     } while (0)
@@ -448,7 +449,7 @@
 
 #define DOUBLES_EQUAL_LOCATION(expected, actual, threshold, text, file, line)  \
     do {                                                                       \
-        UtestShell::getCurrent()->assertDoublesEqual(                          \
+        cpputest::UtestShell::getCurrent()->assertDoublesEqual(                \
             expected, actual, threshold, text, file, line                      \
         );                                                                     \
     } while (0)
@@ -461,7 +462,7 @@
 
 #define MEMCMP_EQUAL_LOCATION(expected, actual, size, text, file, line)        \
     do {                                                                       \
-        UtestShell::getCurrent()->assertBinaryEqual(                           \
+        cpputest::UtestShell::getCurrent()->assertBinaryEqual(                 \
             expected, actual, size, text, file, line                           \
         );                                                                     \
     } while (0)
@@ -475,7 +476,7 @@
 // NOLINTBEGIN(bugprone-sizeof-expression)
 #define BITS_LOCATION(expected, actual, mask, text, file, line)                \
     do {                                                                       \
-        UtestShell::getCurrent()->assertBitsEqual(                             \
+        cpputest::UtestShell::getCurrent()->assertBitsEqual(                   \
             expected, actual, mask, sizeof(actual), text, file, line           \
         );                                                                     \
     } while (0)
@@ -506,13 +507,15 @@
         underlying_type actual_underlying_value =                              \
             static_cast<underlying_type>(actual);                              \
         if (expected_underlying_value != actual_underlying_value) {            \
-            UtestShell::getCurrent()->assertEquals(                            \
-                true, StringFrom(expected_underlying_value).asCharString(),    \
-                StringFrom(actual_underlying_value).asCharString(), text,      \
-                file, line                                                     \
+            cpputest::UtestShell::getCurrent()->assertEquals(                  \
+                true,                                                          \
+                cpputest::StringFrom(expected_underlying_value)                \
+                    .asCharString(),                                           \
+                cpputest::StringFrom(actual_underlying_value).asCharString(),  \
+                text, file, line                                               \
             );                                                                 \
         } else {                                                               \
-            UtestShell::getCurrent()->assertLongsEqual(                        \
+            cpputest::UtestShell::getCurrent()->assertLongsEqual(              \
                 0L, 0L, nullptr, file, line                                    \
             );                                                                 \
         }                                                                      \
@@ -525,7 +528,7 @@
 
     #define FAIL_LOCATION(text, file, line)                                    \
         do {                                                                   \
-            UtestShell::getCurrent()->fail(text, file, line);                  \
+            cpputest::UtestShell::getCurrent()->fail(text, file, line);        \
         } while (0)
 #endif
 
@@ -533,17 +536,17 @@
 
 #define FAIL_TEST_LOCATION(text, file, line)                                   \
     do {                                                                       \
-        UtestShell::getCurrent()->fail(text, file, line);                      \
+        cpputest::UtestShell::getCurrent()->fail(text, file, line);            \
     } while (0)
 
 #define TEST_EXIT                                                              \
     do {                                                                       \
-        UtestShell::getCurrent()->exitTest();                                  \
+        cpputest::UtestShell::getCurrent()->exitTest();                        \
     } while (0)
 
 #define UT_PRINT_LOCATION(text, file, line)                                    \
     do {                                                                       \
-        UtestShell::getCurrent()->print(text, file, line);                     \
+        cpputest::UtestShell::getCurrent()->print(text, file, line);           \
     } while (0)
 
 #define UT_PRINT(text) UT_PRINT_LOCATION(text, __FILE__, __LINE__)
@@ -551,8 +554,8 @@
 #if CPPUTEST_HAVE_EXCEPTIONS
     #define CHECK_THROWS(expected, expression)                                 \
         do {                                                                   \
-            SimpleString failure_msg("expected to throw " #expected            \
-                                     "\nbut threw nothing");                   \
+            cpputest::SimpleString failure_msg("expected to throw " #expected  \
+                                               "\nbut threw nothing");         \
             bool caught_expected = false;                                      \
             try {                                                              \
                 (expression);                                                  \
@@ -565,19 +568,20 @@
                               "\nbut threw a different type";                  \
             }                                                                  \
             if (!caught_expected) {                                            \
-                UtestShell::getCurrent()->fail(                                \
+                cpputest::UtestShell::getCurrent()->fail(                      \
                     failure_msg.asCharString(), __FILE__, __LINE__             \
                 );                                                             \
             } else {                                                           \
-                UtestShell::getCurrent()->countCheck();                        \
+                cpputest::UtestShell::getCurrent()->countCheck();              \
             }                                                                  \
         } while (0)
 #endif /* CPPUTEST_HAVE_EXCEPTIONS */
 
 #define UT_CRASH()                                                             \
     do {                                                                       \
-        UtestShell::crash();                                                   \
+        cpputest::UtestShell::crash();                                         \
     } while (0)
-#define RUN_ALL_TESTS(ac, av) CommandLineTestRunner::RunAllTests(ac, av)
+#define RUN_ALL_TESTS(ac, av)                                                  \
+    cpputest::CommandLineTestRunner::RunAllTests(ac, av)
 
 #endif /*D_UTestMacros_h*/

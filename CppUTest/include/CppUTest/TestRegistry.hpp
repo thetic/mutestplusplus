@@ -38,59 +38,62 @@
 
 #include <stddef.h>
 
-class UtestShell;
-class TestResult;
-class TestPlugin;
-
-class TestRegistry
+namespace cpputest
 {
-public:
-    TestRegistry();
-    virtual ~TestRegistry();
+    class UtestShell;
+    class TestResult;
+    class TestPlugin;
 
-    virtual void addTest(UtestShell* test);
-    virtual void unDoLastAddTest();
-    virtual size_t countTests();
-    virtual void runAllTests(TestResult& result);
-    virtual void shuffleTests(size_t seed);
-    virtual void reverseTests();
-    virtual void listTestGroupNames(TestResult& result);
-    virtual void listTestGroupAndCaseNames(TestResult& result);
-    virtual void listTestLocations(TestResult& result);
-    virtual void setNameFilters(const TestFilter* filters);
-    virtual void setGroupFilters(const TestFilter* filters);
-    virtual void installPlugin(TestPlugin* plugin);
-    virtual void resetPlugins();
-    virtual TestPlugin* getFirstPlugin();
-    virtual TestPlugin* getPluginByName(const SimpleString& name);
-    virtual void removePluginByName(const SimpleString& name);
-    virtual int countPlugins();
+    class TestRegistry
+    {
+    public:
+        TestRegistry();
+        virtual ~TestRegistry();
 
-    virtual UtestShell* getFirstTest();
-    virtual UtestShell* getTestWithNext(UtestShell* test);
+        virtual void addTest(UtestShell* test);
+        virtual void unDoLastAddTest();
+        virtual size_t countTests();
+        virtual void runAllTests(TestResult& result);
+        virtual void shuffleTests(size_t seed);
+        virtual void reverseTests();
+        virtual void listTestGroupNames(TestResult& result);
+        virtual void listTestGroupAndCaseNames(TestResult& result);
+        virtual void listTestLocations(TestResult& result);
+        virtual void setNameFilters(const TestFilter* filters);
+        virtual void setGroupFilters(const TestFilter* filters);
+        virtual void installPlugin(TestPlugin* plugin);
+        virtual void resetPlugins();
+        virtual TestPlugin* getFirstPlugin();
+        virtual TestPlugin* getPluginByName(const SimpleString& name);
+        virtual void removePluginByName(const SimpleString& name);
+        virtual int countPlugins();
 
-    virtual UtestShell* findTestWithName(const SimpleString& name);
-    virtual UtestShell* findTestWithGroup(const SimpleString& name);
+        virtual UtestShell* getFirstTest();
+        virtual UtestShell* getTestWithNext(UtestShell* test);
 
-    static TestRegistry* getCurrentRegistry();
-    virtual void setCurrentRegistry(TestRegistry* registry);
+        virtual UtestShell* findTestWithName(const SimpleString& name);
+        virtual UtestShell* findTestWithGroup(const SimpleString& name);
 
-    virtual void setRunTestsInSeperateProcess();
-    int getCurrentRepetition();
-    void setRunIgnored();
+        static TestRegistry* getCurrentRegistry();
+        virtual void setCurrentRegistry(TestRegistry* registry);
 
-private:
-    bool testShouldRun(UtestShell* test, TestResult& result);
-    bool endOfGroup(UtestShell* test);
+        virtual void setRunTestsInSeperateProcess();
+        int getCurrentRepetition();
+        void setRunIgnored();
 
-    UtestShell* tests_;
-    const TestFilter* nameFilters_;
-    const TestFilter* groupFilters_;
-    TestPlugin* firstPlugin_;
-    static TestRegistry* currentRegistry_;
-    bool runInSeperateProcess_;
-    int currentRepetition_;
-    bool runIgnored_;
-};
+    private:
+        bool testShouldRun(UtestShell* test, TestResult& result);
+        bool endOfGroup(UtestShell* test);
+
+        UtestShell* tests_;
+        const TestFilter* nameFilters_;
+        const TestFilter* groupFilters_;
+        TestPlugin* firstPlugin_;
+        static TestRegistry* currentRegistry_;
+        bool runInSeperateProcess_;
+        int currentRepetition_;
+        bool runIgnored_;
+    };
+}
 
 #endif

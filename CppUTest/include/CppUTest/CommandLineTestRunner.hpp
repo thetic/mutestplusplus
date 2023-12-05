@@ -31,40 +31,43 @@
 #include "CppUTest/CommandLineArguments.hpp"
 #include "CppUTest/TestOutput.hpp"
 
-class TestRegistry;
-
 #define DEF_PLUGIN_MEM_LEAK "MemoryLeakPlugin"
 #define DEF_PLUGIN_SET_POINTER "SetPointerPlugin"
 
-class CommandLineTestRunner
+namespace cpputest
 {
-public:
-    static int RunAllTests(int ac, const char* const* av);
-    static int RunAllTests(int ac, char** av);
+    class TestRegistry;
 
-    CommandLineTestRunner(
-        int ac, const char* const* av, TestRegistry* registry
-    );
-    virtual ~CommandLineTestRunner();
+    class CommandLineTestRunner
+    {
+    public:
+        static int RunAllTests(int ac, const char* const* av);
+        static int RunAllTests(int ac, char** av);
 
-    int runAllTestsMain();
+        CommandLineTestRunner(
+            int ac, const char* const* av, TestRegistry* registry
+        );
+        virtual ~CommandLineTestRunner();
 
-protected:
-    virtual TestOutput* createTeamCityOutput();
-    virtual TestOutput* createJUnitOutput(const SimpleString& packageName);
-    virtual TestOutput* createConsoleOutput();
-    virtual TestOutput*
-    createCompositeOutput(TestOutput* outputOne, TestOutput* outputTwo);
+        int runAllTestsMain();
 
-    TestOutput* output_;
+    protected:
+        virtual TestOutput* createTeamCityOutput();
+        virtual TestOutput* createJUnitOutput(const SimpleString& packageName);
+        virtual TestOutput* createConsoleOutput();
+        virtual TestOutput*
+        createCompositeOutput(TestOutput* outputOne, TestOutput* outputTwo);
 
-private:
-    CommandLineArguments* arguments_;
-    TestRegistry* registry_;
+        TestOutput* output_;
 
-    bool parseArguments(TestPlugin*);
-    int runAllTests();
-    void initializeTestRun();
-};
+    private:
+        CommandLineArguments* arguments_;
+        TestRegistry* registry_;
+
+        bool parseArguments(TestPlugin*);
+        int runAllTests();
+        void initializeTestRun();
+    };
+}
 
 #endif
