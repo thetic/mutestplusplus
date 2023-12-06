@@ -109,11 +109,6 @@ void PlatformSpecificFlush()
     fflush(stdout);
 }
 
-double PlatformSpecificFabs(double d)
-{
-    return fabs(d);
-}
-
 PlatformSpecificFile PlatformSpecificStdOut = stdout;
 
 PlatformSpecificFile
@@ -130,22 +125,6 @@ void PlatformSpecificFPuts(const char* str, PlatformSpecificFile file)
 void PlatformSpecificFClose(PlatformSpecificFile file)
 {
     fclose((FILE*)file);
-}
-
-extern "C" {
-
-static int IsNanImplementation(double d)
-{
-    return isnan(d);
-}
-
-static int IsInfImplementation(double d)
-{
-    return isinf(d);
-}
-
-int (*PlatformSpecificIsNan)(double) = IsNanImplementation;
-int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
 }
 
 static PlatformSpecificMutex DummyMutexCreate(void)

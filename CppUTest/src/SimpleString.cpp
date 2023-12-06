@@ -28,7 +28,9 @@
 #include "CppUTest/SimpleString.hpp"
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/TestMemoryAllocator.hpp"
+
 #include <limits.h>
+#include <math.h>
 
 namespace cpputest
 {
@@ -775,9 +777,9 @@ namespace cpputest
 
     SimpleString StringFrom(double value, int precision)
     {
-        if (PlatformSpecificIsNan(value))
+        if (isnan(value))
             return "Nan - Not a number";
-        else if (PlatformSpecificIsInf(value))
+        else if (isinf(value))
             return "Inf - Infinity";
         else
             return StringFromFormat("%.*g", precision, value);

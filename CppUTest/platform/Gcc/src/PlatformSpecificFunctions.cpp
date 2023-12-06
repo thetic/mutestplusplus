@@ -272,21 +272,8 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
 
-static int IsNanImplementation(double d)
-{
-    return isnan(d);
-}
-
-static int IsInfImplementation(double d)
-{
-    return isinf(d);
-}
-
-double (*PlatformSpecificFabs)(double) = fabs;
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
-int (*PlatformSpecificIsNan)(double) = IsNanImplementation;
-int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
 int (*PlatformSpecificAtExit)(void (*func)(void)
 ) = atexit; /// this was undefined before
 

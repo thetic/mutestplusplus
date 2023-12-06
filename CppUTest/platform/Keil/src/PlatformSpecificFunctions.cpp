@@ -172,23 +172,11 @@ static int IsNanImplementation(double d)
 #endif
 }
 
-static int IsInfImplementation(double d)
-{
-#ifdef __MICROLIB
-    return 0;
-#else
-    return isinf(d);
-#endif
-}
-
 int DummyAtExit(void (*)(void))
 {
     return 0;
 }
 
-double (*PlatformSpecificFabs)(double) = abs;
-int (*PlatformSpecificIsNan)(double) = IsNanImplementation;
-int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
 int (*PlatformSpecificAtExit)(void (*func)(void)) = DummyAtExit;
 
 static PlatformSpecificMutex DummyMutexCreate(void)

@@ -33,21 +33,21 @@
 #include "CppUTest/TestRegistry.hpp"
 #include "CppUTest/TestResult.hpp"
 
+#include <math.h>
 #include <stdlib.h>
 
 namespace cpputest
 {
     bool doubles_equal(double d1, double d2, double threshold)
     {
-        if (PlatformSpecificIsNan(d1) || PlatformSpecificIsNan(d2) ||
-            PlatformSpecificIsNan(threshold))
+        if (isnan(d1) || isnan(d2) || isnan(threshold))
             return false;
 
-        if (PlatformSpecificIsInf(d1) && PlatformSpecificIsInf(d2)) {
+        if (isinf(d1) && isinf(d2)) {
             return true;
         }
 
-        return PlatformSpecificFabs(d1 - d2) <= threshold;
+        return fabs(d1 - d2) <= threshold;
     }
 
     /* Sometimes stubs use the CppUTest assertions.

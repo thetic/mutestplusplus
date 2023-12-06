@@ -176,14 +176,6 @@ void (*PlatformSpecificFlush)(void) = VisualCppFlush;
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
 
-static int IsInfImplementation(double d)
-{
-    return !_finite(d);
-}
-
-double (*PlatformSpecificFabs)(double d) = fabs;
-int (*PlatformSpecificIsNan)(double) = _isnan;
-int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
 int (*PlatformSpecificAtExit)(void (*func)(void)) = atexit;
 
 static PlatformSpecificMutex VisualCppMutexCreate(void)

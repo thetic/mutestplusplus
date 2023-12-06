@@ -33,6 +33,7 @@
 #include "CppUTest/TestTestingFixture.hpp"
 
 #include <limits.h>
+#include <math.h>
 #include <stdlib.h>
 
 /*
@@ -567,22 +568,15 @@ TEST(SimpleString, Doubles)
     STRCMP_EQUAL("1.2", s.asCharString());
 }
 
-static int alwaysTrue(double)
-{
-    return true;
-}
-
 TEST(SimpleString, NaN)
 {
-    UT_PTR_SET(PlatformSpecificIsNan, alwaysTrue);
-    SimpleString s(StringFrom(0.0));
+    SimpleString s(StringFrom(static_cast<double>(NAN)));
     STRCMP_EQUAL("Nan - Not a number", s.asCharString());
 }
 
 TEST(SimpleString, Inf)
 {
-    UT_PTR_SET(PlatformSpecificIsInf, alwaysTrue);
-    SimpleString s(StringFrom(0.0));
+    SimpleString s(StringFrom(static_cast<double>(INFINITY)));
     STRCMP_EQUAL("Inf - Infinity", s.asCharString());
 }
 
