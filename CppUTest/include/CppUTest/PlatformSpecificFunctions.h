@@ -83,12 +83,6 @@ extern void (*PlatformSpecificFClose)(PlatformSpecificFile file);
 
 extern void (*PlatformSpecificFlush)(void);
 
-typedef void* PlatformSpecificMutex;
-extern PlatformSpecificMutex (*PlatformSpecificMutexCreate)(void);
-extern void (*PlatformSpecificMutexLock)(PlatformSpecificMutex mtx);
-extern void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex mtx);
-extern void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex mtx);
-
 #ifdef __cplusplus
 }
 #endif

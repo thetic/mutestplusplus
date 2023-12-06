@@ -14,7 +14,6 @@ add_library(CppUTest
     src/TestFilter.cpp
     src/TestPlugin.cpp
     src/TestTestingFixture.cpp
-    src/SimpleMutex.cpp
     src/Utest.cpp
 )
 

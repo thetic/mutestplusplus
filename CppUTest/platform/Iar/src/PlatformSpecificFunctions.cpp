@@ -42,36 +42,6 @@ using namespace cpputest;
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
 
-TestOutput::WorkingEnvironment PlatformSpecificGetWorkingEnvironment()
-{
-    return TestOutput::eclipse;
-}
-
-static void DummyPlatformSpecificRunTestInASeperateProcess(
-    UtestShell* shell, TestPlugin*, TestResult* result
-)
-{
-    result->addFailure(TestFailure(
-        shell, "-p doesn't work on this platform, as it is lacking fork.\b"
-    ));
-}
-
-static int DummyPlatformSpecificFork(void)
-{
-    return 0;
-}
-
-static int DummyPlatformSpecificWaitPid(int, int*, int)
-{
-    return 0;
-}
-
-void (*PlatformSpecificRunTestInASeperateProcess)(
-    UtestShell* shell, TestPlugin* plugin, TestResult* result
-) = DummyPlatformSpecificRunTestInASeperateProcess;
-int (*PlatformSpecificFork)(void) = DummyPlatformSpecificFork;
-int (*PlatformSpecificWaitPid)(int, int*, int) = DummyPlatformSpecificWaitPid;
-
 int PlatformSpecificSetJmp(void (*function)(void* data), void* data)
 {
     if (0 == setjmp(test_exit_jmp_buf[jmp_buf_index])) {
@@ -160,19 +130,3 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 ) = PlatformSpecificFCloseImplementation;
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
-
-static PlatformSpecificMutex DummyMutexCreate(void)
-{
-    return 0;
-}
-
-static void DummyMutexLock(PlatformSpecificMutex) {}
-
-static void DummyMutexUnlock(PlatformSpecificMutex) {}
-
-static void DummyMutexDestroy(PlatformSpecificMutex) {}
-
-PlatformSpecificMutex (*PlatformSpecificMutexCreate)(void) = DummyMutexCreate;
-void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = DummyMutexLock;
-void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = DummyMutexUnlock;
-void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex) = DummyMutexDestroy;

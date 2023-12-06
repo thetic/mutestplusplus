@@ -45,39 +45,8 @@
 #include <string.h>
 #include <time.h>
 
-using namespace cpputest;
-
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
-
-TestOutput::WorkingEnvironment PlatformSpecificGetWorkingEnvironment()
-{
-    return TestOutput::eclipse;
-}
-
-static void DummyRunTestInASeperateProcess(
-    UtestShell* shell, TestPlugin* plugin, TestResult* result
-)
-{
-    result->addFailure(TestFailure(
-        shell, "-p doesn't work on this platform, as it is lacking fork.\b"
-    ));
-}
-
-static int DummyPlatformSpecificFork(void)
-{
-    return 0;
-}
-
-static int DummyPlatformSpecificWaitPid(int, int*, int)
-{
-    return 0;
-}
-
-void (*PlatformSpecificRunTestInASeperateProcess)(UtestShell*, TestPlugin*, TestResult*) =
-    DummyRunTestInASeperateProcess;
-int (*PlatformSpecificFork)() = DummyPlatformSpecificFork;
-int (*PlatformSpecificWaitPid)(int, int*, int) = DummyPlatformSpecificWaitPid;
 
 int PlatformSpecificSetJmp(void (*function)(void* data), void* data)
 {
@@ -125,11 +94,6 @@ static const char* TimeStringImplementation()
 
 const char* (*GetPlatformSpecificTimeString)() = TimeStringImplementation;
 
-int PlatformSpecificAtoI(const char* str)
-{
-    return atoi(str);
-}
-
 /* The ARMCC compiler will compile this function with C++ linkage, unless
  * we specifically tell it to use C linkage again, in the function definiton.
  */
@@ -162,28 +126,3 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 ) = PlatformSpecificFCloseImplementation;
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
-
-static int IsNanImplementation(double d)
-{
-#ifdef __MICROLIB
-    return 0;
-#else
-    return isnan(d);
-#endif
-}
-
-static PlatformSpecificMutex DummyMutexCreate(void)
-{
-    return 0;
-}
-
-static void DummyMutexLock(PlatformSpecificMutex mtx) {}
-
-static void DummyMutexUnlock(PlatformSpecificMutex mtx) {}
-
-static void DummyMutexDestroy(PlatformSpecificMutex mtx) {}
-
-PlatformSpecificMutex (*PlatformSpecificMutexCreate)(void) = DummyMutexCreate;
-void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = DummyMutexLock;
-void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = DummyMutexUnlock;
-void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex) = DummyMutexDestroy;

@@ -48,6 +48,7 @@ TEST_GROUP(TestOutput)
     TestFailure* f2;
     TestFailure* f3;
     TestResult* result;
+    TestOutput::WorkingEnvironment workingEnvironment;
 
     void setup() override
     {
@@ -64,12 +65,13 @@ TEST_GROUP(TestOutput)
         UT_PTR_SET(
             GetPlatformSpecificTimeInMillis, MockGetPlatformSpecificTimeInMillis
         );
+        workingEnvironment = TestOutput::getWorkingEnvironment();
         TestOutput::setWorkingEnvironment(TestOutput::eclipse);
     }
     void teardown() override
     {
         using cpputest::TestOutput;
-        TestOutput::setWorkingEnvironment(TestOutput::detectEnvironment);
+        TestOutput::setWorkingEnvironment(workingEnvironment);
         delete printer;
         delete tst;
         delete f;

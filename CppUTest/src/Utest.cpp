@@ -137,16 +137,6 @@ namespace cpputest
         shell->runOneTestInCurrentProcess(plugin, *result);
     }
 
-    static void helperDoRunOneTestSeperateProcess(void* data)
-    {
-        HelperTestRunInfo* runInfo = reinterpret_cast<HelperTestRunInfo*>(data);
-
-        UtestShell* shell = runInfo->shell_;
-        TestPlugin* plugin = runInfo->plugin_;
-        TestResult* result = runInfo->result_;
-        PlatformSpecificRunTestInASeperateProcess(shell, plugin, result);
-    }
-
     /******************************** */
 
     static const NormalTestTerminator normalTestTerminator =
@@ -235,12 +225,7 @@ namespace cpputest
         hasFailed_ = false;
         result.countRun();
         HelperTestRunInfo runInfo(this, plugin, &result);
-        if (isRunInSeperateProcess())
-            PlatformSpecificSetJmp(helperDoRunOneTestSeperateProcess, &runInfo);
-        else
-            PlatformSpecificSetJmp(
-                helperDoRunOneTestInCurrentProcess, &runInfo
-            );
+        PlatformSpecificSetJmp(helperDoRunOneTestInCurrentProcess, &runInfo);
     }
 
     Utest* UtestShell::createTest()

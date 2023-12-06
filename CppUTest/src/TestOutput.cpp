@@ -33,7 +33,7 @@
 namespace cpputest
 {
     TestOutput::WorkingEnvironment TestOutput::workingEnvironment_ =
-        TestOutput::detectEnvironment;
+        TestOutput::eclipse;
 
     void TestOutput::setWorkingEnvironment(
         TestOutput::WorkingEnvironment workEnvironment
@@ -44,8 +44,6 @@ namespace cpputest
 
     TestOutput::WorkingEnvironment TestOutput::getWorkingEnvironment()
     {
-        if (workingEnvironment_ == TestOutput::detectEnvironment)
-            return PlatformSpecificGetWorkingEnvironment();
         return workingEnvironment_;
     }
 

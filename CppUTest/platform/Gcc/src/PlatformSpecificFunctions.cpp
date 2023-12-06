@@ -34,143 +34,15 @@
 #ifdef CPPUTEST_HAVE_GETTIMEOFDAY
     #include <sys/time.h>
 #endif
-#if defined(CPPUTEST_HAVE_FORK) && defined(CPPUTEST_HAVE_WAITPID)
-    #include <errno.h>
-    #include <sys/wait.h>
-    #include <unistd.h>
-#endif
 
-#include <math.h>
 #include <setjmp.h>
-#include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
-#ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
-    #include <pthread.h>
-#endif
-
-using namespace cpputest;
-
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
-
-#if defined(CPPUTEST_HAVE_FORK) && defined(CPPUTEST_HAVE_WAITPID)
-static void
-SetTestFailureByStatusCode(UtestShell* shell, TestResult* result, int status)
-{
-    if (WIFEXITED(status) && WEXITSTATUS(status) != 0) {
-        result->addFailure(TestFailure(shell, "Failed in separate process"));
-    } else if (WIFSIGNALED(status)) {
-        SimpleString message("Failed in separate process - killed by signal ");
-        message += StringFrom(WTERMSIG(status));
-        result->addFailure(TestFailure(shell, message));
-    } else if (WIFSTOPPED(status)) {
-        result->addFailure(
-            TestFailure(shell, "Stopped in separate process - continuing")
-        );
-    }
-}
-#endif
-
-static void GccPlatformSpecificRunTestInASeperateProcess(
-    UtestShell* shell, TestPlugin* plugin, TestResult* result
-)
-{
-#if defined(CPPUTEST_HAVE_FORK) && defined(CPPUTEST_HAVE_WAITPID)
-    const pid_t syscallError = -1;
-    pid_t cpid;
-    pid_t w;
-    int status = 0;
-
-    cpid = PlatformSpecificFork();
-
-    if (cpid == syscallError) {
-        result->addFailure(TestFailure(shell, "Call to fork() failed"));
-        return;
-    }
-
-    if (cpid == 0) { /* Code executed by child */
-        const size_t initialFailureCount =
-            result->getFailureCount();                      // LCOV_EXCL_LINE
-        shell->runOneTestInCurrentProcess(plugin, *result); // LCOV_EXCL_LINE
-        _exit(
-            initialFailureCount < result->getFailureCount()
-        );   // LCOV_EXCL_LINE
-    } else { /* Code executed by parent */
-        size_t amountOfRetries = 0;
-        do {
-            w = PlatformSpecificWaitPid(cpid, &status, WUNTRACED);
-            if (w == syscallError) {
-                // OS X debugger causes EINTR
-                if (EINTR == errno) {
-                    if (amountOfRetries > 30) {
-                        result->addFailure(TestFailure(
-                            shell,
-                            "Call to waitpid() failed with EINTR. Tried 30 "
-                            "times and giving up! Sometimes happens in debugger"
-                        ));
-                        return;
-                    }
-                    amountOfRetries++;
-                } else {
-                    result->addFailure(
-                        TestFailure(shell, "Call to waitpid() failed")
-                    );
-                    return;
-                }
-            } else {
-                SetTestFailureByStatusCode(shell, result, status);
-                if (WIFSTOPPED(status))
-                    kill(w, SIGCONT);
-            }
-        } while ((w == syscallError) ||
-                 (!WIFEXITED(status) && !WIFSIGNALED(status)));
-    }
-#else
-    static_cast<void>(plugin);
-    result->addFailure(TestFailure(
-        shell, "-p doesn't work on this platform, as it is lacking fork.\b"
-    ));
-#endif
-}
-
-static int PlatformSpecificForkImplementation(void)
-{
-#if defined(CPPUTEST_HAVE_FORK) && defined(CPPUTEST_HAVE_WAITPID)
-    return fork();
-#else
-    return 0;
-#endif
-}
-
-static int
-PlatformSpecificWaitPidImplementation(int pid, int* status, int options)
-{
-#if defined(CPPUTEST_HAVE_FORK) && defined(CPPUTEST_HAVE_WAITPID)
-    return waitpid(pid, status, options);
-#else
-    static_cast<void>(pid);
-    static_cast<void>(status);
-    static_cast<void>(options);
-    return 0;
-#endif
-}
-
-TestOutput::WorkingEnvironment cpputest::PlatformSpecificGetWorkingEnvironment()
-{
-    return TestOutput::eclipse;
-}
-
-void (*cpputest::PlatformSpecificRunTestInASeperateProcess)(
-    UtestShell* shell, TestPlugin* plugin, TestResult* result
-) = GccPlatformSpecificRunTestInASeperateProcess;
-int (*cpputest::PlatformSpecificFork)(void
-) = PlatformSpecificForkImplementation;
-int (*cpputest::PlatformSpecificWaitPid)(int, int*, int) =
-    PlatformSpecificWaitPidImplementation;
 
 int PlatformSpecificSetJmp(void (*function)(void* data), void* data)
 {
@@ -271,50 +143,3 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 ) = PlatformSpecificFCloseImplementation;
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
-
-static PlatformSpecificMutex PThreadMutexCreate(void)
-{
-#ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
-    pthread_mutex_t* mutex = new pthread_mutex_t;
-
-    pthread_mutex_init(mutex, nullptr);
-    return reinterpret_cast<PlatformSpecificMutex>(mutex);
-#else
-    return nullptr;
-#endif
-}
-
-static void PThreadMutexLock(PlatformSpecificMutex mtx)
-{
-#ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
-    pthread_mutex_lock(reinterpret_cast<pthread_mutex_t*>(mtx));
-#else
-    static_cast<void>(mtx);
-#endif
-}
-
-static void PThreadMutexUnlock(PlatformSpecificMutex mtx)
-{
-#ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
-    pthread_mutex_unlock(reinterpret_cast<pthread_mutex_t*>(mtx));
-#else
-    static_cast<void>(mtx);
-#endif
-}
-
-static void PThreadMutexDestroy(PlatformSpecificMutex mtx)
-{
-#ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK
-    pthread_mutex_t* mutex = reinterpret_cast<pthread_mutex_t*>(mtx);
-    pthread_mutex_destroy(mutex);
-    delete mutex;
-#else
-    static_cast<void>(mtx);
-#endif
-}
-
-PlatformSpecificMutex (*PlatformSpecificMutexCreate)(void) = PThreadMutexCreate;
-void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = PThreadMutexLock;
-void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = PThreadMutexUnlock;
-void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex
-) = PThreadMutexDestroy;

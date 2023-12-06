@@ -55,24 +55,6 @@ void PlatformSpecificRestoreJumpBuffer()
     jmp_buf_index--;
 }
 
-static void VisualCppRunTestInASeperateProcess(
-    UtestShell* shell, TestPlugin* /* plugin */, TestResult* result
-)
-{
-    result->addFailure(TestFailure(
-        shell, "-p doesn't work on this platform, as it is lacking fork.\b"
-    ));
-}
-
-void (*cpputest::PlatformSpecificRunTestInASeperateProcess)(
-    UtestShell* shell, TestPlugin* plugin, TestResult* result
-) = VisualCppRunTestInASeperateProcess;
-
-TestOutput::WorkingEnvironment cpputest::PlatformSpecificGetWorkingEnvironment()
-{
-    return TestOutput::visualStudio;
-}
-
 ///////////// Time in millis
 
 static long VisualCppTimeInMillis()
@@ -172,36 +154,3 @@ static void VisualCppFlush()
 }
 
 void (*PlatformSpecificFlush)(void) = VisualCppFlush;
-
-static PlatformSpecificMutex VisualCppMutexCreate(void)
-{
-    CRITICAL_SECTION* critical_section = new CRITICAL_SECTION;
-    InitializeCriticalSection(critical_section);
-    return reinterpret_cast<PlatformSpecificMutex>(critical_section);
-}
-
-static void VisualCppMutexLock(PlatformSpecificMutex mutex)
-{
-    EnterCriticalSection(reinterpret_cast<CRITICAL_SECTION*>(mutex));
-}
-
-static void VisualCppMutexUnlock(PlatformSpecificMutex mutex)
-{
-    LeaveCriticalSection(reinterpret_cast<CRITICAL_SECTION*>(mutex));
-}
-
-static void VisualCppMutexDestroy(PlatformSpecificMutex mutex)
-{
-    CRITICAL_SECTION* critical_section =
-        reinterpret_cast<CRITICAL_SECTION*>(mutex);
-    DeleteCriticalSection(critical_section);
-    delete critical_section;
-}
-
-PlatformSpecificMutex (*PlatformSpecificMutexCreate)(void
-) = VisualCppMutexCreate;
-void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = VisualCppMutexLock;
-void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex
-) = VisualCppMutexUnlock;
-void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex
-) = VisualCppMutexDestroy;
