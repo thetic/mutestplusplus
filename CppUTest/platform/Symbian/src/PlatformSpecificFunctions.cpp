@@ -129,11 +129,6 @@ void PlatformSpecificFree(void* memory)
     free(memory);
 }
 
-void* PlatformSpecificMemCpy(void* s1, const void* s2, size_t size)
-{
-    return memcpy(s1, s2, size);
-}
-
 PlatformSpecificFile PlatformSpecificStdOut = stdout;
 
 PlatformSpecificFile

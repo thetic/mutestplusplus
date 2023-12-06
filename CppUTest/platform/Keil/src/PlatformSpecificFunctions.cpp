@@ -165,7 +165,6 @@ void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
 void* (*PlatformSpecificMalloc)(size_t) = malloc;
 void* (*PlatformSpecificRealloc)(void*, size_t) = realloc;
 void (*PlatformSpecificFree)(void*) = free;
-void* (*PlatformSpecificMemCpy)(void* s1, const void* s2, size_t size) = memcpy;
 
 static int IsNanImplementation(double d)
 {
