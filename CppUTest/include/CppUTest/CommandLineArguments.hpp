@@ -59,7 +59,6 @@ namespace cpputest
         bool isJUnitOutput() const;
         bool isEclipseOutput() const;
         bool isTeamCityOutput() const;
-        bool runTestsInSeperateProcess() const;
         const SimpleString& getPackageName() const;
         const char* usage() const;
         const char* help() const;
@@ -79,7 +78,6 @@ namespace cpputest
         bool verbose_;
         bool veryVerbose_;
         bool color_;
-        bool runTestsAsSeperateProcess_;
         bool listTestGroupNames_;
         bool listTestGroupAndCaseNames_;
         bool listTestLocations_;

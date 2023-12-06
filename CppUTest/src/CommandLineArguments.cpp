@@ -38,7 +38,6 @@ namespace cpputest
         verbose_(false),
         veryVerbose_(false),
         color_(false),
-        runTestsAsSeperateProcess_(false),
         listTestGroupNames_(false),
         listTestGroupAndCaseNames_(false),
         listTestLocations_(false),
@@ -82,8 +81,6 @@ namespace cpputest
                 veryVerbose_ = true;
             else if (argument == "-c")
                 color_ = true;
-            else if (argument == "-p")
-                runTestsAsSeperateProcess_ = true;
             else if (argument == "-b")
                 reversing_ = true;
             else if (argument == "-lg")
@@ -151,7 +148,7 @@ namespace cpputest
     const char* CommandLineArguments::usage() const
     {
         return "use -h for more extensive help\n"
-               "usage [-h] [-v] [-vv] [-c] [-p] [-lg] [-ln] [-ll] [-ri] "
+               "usage [-h] [-v] [-vv] [-c] [-lg] [-ln] [-ll] [-ri] "
                "[-r[<#>]] "
                "[-f] [-e] [-ci]\n"
                "      [-g|sg|xg|xsg <groupName>]... [-n|sn|xn|xsn "
@@ -241,7 +238,6 @@ namespace cpputest
                "the -v option on the command line)\n"
                "\n"
                "Options that control how the tests are run:\n"
-               "  -p                - run tests in a separate process\n"
                "  -b                - run the tests backwards, reversing the "
                "normal way\n"
                "  -r[<#>]           - repeat the tests <#> times (or twice if "
@@ -294,11 +290,6 @@ namespace cpputest
     bool CommandLineArguments::isRunIgnored() const
     {
         return runIgnored_;
-    }
-
-    bool CommandLineArguments::runTestsInSeperateProcess() const
-    {
-        return runTestsAsSeperateProcess_;
     }
 
     size_t CommandLineArguments::getRepeatCount() const

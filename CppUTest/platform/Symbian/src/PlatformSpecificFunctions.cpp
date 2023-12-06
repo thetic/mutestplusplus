@@ -63,17 +63,6 @@ void PlatformSpecificRestoreJumpBuffer()
     jmp_buf_index--;
 }
 
-void PlatformSpecificRunTestInASeperateProcess(
-    UtestShell* shell, TestPlugin* plugin, TestResult* result
-)
-{
-    printf(
-        "-p doesn't work on this platform as it is not implemented. Running "
-        "inside the process\b"
-    );
-    shell->runOneTest(plugin, *result);
-}
-
 static long TimeInMillisImplementation()
 {
     struct timeval tv;
@@ -83,19 +72,6 @@ static long TimeInMillisImplementation()
 }
 
 long (*GetPlatformSpecificTimeInMillis)() = TimeInMillisImplementation;
-
-TestOutput::WorkingEnvironment PlatformSpecificGetWorkingEnvironment()
-{
-    return TestOutput::eclipse;
-}
-
-static SimpleString TimeStringImplementation()
-{
-    time_t tm = time(NULL);
-    return ctime(&tm);
-}
-
-SimpleString GetPlatformSpecificTimeString() = TimeStringImplementation;
 
 int PlatformSpecificVSNprintf(
     char* str, size_t size, const char* format, va_list args
@@ -126,29 +102,3 @@ void PlatformSpecificFClose(PlatformSpecificFile file)
 {
     fclose((FILE*)file);
 }
-
-static PlatformSpecificMutex DummyMutexCreate(void)
-{
-    FAIL("PlatformSpecificMutexCreate is not implemented");
-    return 0;
-}
-
-static void DummyMutexLock(PlatformSpecificMutex mtx)
-{
-    FAIL("PlatformSpecificMutexLock is not implemented");
-}
-
-static void DummyMutexUnlock(PlatformSpecificMutex mtx)
-{
-    FAIL("PlatformSpecificMutexUnlock is not implemented");
-}
-
-static void DummyMutexDestroy(PlatformSpecificMutex mtx)
-{
-    FAIL("PlatformSpecificMutexDestroy is not implemented");
-}
-
-PlatformSpecificMutex (*PlatformSpecificMutexCreate)(void) = DummyMutexCreate;
-void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = DummyMutexLock;
-void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = DummyMutexUnlock;
-void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex) = DummyMutexDestroy;

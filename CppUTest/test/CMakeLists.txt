@@ -8,7 +8,6 @@ add_executable(CppUTestTests
     src/PluginTest.cpp
     src/PreprocessorTest.cpp
     src/SetPluginTest.cpp
-    src/SimpleMutexTest.cpp
     src/SimpleStringCacheTest.cpp
     src/SimpleStringTest.cpp
     src/TeamCityOutputTest.cpp
@@ -24,7 +23,6 @@ add_executable(CppUTestTests
     src/TestResultTest.cpp
     src/TestUTestMacro.cpp
     src/TestUTestStringMacro.cpp
-    src/UtestPlatformTest.cpp
     src/UtestTest.cpp
 )
 

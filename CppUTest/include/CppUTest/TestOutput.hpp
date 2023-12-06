@@ -52,7 +52,6 @@ namespace cpputest
         {
             visualStudio,
             eclipse,
-            detectEnvironment
         };
         enum VerbosityLevel
         {
