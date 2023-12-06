@@ -162,9 +162,6 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 ) = PlatformSpecificFCloseImplementation;
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
-void* (*PlatformSpecificMalloc)(size_t) = malloc;
-void* (*PlatformSpecificRealloc)(void*, size_t) = realloc;
-void (*PlatformSpecificFree)(void*) = free;
 
 static int IsNanImplementation(double d)
 {

@@ -114,21 +114,6 @@ double PlatformSpecificFabs(double d)
     return fabs(d);
 }
 
-void* PlatformSpecificMalloc(size_t size)
-{
-    return malloc(size);
-}
-
-void* PlatformSpecificRealloc(void* memory, size_t size)
-{
-    return realloc(memory, size);
-}
-
-void PlatformSpecificFree(void* memory)
-{
-    free(memory);
-}
-
 PlatformSpecificFile PlatformSpecificStdOut = stdout;
 
 PlatformSpecificFile

@@ -30,11 +30,13 @@
 #include "CppUTest/Utest.hpp"
 #include "CppUTest/UtestMacros.hpp"
 
+#include <stdlib.h>
+
 namespace cpputest
 {
     static char* checkedMalloc(size_t size)
     {
-        char* mem = reinterpret_cast<char*>(PlatformSpecificMalloc(size));
+        char* mem = reinterpret_cast<char*>(malloc(size));
         if (mem == nullptr)
             FAIL("malloc returned null pointer");
         return mem;
@@ -166,7 +168,7 @@ namespace cpputest
     void
     TestMemoryAllocator::free_memory(char* memory, size_t, const char*, size_t)
     {
-        PlatformSpecificFree(memory);
+        free(memory);
     }
 
     const char* TestMemoryAllocator::name() const

@@ -173,26 +173,8 @@ static void VisualCppFlush()
 
 void (*PlatformSpecificFlush)(void) = VisualCppFlush;
 
-static void* VisualCppMalloc(size_t size)
-{
-    return malloc(size);
-}
-
-static void* VisualCppReAlloc(void* memory, size_t size)
-{
-    return realloc(memory, size);
-}
-
-static void VisualCppFree(void* memory)
-{
-    free(memory);
-}
-
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
-void* (*PlatformSpecificMalloc)(size_t size) = VisualCppMalloc;
-void* (*PlatformSpecificRealloc)(void* memory, size_t size) = VisualCppReAlloc;
-void (*PlatformSpecificFree)(void* memory) = VisualCppFree;
 
 static int IsInfImplementation(double d)
 {

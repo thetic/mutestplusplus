@@ -160,10 +160,6 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
 
-void* (*PlatformSpecificMalloc)(size_t size) = malloc;
-void* (*PlatformSpecificRealloc)(void*, size_t) = realloc;
-void (*PlatformSpecificFree)(void* memory) = free;
-
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
 
