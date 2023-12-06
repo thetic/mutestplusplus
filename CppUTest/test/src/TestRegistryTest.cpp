@@ -403,54 +403,6 @@ TEST(
     );
 }
 
-TEST(TestRegistry, shuffleEmptyListIsNoOp)
-{
-    CHECK_TRUE(myRegistry->getFirstTest() == nullptr);
-    myRegistry->shuffleTests(0);
-    CHECK_TRUE(myRegistry->getFirstTest() == nullptr);
-}
-
-TEST(TestRegistry, shuffleSingleTestIsNoOp)
-{
-    myRegistry->addTest(test1);
-    myRegistry->shuffleTests(0);
-    CHECK_TRUE(myRegistry->getFirstTest() == test1);
-}
-
-static int getZero()
-{
-    return 0;
-}
-
-IGNORE_TEST(TestRegistry, shuffleTestList)
-{
-    UT_PTR_SET(PlatformSpecificRand, getZero);
-    myRegistry->addTest(test3);
-    myRegistry->addTest(test2);
-    myRegistry->addTest(test1);
-
-    UtestShell* first_before = myRegistry->getFirstTest();
-    UtestShell* second_before = first_before->getNext();
-    UtestShell* third_before = second_before->getNext();
-
-    CHECK_TRUE(first_before == test1);
-    CHECK_TRUE(second_before == test2);
-    CHECK_TRUE(third_before == test3);
-    CHECK_TRUE(third_before->getNext() == nullptr);
-
-    // shuffle always with element at index 0: [1] 2 [3] --> [3] [2] 1 --> 2 3 1
-    myRegistry->shuffleTests(0);
-
-    UtestShell* first_after = myRegistry->getFirstTest();
-    UtestShell* second_after = first_after->getNext();
-    UtestShell* third_after = second_after->getNext();
-
-    CHECK_TRUE(first_after == test2);
-    CHECK_TRUE(second_after == test3);
-    CHECK_TRUE(third_after == test1);
-    CHECK_TRUE(third_after->getNext() == nullptr);
-}
-
 TEST(TestRegistry, reverseTests)
 {
     myRegistry->addTest(test1);

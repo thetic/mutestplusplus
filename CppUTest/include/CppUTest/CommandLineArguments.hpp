@@ -51,11 +51,9 @@ namespace cpputest
         bool isListingTestLocations() const;
         bool isRunIgnored() const;
         size_t getRepeatCount() const;
-        bool isShuffling() const;
         bool isReversing() const;
         bool isCrashingOnFail() const;
         bool isRethrowingExceptions() const;
-        size_t getShuffleSeed() const;
         const TestFilter* getGroupFilters() const;
         const TestFilter* getNameFilters() const;
         bool isJUnitOutput() const;
@@ -89,10 +87,7 @@ namespace cpputest
         bool reversing_;
         bool crashOnFail_;
         bool rethrowExceptions_;
-        bool shuffling_;
-        bool shufflingPreSeeded_;
         size_t repeat_;
-        size_t shuffleSeed_;
         TestFilter* groupFilters_;
         TestFilter* nameFilters_;
         OutputType outputType_;
@@ -105,7 +100,6 @@ namespace cpputest
             const SimpleString& parameterName
         );
         void setRepeatCount(int ac, const char* const* av, int& index);
-        bool setShuffle(int ac, const char* const* av, int& index);
         void addGroupFilter(int ac, const char* const* av, int& index);
         bool addGroupDotNameFilter(
             int ac,

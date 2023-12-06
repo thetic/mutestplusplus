@@ -363,28 +363,6 @@ TEST(CommandLineTestRunner, listTestLocationsShouldWorkProperly)
     );
 }
 
-TEST(CommandLineTestRunner, randomShuffleSeedIsPrintedAndRandFuncIsExercised)
-{
-    // more than 1 item in test list ensures that shuffle algorithm calls
-    // rand_()
-    cpputest::UtestShell* anotherTest =
-        new cpputest::UtestShell("group", "test2", "file", 1);
-    registry.addTest(anotherTest);
-
-    const char* argv[] = {"tests.exe", "-s"};
-    cpputest::SimpleString text = runAndGetOutput(2, argv);
-    STRCMP_CONTAINS("shuffling enabled with seed:", text.asCharString());
-
-    delete anotherTest;
-}
-
-TEST(CommandLineTestRunner, specificShuffleSeedIsPrintedVerbose)
-{
-    const char* argv[] = {"tests.exe", "-s2", "-v"};
-    cpputest::SimpleString text = runAndGetOutput(3, argv);
-    STRCMP_CONTAINS("shuffling enabled with seed: 2", text.asCharString());
-}
-
 typedef PlatformSpecificFile (*FOpenFunc)(const char*, const char*);
 typedef void (*FPutsFunc)(const char*, PlatformSpecificFile);
 typedef void (*FCloseFunc)(PlatformSpecificFile);

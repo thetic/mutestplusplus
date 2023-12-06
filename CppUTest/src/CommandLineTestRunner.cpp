@@ -140,15 +140,7 @@ namespace cpputest
         if (arguments_->isReversing())
             registry_->reverseTests();
 
-        if (arguments_->isShuffling()) {
-            output_->print("Test order shuffling enabled with seed: ");
-            output_->print(arguments_->getShuffleSeed());
-            output_->print("\n");
-        }
         while (loopCount++ < repeatCount) {
-
-            if (arguments_->isShuffling())
-                registry_->shuffleTests(arguments_->getShuffleSeed());
 
             output_->printTestRun(loopCount, repeatCount);
             TestResult tr(*output_);

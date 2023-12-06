@@ -46,10 +46,7 @@ namespace cpputest
         reversing_(false),
         crashOnFail_(false),
         rethrowExceptions_(true),
-        shuffling_(false),
-        shufflingPreSeeded_(false),
         repeat_(1),
-        shuffleSeed_(0),
         groupFilters_(nullptr),
         nameFilters_(nullptr),
         outputType_(OUTPUT_ECLIPSE)
@@ -132,8 +129,6 @@ namespace cpputest
             else if (argument.startsWith("-xsn"))
                 addExcludeStrictNameFilter(ac_, av_, i);
             else if (argument.startsWith("-s"))
-                correctParameters = setShuffle(ac_, av_, i);
-            else if (argument.startsWith("TEST("))
                 addTestToRunBasedOnVerboseOutput(ac_, av_, i, "TEST(");
             else if (argument.startsWith("IGNORE_TEST("))
                 addTestToRunBasedOnVerboseOutput(ac_, av_, i, "IGNORE_TEST(");
@@ -249,9 +244,6 @@ namespace cpputest
                "  -p                - run tests in a separate process\n"
                "  -b                - run the tests backwards, reversing the "
                "normal way\n"
-               "  -s [<seed>]       - shuffle tests randomly (randomization "
-               "seed "
-               "is optional, must be greater than 0)\n"
                "  -r[<#>]           - repeat the tests <#> times (or twice if "
                "<#> "
                "is not specified)\n"
@@ -329,16 +321,6 @@ namespace cpputest
         return rethrowExceptions_;
     }
 
-    bool CommandLineArguments::isShuffling() const
-    {
-        return shuffling_;
-    }
-
-    size_t CommandLineArguments::getShuffleSeed() const
-    {
-        return shuffleSeed_;
-    }
-
     const TestFilter* CommandLineArguments::getGroupFilters() const
     {
         return groupFilters_;
@@ -365,29 +347,6 @@ namespace cpputest
 
         if (0 == repeat_)
             repeat_ = 2;
-    }
-
-    bool CommandLineArguments::setShuffle(int ac, const char* const* av, int& i)
-    {
-        shuffling_ = true;
-        shuffleSeed_ =
-            static_cast<unsigned int>(GetPlatformSpecificTimeInMillis());
-        if (shuffleSeed_ == 0)
-            shuffleSeed_++;
-
-        SimpleString shuffleParameter = av[i];
-        if (shuffleParameter.size() > 2) {
-            shufflingPreSeeded_ = true;
-            shuffleSeed_ = SimpleString::AtoU(av[i] + 2);
-        } else if (i + 1 < ac) {
-            unsigned int parsedParameter = SimpleString::AtoU(av[i + 1]);
-            if (parsedParameter != 0) {
-                shufflingPreSeeded_ = true;
-                shuffleSeed_ = parsedParameter;
-                i++;
-            }
-        }
-        return (shuffleSeed_ != 0);
     }
 
     SimpleString CommandLineArguments::getParameterField(

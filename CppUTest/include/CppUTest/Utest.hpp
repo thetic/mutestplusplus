@@ -476,7 +476,6 @@ namespace cpputest
         UtestShellPointerArray(UtestShell* firstTest);
         ~UtestShellPointerArray();
 
-        void shuffle(size_t seed);
         void reverse();
         void relinkTestsInOrder();
         UtestShell* getFirstTest() const;
