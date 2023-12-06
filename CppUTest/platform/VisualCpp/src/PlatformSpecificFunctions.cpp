@@ -33,7 +33,7 @@ using namespace cpputest;
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
 
-static int VisualCppSetJmp(void (*function)(void* data), void* data)
+int PlatformSpecificSetJmp(void (*function)(void* data), void* data)
 {
     if (0 == setjmp(test_exit_jmp_buf[jmp_buf_index])) {
         jmp_buf_index++;
@@ -44,21 +44,16 @@ static int VisualCppSetJmp(void (*function)(void* data), void* data)
     return 0;
 }
 
-[[noreturn]] static void VisualCppLongJmp()
+void PlatformSpecificLongJmp()
 {
     jmp_buf_index--;
     longjmp(test_exit_jmp_buf[jmp_buf_index], 1);
 }
 
-static void VisualCppRestoreJumpBuffer()
+void PlatformSpecificRestoreJumpBuffer()
 {
     jmp_buf_index--;
 }
-
-int (*PlatformSpecificSetJmp)(void (*function)(void*), void* data) =
-    VisualCppSetJmp;
-void (*PlatformSpecificLongJmp)(void) = VisualCppLongJmp;
-void (*PlatformSpecificRestoreJumpBuffer)(void) = VisualCppRestoreJumpBuffer;
 
 static void VisualCppRunTestInASeperateProcess(
     UtestShell* shell, TestPlugin* /* plugin */, TestResult* result

@@ -19,6 +19,7 @@ if(
         -Wreserved-id-macro
         -Wkeyword-macro
         -Wno-unsafe-buffer-usage
+        -Wmissing-noreturn
     )
 
     set(WARNING_C_FLAGS

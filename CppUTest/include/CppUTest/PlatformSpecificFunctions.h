@@ -44,9 +44,16 @@ extern "C" {
 #endif
 
 /* Jumping operations. They manage their own jump buffers */
-extern int (*PlatformSpecificSetJmp)(void (*function)(void*), void* data);
-extern void (*PlatformSpecificLongJmp)(void);
-extern void (*PlatformSpecificRestoreJumpBuffer)(void);
+int PlatformSpecificSetJmp(void (*function)(void*), void* data);
+#ifdef __cplusplus
+[[noreturn]]
+#elif defined(__has_attribute)
+    #if __has_attribute(noreturn)
+__attribute__((noreturn))
+    #endif
+#endif
+void PlatformSpecificLongJmp(void);
+void PlatformSpecificRestoreJumpBuffer(void);
 
 /* Time operations */
 extern long (*GetPlatformSpecificTimeInMillis)(void);

@@ -80,10 +80,7 @@ void (*PlatformSpecificRunTestInASeperateProcess)(
 int (*PlatformSpecificFork)(void) = DummyPlatformSpecificFork;
 int (*PlatformSpecificWaitPid)(int, int*, int) = DummyPlatformSpecificWaitPid;
 
-extern "C" {
-
-static int
-PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
+int PlatformSpecificSetJmp(void (*function)(void* data), void* data)
 {
     if (0 == setjmp(test_exit_jmp_buf[jmp_buf_index])) {
         jmp_buf_index++;
@@ -94,22 +91,16 @@ PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
     return 0;
 }
 
-static void PlatformSpecificLongJmpImplementation()
+void PlatformSpecificLongJmp()
 {
     jmp_buf_index--;
     longjmp(test_exit_jmp_buf[jmp_buf_index], 1);
 }
 
-static void PlatformSpecificRestoreJumpBufferImplementation()
+void PlatformSpecificRestoreJumpBuffer()
 {
     jmp_buf_index--;
 }
-
-void (*PlatformSpecificLongJmp)() = PlatformSpecificLongJmpImplementation;
-int (*PlatformSpecificSetJmp)(void (*)(void*), void*) =
-    PlatformSpecificSetJmpImplementation;
-void (*PlatformSpecificRestoreJumpBuffer)() =
-    PlatformSpecificRestoreJumpBufferImplementation;
 
 ///////////// Time in millis
 /*
@@ -214,4 +205,3 @@ void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = DummyMutexLock;
 void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = DummyMutexUnlock;
 void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex) = DummyMutexDestroy;
 void (*PlatformSpecificAbort)(void) = abort;
-}
