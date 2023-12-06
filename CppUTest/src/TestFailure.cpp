@@ -40,6 +40,8 @@
     #endif
 #endif
 
+#include <math.h>
+
 namespace cpputest
 {
     TestFailure::TestFailure(
@@ -250,8 +252,7 @@ namespace cpputest
         message_ += StringFrom(threshold, 7);
         message_ += ">";
 
-        if (PlatformSpecificIsNan(expected) || PlatformSpecificIsNan(actual) ||
-            PlatformSpecificIsNan(threshold))
+        if (isnan(expected) || isnan(actual) || isnan(threshold))
             message_ += "\n\tCannot make comparisons with Nan";
     }
 

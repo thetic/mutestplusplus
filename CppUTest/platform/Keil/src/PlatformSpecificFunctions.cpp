@@ -79,8 +79,7 @@ void (*PlatformSpecificRunTestInASeperateProcess)(UtestShell*, TestPlugin*, Test
 int (*PlatformSpecificFork)() = DummyPlatformSpecificFork;
 int (*PlatformSpecificWaitPid)(int, int*, int) = DummyPlatformSpecificWaitPid;
 
-static int
-PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
+int PlatformSpecificSetJmp(void (*function)(void* data), void* data)
 {
     if (0 == setjmp(test_exit_jmp_buf[jmp_buf_index])) {
         jmp_buf_index++;
@@ -91,22 +90,16 @@ PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
     return 0;
 }
 
-static void PlatformSpecificLongJmpImplementation()
+void PlatformSpecificLongJmp()
 {
     jmp_buf_index--;
     longjmp(test_exit_jmp_buf[jmp_buf_index], 1);
 }
 
-static void PlatformSpecificRestoreJumpBufferImplementation()
+void PlatformSpecificRestoreJumpBuffer()
 {
     jmp_buf_index--;
 }
-
-void (*PlatformSpecificLongJmp)() = PlatformSpecificLongJmpImplementation;
-int (*PlatformSpecificSetJmp)(void (*function)(void*), void*) =
-    PlatformSpecificSetJmpImplementation;
-void (*PlatformSpecificRestoreJumpBuffer)() =
-    PlatformSpecificRestoreJumpBufferImplementation;
 
 ///////////// Time in millis
 /*
@@ -169,11 +162,6 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 ) = PlatformSpecificFCloseImplementation;
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
-void* (*PlatformSpecificMalloc)(size_t) = malloc;
-void* (*PlatformSpecificRealloc)(void*, size_t) = realloc;
-void (*PlatformSpecificFree)(void*) = free;
-void* (*PlatformSpecificMemCpy)(void* s1, const void* s2, size_t size) = memcpy;
-void* (*PlatformSpecificMemset)(void*, int, size_t) = memset;
 
 static int IsNanImplementation(double d)
 {
@@ -183,25 +171,6 @@ static int IsNanImplementation(double d)
     return isnan(d);
 #endif
 }
-
-static int IsInfImplementation(double d)
-{
-#ifdef __MICROLIB
-    return 0;
-#else
-    return isinf(d);
-#endif
-}
-
-int DummyAtExit(void (*)(void))
-{
-    return 0;
-}
-
-double (*PlatformSpecificFabs)(double) = abs;
-int (*PlatformSpecificIsNan)(double) = IsNanImplementation;
-int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
-int (*PlatformSpecificAtExit)(void (*func)(void)) = DummyAtExit;
 
 static PlatformSpecificMutex DummyMutexCreate(void)
 {
@@ -218,4 +187,3 @@ PlatformSpecificMutex (*PlatformSpecificMutexCreate)(void) = DummyMutexCreate;
 void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = DummyMutexLock;
 void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = DummyMutexUnlock;
 void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex) = DummyMutexDestroy;
-void (*PlatformSpecificAbort)(void) = abort;

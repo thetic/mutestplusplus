@@ -72,8 +72,7 @@ void (*PlatformSpecificRunTestInASeperateProcess)(
 int (*PlatformSpecificFork)(void) = DummyPlatformSpecificFork;
 int (*PlatformSpecificWaitPid)(int, int*, int) = DummyPlatformSpecificWaitPid;
 
-static int
-PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
+int PlatformSpecificSetJmp(void (*function)(void* data), void* data)
 {
     if (0 == setjmp(test_exit_jmp_buf[jmp_buf_index])) {
         jmp_buf_index++;
@@ -84,22 +83,16 @@ PlatformSpecificSetJmpImplementation(void (*function)(void* data), void* data)
     return 0;
 }
 
-static void PlatformSpecificLongJmpImplementation()
+void PlatformSpecificLongJmp()
 {
     jmp_buf_index--;
     longjmp(test_exit_jmp_buf[jmp_buf_index], 1);
 }
 
-static void PlatformSpecificRestoreJumpBufferImplementation()
+void PlatformSpecificRestoreJumpBuffer()
 {
     jmp_buf_index--;
 }
-
-void (*PlatformSpecificLongJmp)() = PlatformSpecificLongJmpImplementation;
-int (*PlatformSpecificSetJmp)(void (*)(void*), void*) =
-    PlatformSpecificSetJmpImplementation;
-void (*PlatformSpecificRestoreJumpBuffer)() =
-    PlatformSpecificRestoreJumpBufferImplementation;
 
 ///////////// Time in millis
 
@@ -168,28 +161,6 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
 
-void* (*PlatformSpecificMalloc)(size_t size) = malloc;
-void* (*PlatformSpecificRealloc)(void*, size_t) = realloc;
-void (*PlatformSpecificFree)(void* memory) = free;
-void* (*PlatformSpecificMemCpy)(void*, const void*, size_t) = memcpy;
-void* (*PlatformSpecificMemset)(void*, int, size_t) = memset;
-
-static int IsNanImplementation(double d)
-{
-    return isnan(d);
-}
-
-static int IsInfImplementation(double d)
-{
-    return isinf(d);
-}
-
-double (*PlatformSpecificFabs)(double) = fabs;
-int (*PlatformSpecificIsNan)(double) = IsNanImplementation;
-int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
-int (*PlatformSpecificAtExit)(void (*func)(void)
-) = atexit; /// this was undefined before
-
 static PlatformSpecificMutex DummyMutexCreate(void)
 {
     return 0;
@@ -207,4 +178,3 @@ void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = DummyMutexUnlock;
 void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex) = DummyMutexDestroy;
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
-void (*PlatformSpecificAbort)(void) = abort;

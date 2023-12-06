@@ -26,11 +26,15 @@
  */
 
 #include "CppUTest/SimpleString.hpp"
+
 #include "CppUTest/PlatformSpecificFunctions.hpp"
 #include "CppUTest/TestHarness.hpp"
 #include "CppUTest/TestMemoryAllocator.hpp"
 #include "CppUTest/TestTestingFixture.hpp"
+
 #include <limits.h>
+#include <math.h>
+#include <stdlib.h>
 
 /*
  * Detection of different 64 bit environments
@@ -441,10 +445,10 @@ TEST(SimpleString, copyInBufferNormal)
 {
     SimpleString str("Hello World");
     size_t bufferSize = str.size() + 1;
-    char* buffer = reinterpret_cast<char*>(PlatformSpecificMalloc(bufferSize));
+    char* buffer = reinterpret_cast<char*>(malloc(bufferSize));
     str.copyToBuffer(buffer, bufferSize);
     STRCMP_EQUAL(str.asCharString(), buffer);
-    PlatformSpecificFree(buffer);
+    free(buffer);
 }
 
 TEST(SimpleString, copyInBufferWithEmptyBuffer)
@@ -459,21 +463,21 @@ TEST(SimpleString, copyInBufferWithBiggerBufferThanNeeded)
 {
     SimpleString str("Hello");
     size_t bufferSize = 20;
-    char* buffer = reinterpret_cast<char*>(PlatformSpecificMalloc(bufferSize));
+    char* buffer = reinterpret_cast<char*>(malloc(bufferSize));
     str.copyToBuffer(buffer, bufferSize);
     STRCMP_EQUAL(str.asCharString(), buffer);
-    PlatformSpecificFree(buffer);
+    free(buffer);
 }
 
 TEST(SimpleString, copyInBufferWithSmallerBufferThanNeeded)
 {
     SimpleString str("Hello");
     size_t bufferSize = str.size();
-    char* buffer = reinterpret_cast<char*>(PlatformSpecificMalloc(bufferSize));
+    char* buffer = reinterpret_cast<char*>(malloc(bufferSize));
     str.copyToBuffer(buffer, bufferSize);
     STRNCMP_EQUAL(str.asCharString(), buffer, (bufferSize - 1));
     LONGS_EQUAL(0, buffer[bufferSize - 1]);
-    PlatformSpecificFree(buffer);
+    free(buffer);
 }
 
 TEST(SimpleString, ContainsNull)
@@ -564,22 +568,15 @@ TEST(SimpleString, Doubles)
     STRCMP_EQUAL("1.2", s.asCharString());
 }
 
-static int alwaysTrue(double)
-{
-    return true;
-}
-
 TEST(SimpleString, NaN)
 {
-    UT_PTR_SET(PlatformSpecificIsNan, alwaysTrue);
-    SimpleString s(StringFrom(0.0));
+    SimpleString s(StringFrom(static_cast<double>(NAN)));
     STRCMP_EQUAL("Nan - Not a number", s.asCharString());
 }
 
 TEST(SimpleString, Inf)
 {
-    UT_PTR_SET(PlatformSpecificIsInf, alwaysTrue);
-    SimpleString s(StringFrom(0.0));
+    SimpleString s(StringFrom(static_cast<double>(INFINITY)));
     STRCMP_EQUAL("Inf - Infinity", s.asCharString());
 }
 

@@ -32,6 +32,8 @@
 
 #include "CppUTest/PlatformSpecificFunctions.h"
 
+#include <string.h>
+
 namespace cpputest
 {
     namespace extensions
@@ -109,7 +111,7 @@ namespace cpputest
                 } else if ((outputParameter.getType() == "const void*") && (p->type_ == "void*")) {
                     const void* data = outputParameter.getConstPointerValue();
                     size_t size = outputParameter.getSize();
-                    PlatformSpecificMemCpy(p->ptr_, data, size);
+                    memcpy(p->ptr_, data, size);
                 } else if (outputParameter.getName() != "") {
                     SimpleString type =
                         expectedCall->getOutputParameter(p->name_).getType();

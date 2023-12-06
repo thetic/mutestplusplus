@@ -73,21 +73,21 @@ namespace cpputest
     class NormalTestTerminator : public TestTerminator
     {
     public:
-        virtual void exitCurrentTest() const override;
+        [[noreturn]] virtual void exitCurrentTest() const override;
         virtual ~NormalTestTerminator() override;
     };
 
     class TestTerminatorWithoutExceptions : public TestTerminator
     {
     public:
-        virtual void exitCurrentTest() const override;
+        [[noreturn]] virtual void exitCurrentTest() const override;
         virtual ~TestTerminatorWithoutExceptions() override;
     };
 
     class CrashingTestTerminator : public NormalTestTerminator
     {
     public:
-        virtual void exitCurrentTest() const override;
+        [[noreturn]] virtual void exitCurrentTest() const override;
         virtual ~CrashingTestTerminator() override;
     };
 
@@ -95,7 +95,7 @@ namespace cpputest
         : public TestTerminatorWithoutExceptions
     {
     public:
-        virtual void exitCurrentTest() const override;
+        [[noreturn]] virtual void exitCurrentTest() const override;
         virtual ~CrashingTestTerminatorWithoutExceptions() override;
     };
 

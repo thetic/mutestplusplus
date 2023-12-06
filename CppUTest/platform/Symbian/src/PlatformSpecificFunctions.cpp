@@ -109,36 +109,6 @@ void PlatformSpecificFlush()
     fflush(stdout);
 }
 
-double PlatformSpecificFabs(double d)
-{
-    return fabs(d);
-}
-
-void* PlatformSpecificMalloc(size_t size)
-{
-    return malloc(size);
-}
-
-void* PlatformSpecificRealloc(void* memory, size_t size)
-{
-    return realloc(memory, size);
-}
-
-void PlatformSpecificFree(void* memory)
-{
-    free(memory);
-}
-
-void* PlatformSpecificMemCpy(void* s1, const void* s2, size_t size)
-{
-    return memcpy(s1, s2, size);
-}
-
-void* PlatformSpecificMemset(void* mem, int c, size_t size)
-{
-    return memset(mem, c, size);
-}
-
 PlatformSpecificFile PlatformSpecificStdOut = stdout;
 
 PlatformSpecificFile
@@ -155,22 +125,6 @@ void PlatformSpecificFPuts(const char* str, PlatformSpecificFile file)
 void PlatformSpecificFClose(PlatformSpecificFile file)
 {
     fclose((FILE*)file);
-}
-
-extern "C" {
-
-static int IsNanImplementation(double d)
-{
-    return isnan(d);
-}
-
-static int IsInfImplementation(double d)
-{
-    return isinf(d);
-}
-
-int (*PlatformSpecificIsNan)(double) = IsNanImplementation;
-int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
 }
 
 static PlatformSpecificMutex DummyMutexCreate(void)
@@ -198,4 +152,3 @@ PlatformSpecificMutex (*PlatformSpecificMutexCreate)(void) = DummyMutexCreate;
 void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = DummyMutexLock;
 void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = DummyMutexUnlock;
 void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex) = DummyMutexDestroy;
-void (*PlatformSpecificAbort)(void) = abort;

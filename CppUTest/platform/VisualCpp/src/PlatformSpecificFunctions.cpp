@@ -33,7 +33,7 @@ using namespace cpputest;
 static jmp_buf test_exit_jmp_buf[10];
 static int jmp_buf_index = 0;
 
-static int VisualCppSetJmp(void (*function)(void* data), void* data)
+int PlatformSpecificSetJmp(void (*function)(void* data), void* data)
 {
     if (0 == setjmp(test_exit_jmp_buf[jmp_buf_index])) {
         jmp_buf_index++;
@@ -44,21 +44,16 @@ static int VisualCppSetJmp(void (*function)(void* data), void* data)
     return 0;
 }
 
-[[noreturn]] static void VisualCppLongJmp()
+void PlatformSpecificLongJmp()
 {
     jmp_buf_index--;
     longjmp(test_exit_jmp_buf[jmp_buf_index], 1);
 }
 
-static void VisualCppRestoreJumpBuffer()
+void PlatformSpecificRestoreJumpBuffer()
 {
     jmp_buf_index--;
 }
-
-int (*PlatformSpecificSetJmp)(void (*function)(void*), void* data) =
-    VisualCppSetJmp;
-void (*PlatformSpecificLongJmp)(void) = VisualCppLongJmp;
-void (*PlatformSpecificRestoreJumpBuffer)(void) = VisualCppRestoreJumpBuffer;
 
 static void VisualCppRunTestInASeperateProcess(
     UtestShell* shell, TestPlugin* /* plugin */, TestResult* result
@@ -178,38 +173,8 @@ static void VisualCppFlush()
 
 void (*PlatformSpecificFlush)(void) = VisualCppFlush;
 
-static void* VisualCppMalloc(size_t size)
-{
-    return malloc(size);
-}
-
-static void* VisualCppReAlloc(void* memory, size_t size)
-{
-    return realloc(memory, size);
-}
-
-static void VisualCppFree(void* memory)
-{
-    free(memory);
-}
-
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
-void* (*PlatformSpecificMalloc)(size_t size) = VisualCppMalloc;
-void* (*PlatformSpecificRealloc)(void* memory, size_t size) = VisualCppReAlloc;
-void (*PlatformSpecificFree)(void* memory) = VisualCppFree;
-void* (*PlatformSpecificMemCpy)(void* s1, const void* s2, size_t size) = memcpy;
-void* (*PlatformSpecificMemset)(void* mem, int c, size_t size) = memset;
-
-static int IsInfImplementation(double d)
-{
-    return !_finite(d);
-}
-
-double (*PlatformSpecificFabs)(double d) = fabs;
-int (*PlatformSpecificIsNan)(double) = _isnan;
-int (*PlatformSpecificIsInf)(double) = IsInfImplementation;
-int (*PlatformSpecificAtExit)(void (*func)(void)) = atexit;
 
 static PlatformSpecificMutex VisualCppMutexCreate(void)
 {
@@ -243,4 +208,3 @@ void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex
 ) = VisualCppMutexUnlock;
 void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex
 ) = VisualCppMutexDestroy;
-void (*PlatformSpecificAbort)(void) = abort;

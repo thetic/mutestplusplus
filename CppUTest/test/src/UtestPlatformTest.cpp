@@ -31,8 +31,6 @@
 #include "CppUTest/TestMemoryAllocator.hpp"
 #include "CppUTest/TestTestingFixture.hpp"
 
-// This will cause a crash in VS2010 due to PlatformSpecificFree being
-// uninitialized
 static const cpputest::SimpleString str1("abc");
 static const cpputest::SimpleString str2("def");
 static const cpputest::SimpleString str3(str1 + str2);
