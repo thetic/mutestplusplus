@@ -163,13 +163,6 @@ void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
 
-static int AtExitImplementation(void (*func)(void))
-{
-    return atexit(func);
-}
-
-int (*PlatformSpecificAtExit)(void (*func)(void)) = AtExitImplementation;
-
 static PlatformSpecificMutex DummyMutexCreate(void)
 {
     return 0;

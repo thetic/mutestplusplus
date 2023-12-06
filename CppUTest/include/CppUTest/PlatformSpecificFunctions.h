@@ -68,9 +68,6 @@ extern int (*PlatformSpecificVSNprintf)(
     char* str, size_t size, const char* format, va_list va_args_list
 );
 
-/* Misc */
-extern int (*PlatformSpecificAtExit)(void (*func)(void));
-
 /* IO operations */
 typedef void* PlatformSpecificFile;
 

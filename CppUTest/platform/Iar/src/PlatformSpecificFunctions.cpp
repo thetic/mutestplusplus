@@ -161,9 +161,6 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
 
-int (*PlatformSpecificAtExit)(void (*func)(void)
-) = atexit; /// this was undefined before
-
 static PlatformSpecificMutex DummyMutexCreate(void)
 {
     return 0;

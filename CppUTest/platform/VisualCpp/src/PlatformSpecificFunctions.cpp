@@ -176,8 +176,6 @@ void (*PlatformSpecificFlush)(void) = VisualCppFlush;
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
 
-int (*PlatformSpecificAtExit)(void (*func)(void)) = atexit;
-
 static PlatformSpecificMutex VisualCppMutexCreate(void)
 {
     CRITICAL_SECTION* critical_section = new CRITICAL_SECTION;
