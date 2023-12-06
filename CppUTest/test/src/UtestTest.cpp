@@ -590,16 +590,6 @@ TEST(
     dummy.allocateMoreMemory();
 }
 
-static int getZero()
-{
-    return 0;
-}
-
-static int getOne()
-{
-    return 1;
-}
-
 TEST_GROUP(UtestShellPointerArrayTest)
 {
     UtestShell* test0;
@@ -624,13 +614,6 @@ TEST_GROUP(UtestShellPointerArrayTest)
     }
 };
 
-TEST(UtestShellPointerArrayTest, empty)
-{
-    UtestShellPointerArray tests(nullptr);
-    tests.shuffle(0);
-    CHECK(nullptr == tests.getFirstTest());
-}
-
 TEST(UtestShellPointerArrayTest, testsAreInOrder)
 {
     UtestShellPointerArray tests(test0);
@@ -649,46 +632,4 @@ TEST(
     CHECK(tests.get(0) == test0);
     CHECK(tests.get(1) == test1);
     CHECK(tests.get(2) == test2);
-}
-
-TEST(UtestShellPointerArrayTest, firstTestisNotTheFirstTestWithSeed1234)
-{
-    UtestShellPointerArray tests(test0);
-    tests.shuffle(1234);
-    CHECK(tests.getFirstTest() != test0);
-}
-
-TEST(UtestShellPointerArrayTest, ShuffleListTestWithRandomAlwaysReturningZero)
-{
-    UT_PTR_SET(PlatformSpecificRand, getZero);
-
-    UtestShellPointerArray tests(test0);
-    tests.shuffle(3);
-    CHECK(tests.get(0) == test1);
-    CHECK(tests.get(1) == test2);
-    CHECK(tests.get(2) == test0);
-}
-
-// swaps with 4 mod 3 (1) then 4 mod 2 (0): 1, [2], [0] --> [1], [0], 2 --> 0,
-// 1, 2
-TEST(UtestShellPointerArrayTest, ShuffleListTestWithRandomAlwaysReturningOne)
-{
-    UT_PTR_SET(PlatformSpecificRand, getOne);
-
-    UtestShellPointerArray tests(test0);
-    tests.shuffle(3);
-    CHECK(tests.get(0) == test0);
-    CHECK(tests.get(1) == test2);
-    CHECK(tests.get(2) == test1);
-}
-
-TEST(UtestShellPointerArrayTest, reverse)
-{
-    UT_PTR_SET(PlatformSpecificRand, getOne);
-
-    UtestShellPointerArray tests(test0);
-    tests.reverse();
-    CHECK(tests.get(0) == test2);
-    CHECK(tests.get(1) == test1);
-    CHECK(tests.get(2) == test0);
 }

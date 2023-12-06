@@ -160,9 +160,6 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
 
-void (*PlatformSpecificSrand)(unsigned int) = srand;
-int (*PlatformSpecificRand)(void) = rand;
-
 static PlatformSpecificMutex DummyMutexCreate(void)
 {
     return 0;

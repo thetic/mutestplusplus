@@ -1187,25 +1187,6 @@ namespace cpputest
         arrayOfTests_[index2] = e1;
     }
 
-    void UtestShellPointerArray::shuffle(size_t seed)
-    {
-        if (count_ == 0)
-            return;
-
-        PlatformSpecificSrand(static_cast<unsigned int>(seed));
-
-        for (size_t i = count_ - 1; i >= 1; --i) {
-            if (count_ == 0)
-                return;
-
-            const size_t j = (static_cast<size_t>(PlatformSpecificRand())) %
-                             (i + 1); // distribution biased by modulo, but good
-                                      // enough for shuffling
-            swap(i, j);
-        }
-        relinkTestsInOrder();
-    }
-
     void UtestShellPointerArray::reverse()
     {
         if (count_ == 0)

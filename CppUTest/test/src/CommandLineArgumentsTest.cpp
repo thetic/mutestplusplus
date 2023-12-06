@@ -106,7 +106,7 @@ TEST(CommandLineArguments, repeatSetDifferentParameter)
     LONGS_EQUAL(4, args->getRepeatCount());
 }
 
-TEST(CommandLineArguments, repeatSetDefaultsToTwoAndShuffleDisabled)
+TEST(CommandLineArguments, repeatSetDefaultsToTwo)
 {
     int argc = 2;
     const char* argv[] = {"tests.exe", "-r"};
@@ -120,65 +120,6 @@ TEST(CommandLineArguments, reverseEnabled)
     const char* argv[] = {"tests.exe", "-b"};
     CHECK(newArgumentParser(argc, argv));
     CHECK_TRUE(args->isReversing());
-}
-
-TEST(CommandLineArguments, shuffleDisabledByDefault)
-{
-    int argc = 1;
-    const char* argv[] = {"tests.exe"};
-    CHECK(newArgumentParser(argc, argv));
-    CHECK_FALSE(args->isShuffling());
-}
-
-TEST(CommandLineArguments, shuffleEnabled)
-{
-    int argc = 2;
-    const char* argv[] = {"tests.exe", "-s"};
-    CHECK(newArgumentParser(argc, argv));
-    CHECK_TRUE(args->isShuffling());
-}
-
-TEST(CommandLineArguments, shuffleWithSeedZeroIsOk)
-{
-    int argc = 2;
-    const char* argv[] = {"tests.exe", "-s0"};
-    CHECK_FALSE(newArgumentParser(argc, argv));
-    CHECK_EQUAL(0, args->getShuffleSeed());
-}
-
-TEST(CommandLineArguments, shuffleEnabledSpecificSeedCase1)
-{
-    int argc = 2;
-    const char* argv[] = {"tests.exe", "-s999"};
-    CHECK(newArgumentParser(argc, argv));
-    CHECK_EQUAL(999, args->getShuffleSeed());
-}
-
-TEST(CommandLineArguments, shuffleEnabledSpecificSeedCase2)
-{
-    int argc = 2;
-    const char* argv[] = {"tests.exe", "-s 888"};
-    CHECK(newArgumentParser(argc, argv));
-    CHECK_EQUAL(888, args->getShuffleSeed());
-}
-
-TEST(CommandLineArguments, shuffleEnabledSpecificSeedCase3)
-{
-    int argc = 3;
-    const char* argv[] = {"tests.exe", "-s", "777"};
-    CHECK(newArgumentParser(argc, argv));
-    CHECK_EQUAL(777, args->getShuffleSeed());
-}
-
-TEST(CommandLineArguments, shuffleBeforeDoesNotDisturbOtherSwitch)
-{
-    int argc = 4;
-    const char* argv[] = {"tests.exe", "-s", "-sg", "group"};
-    CHECK(newArgumentParser(argc, argv));
-    TestFilter groupFilter("group");
-    groupFilter.strictMatching();
-    CHECK_EQUAL(groupFilter, *args->getGroupFilters());
-    CHECK_TRUE(args->isShuffling());
 }
 
 TEST(CommandLineArguments, runningTestsInSeperateProcesses)

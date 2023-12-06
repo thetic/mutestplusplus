@@ -272,9 +272,6 @@ void (*PlatformSpecificFClose)(PlatformSpecificFile
 
 void (*PlatformSpecificFlush)() = PlatformSpecificFlushImplementation;
 
-void (*PlatformSpecificSrand)(unsigned int) = srand;
-int (*PlatformSpecificRand)(void) = rand;
-
 static PlatformSpecificMutex PThreadMutexCreate(void)
 {
 #ifdef CPPUTEST_HAVE_PTHREAD_MUTEX_LOCK

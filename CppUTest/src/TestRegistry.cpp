@@ -269,13 +269,6 @@ namespace cpputest
         return tests_;
     }
 
-    void TestRegistry::shuffleTests(size_t seed)
-    {
-        UtestShellPointerArray array(getFirstTest());
-        array.shuffle(seed);
-        tests_ = array.getFirstTest();
-    }
-
     void TestRegistry::reverseTests()
     {
         UtestShellPointerArray array(getFirstTest());
