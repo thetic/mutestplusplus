@@ -194,7 +194,6 @@ void* (*PlatformSpecificMalloc)(size_t size) = VisualCppMalloc;
 void* (*PlatformSpecificRealloc)(void* memory, size_t size) = VisualCppReAlloc;
 void (*PlatformSpecificFree)(void* memory) = VisualCppFree;
 void* (*PlatformSpecificMemCpy)(void* s1, const void* s2, size_t size) = memcpy;
-void* (*PlatformSpecificMemset)(void* mem, int c, size_t size) = memset;
 
 static int IsInfImplementation(double d)
 {

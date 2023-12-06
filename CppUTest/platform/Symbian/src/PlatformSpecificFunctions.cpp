@@ -134,11 +134,6 @@ void* PlatformSpecificMemCpy(void* s1, const void* s2, size_t size)
     return memcpy(s1, s2, size);
 }
 
-void* PlatformSpecificMemset(void* mem, int c, size_t size)
-{
-    return memset(mem, c, size);
-}
-
 PlatformSpecificFile PlatformSpecificStdOut = stdout;
 
 PlatformSpecificFile

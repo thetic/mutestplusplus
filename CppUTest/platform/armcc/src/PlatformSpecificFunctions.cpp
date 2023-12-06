@@ -164,7 +164,6 @@ void* (*PlatformSpecificMalloc)(size_t size) = malloc;
 void* (*PlatformSpecificRealloc)(void*, size_t) = realloc;
 void (*PlatformSpecificFree)(void* memory) = free;
 void* (*PlatformSpecificMemCpy)(void*, const void*, size_t) = memcpy;
-void* (*PlatformSpecificMemset)(void*, int, size_t) = memset;
 
 void (*PlatformSpecificSrand)(unsigned int) = srand;
 int (*PlatformSpecificRand)(void) = rand;
