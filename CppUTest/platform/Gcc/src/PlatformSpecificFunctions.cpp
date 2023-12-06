@@ -342,4 +342,3 @@ void (*PlatformSpecificMutexLock)(PlatformSpecificMutex) = PThreadMutexLock;
 void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex) = PThreadMutexUnlock;
 void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex
 ) = PThreadMutexDestroy;
-void (*PlatformSpecificAbort)(void) = abort;

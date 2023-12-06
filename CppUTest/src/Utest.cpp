@@ -33,6 +33,8 @@
 #include "CppUTest/TestRegistry.hpp"
 #include "CppUTest/TestResult.hpp"
 
+#include <stdlib.h>
+
 namespace cpputest
 {
     bool doubles_equal(double d1, double d2, double threshold)
@@ -211,7 +213,7 @@ namespace cpputest
 
     UtestShell::~UtestShell() {}
 
-    static void (*pleaseCrashMeRightNow)() = PlatformSpecificAbort;
+    static void (*pleaseCrashMeRightNow)() = abort;
 
     void UtestShell::setCrashMethod(void (*crashme)())
     {
@@ -220,7 +222,7 @@ namespace cpputest
 
     void UtestShell::resetCrashMethod()
     {
-        pleaseCrashMeRightNow = PlatformSpecificAbort;
+        pleaseCrashMeRightNow = abort;
     }
 
     void UtestShell::crash()

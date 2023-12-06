@@ -238,4 +238,3 @@ void (*PlatformSpecificMutexUnlock)(PlatformSpecificMutex
 ) = VisualCppMutexUnlock;
 void (*PlatformSpecificMutexDestroy)(PlatformSpecificMutex
 ) = VisualCppMutexDestroy;
-void (*PlatformSpecificAbort)(void) = abort;
